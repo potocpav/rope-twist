@@ -12,6 +12,7 @@ A blog post on why a climbing rope spins about its own axis when pulled around a
 - `viz/rope.js` — shared rope rendering (palette, braid, marker), theming and iframe embedding used by both figures.
 
 Each figure is a standalone page with no external dependencies, embedded via iframe; open one directly to view it on its own. Theme follows the system, or force it with `?theme=light` / `?theme=dark`.
+- `images/` — photos used in the post.
 - `HANDOFF.md` — physics and implementation notes for the visualization.
 
 ## Local preview

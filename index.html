@@ -1,98 +1,504 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>How Climbing Ropes Twist</title>
-<meta name="description" content="Why a climbing rope spins about its own axis when pulled around a bar at an angle.">
-<style>
-:root{
-  --bg:#ffffff; --text:#1f1e1c; --muted:#5f5e5a; --line:#d6d4cc; --panel:#f3f2ee; --accent:#b8501f;
-  color-scheme:light;
-}
-@media (prefers-color-scheme: dark){
-  :root{--bg:#1e1d1b; --text:#ecebe6; --muted:#a9a8a2; --line:#45443f; --panel:#2a2927; --accent:#e8875a; color-scheme:dark;}
-}
-*{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--text);
-  font-family:Charter,"Bitstream Charter","Sitka Text",Cambria,Georgia,serif;
-  font-size:19px;line-height:1.6;}
-main{max-width:680px;margin:0 auto;padding:48px 16px 80px;}
-header{margin-bottom:40px;}
-h1,h2,h3{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;line-height:1.2;font-weight:650;}
-h1{font-size:clamp(30px,6vw,42px);margin:0 0 12px;letter-spacing:-0.01em;}
-h2{font-size:26px;margin:56px 0 12px;}
-h3{font-size:20px;margin:32px 0 8px;}
-.byline{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;color:var(--muted);margin:0;}
-.lede{font-size:21px;color:var(--muted);margin:0 0 16px;}
-p{margin:0 0 20px;}
-a{color:var(--accent);}
-code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:0.85em;background:var(--panel);padding:1px 5px;border-radius:4px;}
-.eq{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:17px;text-align:center;background:var(--panel);border-radius:8px;padding:14px 16px;margin:0 0 20px;overflow-x:auto;}
-figure{margin:32px 0 40px;}
-figure iframe{display:block;width:100%;height:900px;border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg);}
-figcaption{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.5;color:var(--muted);margin-top:12px;}
-figcaption b{color:var(--text);font-weight:600;}
-.placeholder{color:var(--muted);font-style:italic;}
-footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:14px;color:var(--muted);}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How Climbing Ropes Twist</title>
+  <meta name="description" content="Why a climbing rope spins about its own axis when pulled around a bar at an angle.">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #1f1e1c;
+      --muted: #5f5e5a;
+      --line: #d6d4cc;
+      --panel: #f3f2ee;
+      --accent: #b8501f;
+      color-scheme: light;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1e1d1b;
+        --text: #ecebe6;
+        --muted: #a9a8a2;
+        --line: #45443f;
+        --panel: #2a2927;
+        --accent: #e8875a;
+        color-scheme: dark;
+      }
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+      font-size: 19px;
+      line-height: 1.6;
+    }
+
+    main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 48px 16px 80px;
+    }
+
+    header {
+      margin-bottom: 40px;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.2;
+      font-weight: 650;
+    }
+
+    h1 {
+      font-size: clamp(30px, 6vw, 42px);
+      margin: 0 0 12px;
+      letter-spacing: -0.01em;
+    }
+
+    h2 {
+      font-size: 26px;
+      margin: 56px 0 12px;
+    }
+
+    h3 {
+      font-size: 20px;
+      margin: 32px 0 8px;
+    }
+
+    .byline {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      font-size: 15px;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .lede {
+      font-size: 21px;
+      color: var(--muted);
+      margin: 0 0 16px;
+    }
+
+    p {
+      margin: 0 0 20px;
+    }
+
+    a {
+      color: var(--accent);
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.85em;
+      background: var(--panel);
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+
+    .eq {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 17px;
+      text-align: center;
+      background: var(--panel);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 0 0 20px;
+      overflow-x: auto;
+    }
+
+    figure {
+      margin: 32px 0 40px;
+    }
+
+    figure iframe {
+      display: block;
+      width: 100%;
+      height: 900px;
+      border: 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: var(--bg);
+    }
+
+    figcaption {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--muted);
+      margin-top: 12px;
+    }
+
+    figcaption b {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .placeholder {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    footer {
+      margin-top: 64px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      html {
+        scroll-behavior: smooth;
+      }
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 680px) minmax(0, 1fr);
+    }
+
+    .layout>main {
+      grid-column: 2;
+      grid-row: 1;
+      max-width: none;
+      margin: 0;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: flex-end;
+      margin: -28px 0 24px;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      font-size: 14px;
+    }
+
+    .topbar a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 0;
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .topbar a:hover {
+      color: var(--text);
+    }
+
+    .topbar svg,
+    .toc-toggle svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    h2 {
+      scroll-margin-top: 24px;
+    }
+
+    .anchor {
+      margin-left: 8px;
+      color: var(--muted);
+      font-weight: 400;
+      text-decoration: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    h2:hover .anchor,
+    .anchor:focus-visible {
+      opacity: 1;
+    }
+
+    @media (hover: none) {
+      .anchor {
+        opacity: 0.5;
+      }
+    }
+
+    .toc {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .toc-title {
+      margin: 0 0 10px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .toc ol {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .toc a {
+      display: block;
+      padding: 5px 0 5px 12px;
+      border-left: 2px solid var(--line);
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .toc a:hover {
+      color: var(--text);
+    }
+
+    .toc a[aria-current="true"] {
+      color: var(--text);
+      border-left-color: var(--accent);
+    }
+
+    .toc-toggle {
+      display: none;
+    }
+
+    /* Desktop: table of contents pinned in the left margin. */
+    @media (min-width: 1100px) {
+      .toc {
+        grid-column: 1;
+        grid-row: 1;
+        justify-self: end;
+        align-self: start;
+        position: sticky;
+        top: 48px;
+        width: 200px;
+        max-height: calc(100vh - 96px);
+        overflow-y: auto;
+        margin: 48px 40px 0 16px;
+      }
+    }
+
+    /* Narrower screens: table of contents opens from a floating button. */
+    @media (max-width: 1099.98px) {
+      .toc-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        z-index: 20;
+        width: 48px;
+        height: 48px;
+        border: 1px solid var(--line);
+        border-radius: 50%;
+        background: var(--bg);
+        color: var(--text);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        cursor: pointer;
+      }
+
+      .toc-toggle:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      .toc {
+        display: none;
+        position: fixed;
+        right: 16px;
+        bottom: 76px;
+        z-index: 20;
+        width: min(300px, calc(100vw - 32px));
+        max-height: calc(100vh - 110px);
+        overflow-y: auto;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--bg);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+      }
+
+      .toc.open {
+        display: block;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<main>
-<header>
-  <h1>How Climbing Ropes Twist</h1>
-  <p class="lede">Why a rope pulled around a bar at an angle spins about its own axis, and how fast.</p>
-  <p class="byline">Pavel Potoček · <time datetime="2026-10-12">October 2026</time></p>
-</header>
+  <div class="layout">
+    <nav class="toc" id="toc" aria-label="Table of contents">
+      <p class="toc-title">Contents</p>
+      <ol></ol>
+    </nav>
+    <button class="toc-toggle" type="button" aria-controls="toc" aria-expanded="false" aria-label="Table of contents">
+      <svg viewBox="0 0 16 16" aria-hidden="true">
+        <circle cx="2" cy="3.5" r="1.25" />
+        <circle cx="2" cy="8" r="1.25" />
+        <circle cx="2" cy="12.5" r="1.25" />
+        <rect x="5" y="2.75" width="10" height="1.5" rx="0.75" />
+        <rect x="5" y="7.25" width="10" height="1.5" rx="0.75" />
+        <rect x="5" y="11.75" width="10" height="1.5" rx="0.75" />
+      </svg>
+    </button>
+    <main>
+      <div class="topbar">
+        <a href="https://github.com/potocpav/rope-twist">
+          <svg viewBox="0 0 16 16" aria-hidden="true">
+            <path
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
+          </svg>
+          Source on GitHub
+        </a>
+      </div>
+      <header id="top">
+        <h1>How Climbing Ropes Twist</h1>
+        <p class="lede">Why a rope pulled around a bar at an angle spins about its own axis, and how fast.</p>
+        <p class="byline">Pavel Potoček · <time datetime="2026-10-12">October 2026</time></p>
+      </header>
 
-<p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Introduction: the twisted rope everyone has untangled at the crag, and the question of where the twist comes from.</p>
+      <p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Introduction: the twisted rope
+        everyone has untangled at the crag, and the question of where the twist comes from.</p>
 
-<figure id="fig-1">
-  <iframe id="viz-1" src="viz/rope-twists.html" title="Three straight braided ropes with zero, one and two twists" style="height:420px"></iframe>
-  <figcaption><b>Figure 1.</b> The same braided rope with zero, one and two twists along its length. The violet line is a marker along the rope; bold spirals are tracer strands of the braid.</figcaption>
-</figure>
+      <figure id="fig-1">
+        <iframe id="viz-1" src="viz/rope-twists.html" title="Three straight braided ropes with zero, one and two twists"
+          style="height:420px"></iframe>
+        <figcaption><b>Figure 1.</b> The same braided rope with zero, one and two twists along its length. The violet line
+          is a marker along the rope; bold spirals are tracer strands of the braid.</figcaption>
+      </figure>
 
-<p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. What a twist is, and how the marker line makes it visible.</p>
+      <p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. What a twist is, and how the marker
+        line makes it visible.</p>
 
-<figure id="fig-2">
-  <iframe id="viz-2" src="viz/rope-twist.html" title="Interactive animation: a braided rope pulled around a tilted bar, with a marker line that spins as the rope runs"></iframe>
-  <figcaption><b>Figure 2.</b> A braided rope pulled around a bar at an oblique angle. The violet line is a marker along the rope; bold spirals are tracer strands of the braid. Change the wrap angle, bar radius, number of turns and twist strain to see how fast the rope spins.</figcaption>
-</figure>
+      <figure id="fig-2">
+        <iframe id="viz-2" src="viz/rope-twist.html"
+          title="Interactive animation: a braided rope pulled around a tilted bar, with a marker line that spins as the rope runs"></iframe>
+        <figcaption><b>Figure 2.</b> A braided rope pulled around a bar at an oblique angle. The violet line is a marker
+          along the rope; bold spirals are tracer strands of the braid. Change the wrap angle, bar radius, number of turns
+          and twist strain to see how fast the rope spins.</figcaption>
+      </figure>
 
-<h2>The setup</h2>
-<p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Describe the geometry: a rope of radius r wrapped around a bar of radius R at wrap angle α.</p>
+      <h2>The setup</h2>
+      <p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Describe the geometry: a rope of
+        radius r wrapped around a bar of radius R at wrap angle α.</p>
 
-<h2>Why the rope spins</h2>
-<p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Friction locks the contact strip to the bar, so the rope keeps its orientation relative to the bar's surface while it is wrapped.</p>
-<div class="eq">dk = dl · sin α · cos α / (R + r)</div>
-<p class="placeholder">Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+      <h2>Why the rope spins</h2>
+      <p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Friction locks the contact strip to
+        the bar, so the rope keeps its orientation relative to the bar's surface while it is wrapped.</p>
+      <div class="eq">dk = dl · sin α · cos α / (R + r)</div>
+      <p class="placeholder">Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
 
-<h2>Twist strain</h2>
-<p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. What happens when the rope already carries torsional strain κ.</p>
-<div class="eq">dk = dl · (τ − κ)</div>
+      <h2>Twist strain</h2>
+      <p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. What happens when the rope already
+        carries torsional strain κ.</p>
+      <div class="eq">dk = dl · (τ − κ)</div>
 
-<h2>What this means at the crag</h2>
-<p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Practical consequences for belaying, rappelling and coiling.</p>
+      <h2>What this means at the crag</h2>
+      <p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Practical consequences for belaying,
+        rappelling and coiling.</p>
 
-<footer>
-  Source and visualization code: <a href="https://github.com/potocpav/rope-twist">github.com/potocpav/rope-twist</a>
-</footer>
-</main>
-<script>
-// Keep embedded figures in sync with the page theme and sized to their content.
-(function(){
-  const mq=matchMedia('(prefers-color-scheme: dark)');
-  const frames=[...document.querySelectorAll('figure iframe')];
-  const send=f=>{try{f.contentWindow.postMessage({type:'rope-twist-theme',theme:mq.matches?'dark':'light'},'*');}catch(e){}};
-  frames.forEach(f=>f.addEventListener('load',()=>send(f)));
-  mq.addEventListener('change',()=>frames.forEach(send));
-  addEventListener('message',e=>{
-    if(!e.data||e.data.type!=='rope-twist-height')return;
-    const f=frames.find(f=>f.contentWindow===e.source);
-    if(f&&e.data.h>0)f.style.height=Math.ceil(e.data.h)+'px';
-  });
-})();
-</script>
+      <footer>
+        Source and visualization code: <a href="https://github.com/potocpav/rope-twist">github.com/potocpav/rope-twist</a>
+      </footer>
+    </main>
+  </div>
+  <script>
+    // Table of contents and heading links, built from the article's h2 headings.
+    (function () {
+      const toc = document.getElementById('toc');
+      const list = toc.querySelector('ol');
+      const btn = document.querySelector('.toc-toggle');
+      const slug = t => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      const entry = (href, text) => {
+        const li = document.createElement('li'), a = document.createElement('a');
+        a.href = href;
+        a.textContent = text;
+        li.append(a);
+        list.append(li);
+        return a;
+      };
+      const intro = entry('#top', 'Introduction');
+      const sections = [...document.querySelectorAll('main h2')].map(h => {
+        const title = h.textContent.trim();
+        h.id ||= slug(title);
+        const anchor = document.createElement('a');
+        anchor.className = 'anchor';
+        anchor.href = '#' + h.id;
+        anchor.textContent = '#';
+        anchor.setAttribute('aria-label', 'Link to section: ' + title);
+        h.append(anchor);
+        return { h, link: entry('#' + h.id, title) };
+      });
+
+      // Highlight the section currently being read: the last heading above a line near the top
+      // of the viewport, or the last section once the page is scrolled to the end. A section
+      // jumped to by link stays current while its heading is visible.
+      let ticking = false, pinned = null;
+      const pin = () => { pinned = sections.find(s => '#' + s.h.id === location.hash) || null; };
+      const update = () => {
+        ticking = false;
+        let current = intro;
+        for (const s of sections) if (s.h.getBoundingClientRect().top < 120) current = s.link;
+        const atEnd = scrollY > 0 && innerHeight + scrollY >= document.documentElement.scrollHeight - 2;
+        if (atEnd && sections.length) current = sections[sections.length - 1].link;
+        if (pinned) {
+          const top = pinned.h.getBoundingClientRect().top;
+          if (top >= 0 && top < innerHeight) current = pinned.link;
+          else pinned = null;
+        }
+        for (const a of list.querySelectorAll('a')) a.setAttribute('aria-current', a === current);
+      };
+      const schedule = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+      addEventListener('scroll', schedule, { passive: true });
+      addEventListener('hashchange', () => { pin(); schedule(); });
+      document.addEventListener('click', e => {
+        if (e.target.closest('a[href^="#"]')) setTimeout(() => { pin(); schedule(); });
+      });
+      pin();
+      update();
+
+      // Narrow screens: open and close the table of contents from the floating button.
+      const setOpen = open => {
+        toc.classList.toggle('open', open);
+        btn.setAttribute('aria-expanded', open);
+      };
+      btn.addEventListener('click', () => setOpen(!toc.classList.contains('open')));
+      toc.addEventListener('click', e => { if (e.target.closest('a')) setOpen(false); });
+      document.addEventListener('click', e => { if (!toc.contains(e.target) && !btn.contains(e.target)) setOpen(false); });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && toc.classList.contains('open')) {
+          setOpen(false);
+          btn.focus();
+        }
+      });
+    })();
+
+    // Keep embedded figures in sync with the page theme and sized to their content.
+    (function () {
+      const mq = matchMedia('(prefers-color-scheme: dark)');
+      const frames = [...document.querySelectorAll('figure iframe')];
+      const send = f => { try { f.contentWindow.postMessage({ type: 'rope-twist-theme', theme: mq.matches ? 'dark' : 'light' }, '*'); } catch (e) { } };
+      frames.forEach(f => f.addEventListener('load', () => send(f)));
+      mq.addEventListener('change', () => frames.forEach(send));
+      addEventListener('message', e => {
+        if (!e.data || e.data.type !== 'rope-twist-height') return;
+        const f = frames.find(f => f.contentWindow === e.source);
+        if (f && e.data.h > 0) f.style.height = Math.ceil(e.data.h) + 'px';
+      });
+    })();
+  </script>
 </body>
+
 </html>

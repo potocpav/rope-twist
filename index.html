@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How Climbing Ropes Twist</title>
+<meta name="description" content="Why a climbing rope spins about its own axis when pulled around a bar at an angle.">
+<style>
+:root{
+  --bg:#ffffff; --text:#1f1e1c; --muted:#5f5e5a; --line:#d6d4cc; --panel:#f3f2ee; --accent:#b8501f;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{--bg:#1e1d1b; --text:#ecebe6; --muted:#a9a8a2; --line:#45443f; --panel:#2a2927; --accent:#e8875a; color-scheme:dark;}
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:Charter,"Bitstream Charter","Sitka Text",Cambria,Georgia,serif;
+  font-size:19px;line-height:1.6;}
+main{max-width:680px;margin:0 auto;padding:48px 16px 80px;}
+header{margin-bottom:40px;}
+h1,h2,h3{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;line-height:1.2;font-weight:650;}
+h1{font-size:clamp(30px,6vw,42px);margin:0 0 12px;letter-spacing:-0.01em;}
+h2{font-size:26px;margin:56px 0 12px;}
+h3{font-size:20px;margin:32px 0 8px;}
+.byline{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;color:var(--muted);margin:0;}
+.lede{font-size:21px;color:var(--muted);margin:0 0 16px;}
+p{margin:0 0 20px;}
+a{color:var(--accent);}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:0.85em;background:var(--panel);padding:1px 5px;border-radius:4px;}
+.eq{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:17px;text-align:center;background:var(--panel);border-radius:8px;padding:14px 16px;margin:0 0 20px;overflow-x:auto;}
+figure{margin:32px 0 40px;}
+figure iframe{display:block;width:100%;height:900px;border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg);}
+figcaption{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.5;color:var(--muted);margin-top:12px;}
+figcaption b{color:var(--text);font-weight:600;}
+.placeholder{color:var(--muted);font-style:italic;}
+footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:14px;color:var(--muted);}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>How Climbing Ropes Twist</h1>
+  <p class="lede">Why a rope pulled around a bar at an angle spins about its own axis, and how fast.</p>
+  <p class="byline">Pavel Potoček · <time datetime="2026-10-12">October 2026</time></p>
+</header>
+
+<p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Introduction: the twisted rope everyone has untangled at the crag, and the question of where the twist comes from.</p>
+
+<figure id="fig-1">
+  <iframe id="viz-1" src="viz/rope-twist.html" title="Interactive animation: a braided rope pulled around a tilted bar, with a marker line that spins as the rope runs"></iframe>
+  <figcaption><b>Figure 1.</b> A braided rope pulled around a bar at an oblique angle. The violet line is a marker along the rope; bold spirals are tracer strands of the braid. Change the wrap angle, bar radius, number of turns and twist strain to see how fast the rope spins.</figcaption>
+</figure>
+
+<h2>The setup</h2>
+<p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Describe the geometry: a rope of radius r wrapped around a bar of radius R at wrap angle α.</p>
+
+<h2>Why the rope spins</h2>
+<p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Friction locks the contact strip to the bar, so the rope keeps its orientation relative to the bar's surface while it is wrapped.</p>
+<div class="eq">dk = dl · sin α · cos α / (R + r)</div>
+<p class="placeholder">Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+
+<h2>Twist strain</h2>
+<p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. What happens when the rope already carries torsional strain κ.</p>
+<div class="eq">dk = dl · (τ − κ)</div>
+
+<h2>What this means at the crag</h2>
+<p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Practical consequences for belaying, rappelling and coiling.</p>
+
+<footer>
+  Source and visualization code: <a href="https://github.com/potocpav/rope-twist">github.com/potocpav/rope-twist</a>
+</footer>
+</main>
+<script>
+// Keep embedded figures in sync with the page theme and sized to their content.
+(function(){
+  const mq=matchMedia('(prefers-color-scheme: dark)');
+  const frames=[...document.querySelectorAll('figure iframe')];
+  const send=f=>{try{f.contentWindow.postMessage({type:'rope-twist-theme',theme:mq.matches?'dark':'light'},'*');}catch(e){}};
+  frames.forEach(f=>f.addEventListener('load',()=>send(f)));
+  mq.addEventListener('change',()=>frames.forEach(send));
+  addEventListener('message',e=>{
+    if(!e.data||e.data.type!=='rope-twist-height')return;
+    const f=frames.find(f=>f.contentWindow===e.source);
+    if(f&&e.data.h>0)f.style.height=Math.ceil(e.data.h)+'px';
+  });
+})();
+</script>
+</body>
+</html>

@@ -17,7 +17,7 @@ Each figure is a standalone page with no external dependencies, embedded via ifr
 ## Local preview
 
 ```sh
-python3 -m http.server
+python3 serve.py
 ```
 
-Then open http://localhost:8000/.
+Then open http://localhost:8000/. The page reloads automatically whenever a file in the folder changes, including the figures and `viz/rope.js`. Pass a port to use another one, e.g. `python3 serve.py 8080`. Needs only Python 3.

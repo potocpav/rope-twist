@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rope with zero, one and two twists</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;}
+.wrap{max-width:640px;margin:0 auto;padding:16px;}
+.rope{margin:0 0 20px;}
+.rope:last-child{margin-bottom:0;}
+canvas{width:100%;display:block;}
+.cap{font-size:14px;line-height:1.5;color:var(--muted);margin:4px 0 0;text-align:center;}
+.cap b{color:var(--text);font-weight:600;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="rope"><canvas data-twists="0" aria-label="Straight braided rope with no twist; the marker line runs straight along its front."></canvas><p class="cap"><b>(a) No twist.</b> The marker runs straight along the rope.</p></div>
+<div class="rope"><canvas data-twists="1" aria-label="Straight braided rope with one full twist; the marker line winds once around it."></canvas><p class="cap"><b>(b) One twist.</b> The marker winds once around the rope.</p></div>
+<div class="rope"><canvas data-twists="2" aria-label="Straight braided rope with two full twists; the marker line winds twice around it."></canvas><p class="cap"><b>(c) Two twists.</b> The marker winds twice around the rope.</p></div>
+</div>
+<script src="rope.js"></script>
+<script>
+// Straight rope of length L along x, viewed from +z. A rope with n twists carries a uniform
+// twist strain kap = 2πn / L, so the marker and braid turn n times end to end; the marker
+// faces the viewer at mid-length. PAD, PADY: canvas margins around the rope (cm).
+const L=12,N=300,PAD=0.7,PADY=0.3;
+const P=[],Tg=[];for(let i=0;i<=N;i++){P.push([L*(i/N-0.5),0,0]);Tg.push([1,0,0]);}
+const m={P,Tg,...Rope.rmf(P,Tg,[0,0,1])},back=P.map(()=>false);
+function draw(){const dpr=window.devicePixelRatio||1;
+document.querySelectorAll('canvas[data-twists]').forEach(cv=>{const ctx=cv.getContext('2d');
+const W=cv.clientWidth,s=W/(L+2*PAD),H=Math.round((2*Rope.rr+2*PADY)*s);
+cv.width=W*dpr;cv.height=H*dpr;cv.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
+const S=p=>[W/2+p[0]*s,H/2-p[1]*s],kap=2*Math.PI*(+cv.dataset.twists)/L,spin=-kap*L/2;
+Rope.drawLayer(ctx,m,[[0,N,false]],{S,vw:[0,0,1],s,spin,kap,pulled:0,back,isBack:false});});}
+draw();addEventListener('resize',draw);Rope.onTheme(draw);
+</script>
+</body>
+</html>

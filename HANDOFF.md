@@ -4,11 +4,13 @@ This folder holds a standalone, embeddable visualization built in a claude.ai ch
 
 ## Files
 
-- `viz/rope-twist.html` — the visualization. No dependencies, no network requests; open directly in a browser or embed with an iframe. Theme: `?theme=light|dark` query parameter, otherwise the system preference. A host page can also switch it with `postMessage({type:'rope-twist-theme', theme})`. When embedded, it posts `{type:'rope-twist-height', h}` to the parent so the iframe can be sized to fit.
-- `index.html` — the blog post that embeds it as Figure 1.
+- `viz/rope.js` — shared by all figures: light/dark palettes (`THEMES`: CSS custom properties plus the canvas palette `C`), theme selection, iframe embedding, the rotation-minimizing frame (`rmf`), and `drawLayer`, which draws rope body, braid and marker. Change the rope style here and every figure follows.
+- `viz/rope-twist.html` — the animated wrap described below (Figure 2 in the post).
+- `viz/rope-twists.html` — static Figure 1: a straight 12 cm rope with zero, one and two twists, drawn by `drawLayer` with uniform twist strain κ = 2πn / L.
+- `index.html` — the blog post embedding both figures.
 - `HANDOFF.md` — this brief.
 
-The light and dark palettes live in the `THEMES` object (CSS custom properties plus the canvas palette `C`). This replaced the earlier separate `rope-twist-light.html` / `rope-twist-dark.html` files.
+Theme: `?theme=light|dark` query parameter, otherwise the system preference. A host page can also switch it with `postMessage({type:'rope-twist-theme', theme})`. When embedded, each figure posts `{type:'rope-twist-height', h}` to the parent so the iframe can be sized to fit. Figures need no dependencies beyond `rope.js` and make no network requests.
 
 ## Purpose
 

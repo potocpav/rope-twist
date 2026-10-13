@@ -147,12 +147,14 @@
       font-weight: 600;
     }
 
-    .photo {
+    .photo a {
+      display: block;
+    }
+
+    .photo img {
       display: block;
       width: 100%;
-      max-width: 420px;
       height: auto;
-      margin: 32px auto 40px;
       border-radius: 8px;
     }
 
@@ -188,28 +190,6 @@
       margin: 0;
     }
 
-    .topbar {
-      display: flex;
-      justify-content: flex-end;
-      margin: -28px 0 24px;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      font-size: 14px;
-    }
-
-    .topbar a {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 0;
-      color: var(--muted);
-      text-decoration: none;
-    }
-
-    .topbar a:hover {
-      color: var(--text);
-    }
-
-    .topbar svg,
     .toc-toggle svg,
     .toc-github svg {
       width: 18px;
@@ -279,8 +259,21 @@
       border-left-color: var(--accent);
     }
 
-    .toc-toggle,
     .toc-github {
+      margin: 24px 0 0;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+
+    .toc .toc-github a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
+      border-left: 0;
+    }
+
+    .toc-toggle {
       display: none;
     }
 
@@ -346,19 +339,14 @@
         display: flex;
       }
 
+      /* Keep the GitHub link at the bottom of the drawer. */
       .toc-github {
-        display: block;
-        margin: auto 0 0;
-        padding-top: 16px;
-        border-top: 1px solid var(--line);
+        margin-top: auto;
       }
 
-      .toc .toc-github a {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 6px 0;
-        border-left: 0;
+      /* Leave room for the contents button above the title. */
+      .layout>main {
+        padding-top: 76px;
       }
     }
   </style>
@@ -390,42 +378,50 @@
       </svg>
     </button>
     <main>
-      <div class="topbar">
-        <a href="https://github.com/potocpav/rope-twist">
-          <svg viewBox="0 0 16 16" aria-hidden="true">
-            <path
-              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
-          </svg>
-          Source on GitHub
-        </a>
-      </div>
       <header id="top">
         <h1>Why Ropes Twist</h1>
         <p class="lede">
-          Climbing ropes sometimes twist and tangle, but the precise mechanism of how and when is not well understood in the climbing community. Which belay, anchor configurations, or coiling methods cause the twist? Does it depend on friction, climber weight, rappelling speed? This article explores the physics of rope twist to answer these questions.
+          Climbing ropes sometimes twist and tangle, but the precise mechanism of how and when is not well understood in
+          the climbing community. Which belay devices, anchor configurations, or coiling methods cause the twist? Does
+          it depend on friction, climber weight, rappelling speed? What even <i>is</i> rope twist? This article explores
+          the physics of rope twisting to answer these questions.
         </p>
         <p class="byline">Pavel Potoček · <time datetime="2026-10-12">October 2026</time></p>
       </header>
 
-      <img class="photo" src="images/tangled-rope.jpg" width="501" height="612"
-        alt="A white climbing rope with black markings, twisted into tangled loops against a concrete wall.">
+      <figure class="photo" id="fig-1">
+        <a href="images/tangled-rope.jpg">
+          <img src="images/tangled-rope-preview.jpg" width="1828" height="891"
+            alt="An orange climbing rope twisted into a tangle of loops on a white background.">
+        </a>
+        <figcaption><b>Figure 1.</b> Tangled rope, 30 twists.</figcaption>
+      </figure>
 
-      <figure id="fig-1">
+
+      <h2>What <i>exactly</i> is rope twist?</h2>
+      <p>Rope twist is simply the rotation of a rope around its own axis. When the number of rotations is large enough, the
+        rope starts buckling, which eventually forms loops and generally tangles the rope.
+        
+      </p><p>
+        In most cases, rope twisting has nothing to do with the rope sheath moving relative to the
+        rope core.</p>
+
+      <figure id="fig-2">
         <iframe id="viz-1" src="viz/rope-twists.html" title="Three straight braided ropes with zero, one and two twists"
           style="height:420px"></iframe>
-        <figcaption><b>Figure 1.</b> The same braided rope with zero, one and two twists along its length. The violet line
+        <figcaption><b>Figure 2.</b> The same braided rope with zero, one and two twists along its length. The violet
+          line
           is a marker along the rope; bold spirals are tracer strands of the braid.</figcaption>
       </figure>
 
-      <p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. What a twist is, and how the marker
-        line makes it visible.</p>
+      <p>TODO</p>
 
-      <figure id="fig-2">
+      <figure id="fig-3">
         <iframe id="viz-2" src="viz/rope-twist.html"
           title="Interactive animation: a braided rope pulled around a tilted bar, with a marker line that spins as the rope runs"></iframe>
-        <figcaption><b>Figure 2.</b> A braided rope pulled around a bar at an oblique angle. The violet line is a marker
-          along the rope; bold spirals are tracer strands of the braid. Change the wrap angle, bar radius, number of turns
-          and twist strain to see how fast the rope spins.</figcaption>
+        <figcaption><b>Figure 3.</b> A braided rope pulled around a bar at an oblique angle. The dark line is a marker
+          along the rope. Change the wrap angle, bar radius, number of turns and twist strain to see how fast the rope
+          spins.</figcaption>
       </figure>
 
       <h2>The setup</h2>
@@ -433,7 +429,8 @@
         radius r wrapped around a bar of radius R at wrap angle α.</p>
 
       <h2>Why the rope spins</h2>
-      <p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Friction locks the contact strip to
+      <p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Friction locks the contact strip
+        to
         the bar, so the rope keeps its orientation relative to the bar's surface while it is wrapped.</p>
       <div class="eq">dk = dl · sin α · cos α / (R + r)</div>
       <p class="placeholder">Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
@@ -444,11 +441,13 @@
       <div class="eq">dk = dl · (τ − κ)</div>
 
       <h2>What this means at the crag</h2>
-      <p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Practical consequences for belaying,
+      <p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Practical consequences for
+        belaying,
         rappelling and coiling.</p>
 
       <footer>
-        Source and visualization code: <a href="https://github.com/potocpav/rope-twist">github.com/potocpav/rope-twist</a>
+        Source and visualization code: <a
+          href="https://github.com/potocpav/rope-twist">github.com/potocpav/rope-twist</a>
       </footer>
     </main>
   </div>

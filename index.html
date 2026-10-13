@@ -486,7 +486,8 @@
             alt="Three photos of the same orange braided rope on a white background: straight with no twist, in a gentle S-shaped curve with one twist, and buckled into a pronounced wave with two twists.">
         </a>
         <figcaption><b>Figure 2.</b> Rope with zero, one and two twists along its length. Rope is marked with a black
-          line to show the twist. Twisted ropes naturally buckle into loops, and they resist being pulled into a straight
+          line to show the twist. Twisted ropes naturally buckle into loops, and they resist being pulled into a
+          straight
           line.</figcaption>
       </figure>
 
@@ -510,25 +511,49 @@
 
       <p>
         The answer comes from Kirchhoff's rod theory. Following <a
-          href="https://rotations.berkeley.edu/kinematics-of-rods/">this article</a>, we can model rope as a <i>material
-          curve</i> running through space. Whenever the curve is planar, its geometric torsion is zero, and no twist is
+          href="https://rotations.berkeley.edu/kinematics-of-rods/">this article</a>, we can model rope as a material
+        curve running through space. Whenever the curve is planar, its geometric torsion is zero, and no twist is
         induced.
         This is the case for a straight rope, but also rope running over a pulley, through a tube-style device, or
-        through most anchors.
+        through many anchor configurations.
       </p>
 
       <p>
         The simplest case which <i>does</i> induce twist is a rope wrapped around a bar in a helix.
-        By substituting into equation (54.1) <i>τ</i> from equation (31), and setting zero strain <i>v</i><sub>3</sub> =
-        <i>v</i><sub>03</sub> = 0 from the article, we get the following intrinsic twist rate:
+        In the article, by substituting <i>τ</i> from equation (31) into equation (54.1), and setting zero strain
+        <i>v</i><sub>3</sub> =
+        <i>v</i><sub>03</sub> = 0, we get the following intrinsic twist rate:
       </p>
 
       <math display="block">
         <mrow>
-          <mfrac><mrow><mi mathvariant="normal">d</mi><mi>φ</mi></mrow><mrow><mi mathvariant="normal">d</mi><mi>l</mi></mrow></mfrac>
+          <mfrac>
+            <mrow>
+              <mi mathvariant="normal">d</mi>
+              <mi>φ</mi>
+            </mrow>
+            <mrow>
+              <mi mathvariant="normal">d</mi>
+              <mi>l</mi>
+            </mrow>
+          </mfrac>
           <mo>=</mo>
-          <mfrac><mn>1</mn><mrow><mi>R</mi><mo>+</mo><mi>r</mi></mrow></mfrac>
-          <mo>⋅</mo><mi>sin</mi><mo>&#x2061;</mo><mi>α</mi><mo>⋅</mo><mi>cos</mi><mo>&#x2061;</mo><mi>α</mi>
+          <mfrac>
+            <mn>1</mn>
+            <mrow>
+              <mi>R</mi>
+              <mo>+</mo>
+              <mi>r</mi>
+            </mrow>
+          </mfrac>
+          <mo>⋅</mo>
+          <mi>sin</mi>
+          <mo>&#x2061;</mo>
+          <mi>α</mi>
+          <mo>⋅</mo>
+          <mi>cos</mi>
+          <mo>&#x2061;</mo>
+          <mi>α</mi>
         </mrow>
       </math>
 
@@ -548,10 +573,30 @@
           wrap angle <i>α</i>. As the rope runs around the bar, it rotates about its own axis by angle <i>φ</i>.
         </figcaption>
       </figure>
-
       <p>
-        When a rope slides around the bar, this intrinsic rotation is transferred from the helical section of the rope to the straight sections leading to and from the bar, which causes the rope to twist.
+        When the rope slides around the bar, this intrinsic rotation is transferred from the helical section of the rope
+        to the straight sections leading to and from the bar, which causes the rope to twist, as can be seen in Figure 4 below.
       </p>
+
+      <p>Some notes on the twist rate result:</p>
+      <ul>
+        <li>The twist is not caused by friction, but by the rope trajectory. Even with zero friction, the rope would still twist.</li>
+        <li>The twist rate is highest for a rope running at 45° to the bar. The twist rate is zero when the rope is wrapped around the bar at a right angle.</li>
+        <li>The twist rate is higher for smaller bend radii, and smaller rope diameter.</li>
+        <li>The twist rate is independent of the number of turns, rope velocity and rope tension. A quarter turn should induce the same twist rate as a full turn - more on that later.</li>
+
+      </ul>
+
+      <figure id="fig-4">
+        <iframe id="viz-2" src="viz/rope-twist.html"
+          title="Interactive animation: a braided rope pulled around a tilted bar, with a marker line that spins as the rope runs"></iframe>
+        <figcaption><b>Figure 4.</b> A braided rope pulled around a bar at an oblique angle. The two black lines, half
+          a
+          turn apart, are markers along the rope. Change the wrap angle, bar radius, number of turns and twist strain to
+          see how fast the rope
+          spins.</figcaption>
+      </figure>
+
 
       <p>Rope can become twisted in several ways:</p>
       <ul>
@@ -565,16 +610,6 @@
       <h2>Coiling the rope</h2>
 
       <p>There are three practical methods of coiling the rope:</p>
-
-      <figure id="fig-4">
-        <iframe id="viz-2" src="viz/rope-twist.html"
-          title="Interactive animation: a braided rope pulled around a tilted bar, with a marker line that spins as the rope runs"></iframe>
-        <figcaption><b>Figure 4.</b> A braided rope pulled around a bar at an oblique angle. The two violet lines, half
-          a
-          turn apart, are markers along the rope. Change the wrap angle, bar radius, number of turns and twist strain to
-          see how fast the rope
-          spins.</figcaption>
-      </figure>
 
       <h2>The setup</h2>
       <p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Describe the geometry: a rope of

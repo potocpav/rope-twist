@@ -30,12 +30,13 @@ return{U,S,L:S[S.length-1]};}
 
 // Rope wrapped around a bar of radius R0 along the z axis, at wrap angle al (rad, from the bar's
 // cross-sectional plane), for the given number of turns. Centreline: straight lead-in, helix of
-// radius R0+rr, straight lead-out (both tangent). Frame U: rotation-minimizing = zero-twist frame.
+// radius R0+rr, straight lead-out (both tangent, long enough to leave the view). The helix starts
+// and ends at angle π/2 (+y, the back of the bar in view()). Frame U: rotation-minimizing = zero-twist frame.
 const NI=40;
 function buildWrap(al,R0,turns){const R=R0+rr,NH=Math.max(60,Math.round(240*turns));
-const ta=Math.tan(al),phi0=0.55*Math.PI,ph1=phi0+turns*2*Math.PI,Lz=R*(ph1-phi0)*ta,zo=-Lz/2,P=[],Tg=[],Hx=[];
+const ta=Math.tan(al),phi0=0.5*Math.PI,ph1=phi0+turns*2*Math.PI,Lz=R*(ph1-phi0)*ta,zo=-Lz/2,P=[],Tg=[],Hx=[];
 const hp=f=>[R*Math.cos(f),R*Math.sin(f),R*(f-phi0)*ta+zo],ht=f=>nrm([-Math.sin(f),Math.cos(f),ta]);
-const t0=ht(phi0),t1=ht(ph1),p0=hp(phi0),p1=hp(ph1),Lin=4,Lout=4.5;
+const t0=ht(phi0),t1=ht(ph1),p0=hp(phi0),p1=hp(ph1),Lin=30,Lout=30;
 for(let i=NI;i>0;i--){P.push(sub(p0,mul(t0,Lin*i/NI)));Tg.push(t0);Hx.push(null);}
 for(let i=0;i<=NH;i++){const f=phi0+(ph1-phi0)*i/NH;P.push(hp(f));Tg.push(ht(f));Hx.push([Math.cos(f),Math.sin(f),0]);}
 for(let i=1;i<=NI;i++){P.push(add(p1,mul(t1,Lout*i/NI)));Tg.push(t1);Hx.push(null);}
@@ -43,12 +44,11 @@ const{U,S,L}=rmf(P,Tg,[Math.cos(phi0),Math.sin(phi0),0]);
 // tw: measured rate (rad/cm) at which the zero-twist frame turns relative to the bar's outward normal = helix torsion (signed).
 let psi=0,prev=0;for(let i=NI+1;i<=NI+NH;i++){const h=Hx[i],u=U[i],b=cross(Tg[i],u),a=Math.atan2(dot(h,b),dot(h,u));let d=a-prev;d=Math.atan2(Math.sin(d),Math.cos(d));psi+=d;prev=a;}
 return{P,Tg,U,S,L,tw:psi/(S[NI+NH]-S[NI]),R0};}
-// Fixed orthographic view of the wrap: spin about the bar axis, tilt toward the viewer, then a
-// screen rotation so the bar runs diagonally. Returns [screen x, screen y (up), depth toward viewer].
-const DEG=Math.PI/180,sp=90*DEG,tb=0.3,g=55*DEG;
-function view(p){const c=Math.cos(sp),s=Math.sin(sp);let x=p[0]*c-p[1]*s,y=p[0]*s+p[1]*c,z=p[2];
-let X=x,Y=z,Z=-y;const cb=Math.cos(tb),sb=Math.sin(tb);const Y2=Y*cb-Z*sb,Z2=Y*sb+Z*cb;
-const cg=Math.cos(g),sg=Math.sin(g);return[X*cg-Y2*sg,X*sg+Y2*cg,Z2];}
+// Fixed orthographic side view of the wrap, as in the article's helix diagram: the bar runs
+// horizontally (z to the right), and the viewer looks at it from -y. This is a mirror image, so the
+// (right-handed) helix's front strand rises to the right like the diagram's; the physics is
+// mirror-symmetric. Returns [screen x, screen y (up), depth toward viewer].
+function view(p){return[p[2],p[0],-p[1]];}
 
 window.Rope={THEMES,C,onTheme:f=>themeListeners.push(f),rr,NS,add,sub,mul,dot,cross,nrm,rmf,buildWrap,view};
 })();

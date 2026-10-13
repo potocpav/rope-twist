@@ -7,7 +7,7 @@ A blog post on why a climbing rope spins about its own axis when pulled around a
 ## Layout
 
 - `index.html` — the post (plain static HTML, no build step).
-- `viz/rope-twist.html` — Figure 4, interactive (WebGL 2): a textured rope pulled around a bar at an oblique angle, with a wireframe toggle.
+- `viz/rope-twist.html` — Figure 4, interactive (WebGL 2): a textured rope pulled around a bar at an oblique angle, seen from the side as in Figure 3.
 - `viz/rope-texture.png`, `viz/rope-structure.jpg` — rope colour and fibre-structure textures for Figure 4.
 - `images/` — photos and diagrams used in the post (Figures 1–3); each `*-preview.jpg` is a half-size copy shown inline, linking to the full image.
 - `viz/rope.js` — shared code: palette, theming and iframe embedding, and the wrap geometry and camera (Figure 4).

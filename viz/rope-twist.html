@@ -8,7 +8,7 @@
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;}
 .wrap{max-width:560px;margin:0 auto;padding:16px;}
-canvas{width:100%;display:block;}
+canvas{width:100%;display:block;background:#fff;border:1px solid var(--outline);border-radius:8px;}
 .controls{display:grid;grid-template-columns:40px 96px minmax(0,1fr) 70px;align-items:center;gap:8px 12px;margin:14px 0;}
 .controls label{font-size:14px;color:var(--muted);}
 .controls output{font-size:14px;font-weight:500;text-align:right;font-variant-numeric:tabular-nums;}
@@ -31,7 +31,7 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 </head>
 <body>
 <div class="wrap">
-<canvas id="c" aria-label="Animated 3D rendering of a textured rope pulled around a grey cylinder; a dark marker line along the rope spins as the rope runs."></canvas>
+<canvas id="c" aria-label="Animated 3D rendering of a textured rope pulled around a grey cylinder; two marker lines on opposite sides of the rope spin as the rope runs."></canvas>
 <div class="controls">
 <button id="pp" aria-label="Pause"></button>
 <label for="al">Wrap angle</label><input type="range" id="al" min="10" max="60" step="1" value="45"><output id="ao">45°</output>
@@ -51,11 +51,12 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 <script>
 // Braid row spacing D equals the arc width of one strand (rr·STEP), so both braid directions run at
 // 45° to the rope axis and at right angles to each other: texture pixels are square on the surface.
-const{C,rr,NS,cross,view}=Rope,DEG=Math.PI/180,STEP=2*Math.PI/NS,D=rr*STEP;
+// The 3D scene always uses the light palette on a white canvas; the controls follow the page theme.
+const C=Rope.THEMES.light.c,{rr,NS,cross,view}=Rope,DEG=Math.PI/180,STEP=2*Math.PI/NS,D=rr*STEP;
 const cv=document.getElementById('c'),$=id=>document.getElementById(id);
 const gl=cv.getContext('webgl2',{antialias:true,premultipliedAlpha:false});
 let W,H,dpr=window.devicePixelRatio||1;
-function resize(){W=cv.clientWidth;H=Math.round(Math.min(W*1.15,560));cv.width=W*dpr;cv.height=H*dpr;cv.style.height=H+'px';}
+function resize(){W=cv.clientWidth;H=Math.round(Math.min(W*1.15,560));cv.width=W*dpr;cv.height=H*dpr;cv.style.height=H+cv.offsetWidth-W+'px';} // plus the border, so the drawing area stays H tall
 resize();addEventListener('resize',resize);
 
 // Shaders. Rope vertices carry (s, a): arc length along the centreline and angle around it in the
@@ -71,8 +72,9 @@ const FS=`#version 300 es
 precision highp float;
 in vec3 vN;in vec2 vSA;
 uniform int uMode; // 0 textured rope, 1 plain shaded (bar), 2 flat colour (wireframe)
-uniform vec3 uColor,uLight;uniform sampler2D uTex,uStruct;uniform vec2 uTexScale,uStructScale;uniform float uStructGain;
-uniform float uSpin,uKap,uPulled,uD,uStep,uStructMix;
+uniform vec3 uColor,uMarker,uLight;uniform sampler2D uTex,uStruct;uniform vec2 uTexScale,uStructScale;uniform float uStructGain;
+uniform float uSpin,uKap,uPulled,uD,uStep,uStructMix,uMarkerW;
+const float PI=3.14159265359;
 out vec4 o;
 void main(){
   if(uMode==2){o=vec4(uColor,1.);return;}
@@ -81,6 +83,7 @@ void main(){
     float phi=vSA.y-uSpin-uKap*vSA.x,q=phi/uStep,p=(vSA.x-uPulled)/uD;
     vec2 uv=uTexScale*vec2(q-p,q+p);
     c=texture(uTex,uv).rgb*mix(1.,texture(uStruct,uv*uStructScale).r*uStructGain,uStructMix);
+    if(abs(mod(phi+.5*PI,PI)-.5*PI)<uMarkerW)c=uMarker; // two marker lines, at material angles 0 and π
   }
   vec3 n=normalize(vN);
   o=vec4(c*(.4+.6*max(dot(n,uLight),0.)),1.);
@@ -89,7 +92,7 @@ function shader(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);g
 let prog,U={};
 if(gl){prog=gl.createProgram();gl.attachShader(prog,shader(gl.VERTEX_SHADER,VS));gl.attachShader(prog,shader(gl.FRAGMENT_SHADER,FS));gl.linkProgram(prog);
 if(!gl.getProgramParameter(prog,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(prog));
-for(const n of['uMVP','uRot','uMode','uColor','uLight','uTex','uTexScale','uStruct','uStructScale','uStructGain','uSpin','uKap','uPulled','uD','uStep','uStructMix'])U[n]=gl.getUniformLocation(prog,n);}
+for(const n of['uMVP','uRot','uMode','uColor','uMarker','uLight','uTex','uTexScale','uStruct','uStructScale','uStructGain','uSpin','uKap','uPulled','uD','uStep','uStructMix','uMarkerW'])U[n]=gl.getUniformLocation(prog,n);}
 
 // Rope textures, both repeating, with texture x along one braid direction and y along the other.
 // Colour, rope-texture.png (nearest sampling): the image height spans the NS strands around the rope,
@@ -101,6 +104,8 @@ for(const n of['uMVP','uRot','uMode','uColor','uLight','uTex','uTexScale','uStru
 // the rope keeps its overall tone, and applied at STRUCT_MIX strength (1 = full, 0 = none). It wraps seamlessly when the colour image height is a multiple of STRUCT.
 const STRUCT=4,STRUCT_MIX=0.5;
 const hex=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+// Bar colour: the palette grey (C.cs), lightened halfway to white.
+const barColor=()=>'#'+hex(C.cs).map(v=>Math.round((v+255)/2).toString(16).padStart(2,'0')).join('');
 let tex=null,texScale=[1/NS,1/NS],struct=null,structScale=[1,1],structGain=1;
 function loadTexture(url,smooth,fallback,onload){const t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);
 gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array(fallback)); // until the image loads
@@ -161,7 +166,7 @@ const tau=Math.sin(a)*Math.cos(a)/(R0+rr),net=tau-kdeg*DEG;
 $('ao').textContent=adeg+'°';$('ro').textContent=R0.toFixed(1)+' cm';$('so').textContent=v+' cm/s';$('to').textContent=turns.toFixed(2);$('ko').textContent=kdeg+' °/cm';
 $('ot').textContent=Math.abs(net)<1e-4?'∞':(2*Math.PI/Math.abs(net)).toFixed(1)+' cm';
 $('or').textContent=(v*Math.abs(net)/(2*Math.PI)).toFixed(2)+' rev/s'+(net<-1e-4?' (reversed)':'');
-$('lg').textContent=gl?'Rope radius r = 0.5 cm. Dark line along the rope: marker. Rope texture: 10 strands around, aligned with the braid. dk = dl·(τ − κ), where τ = sin α·cos α / (R + r) = '+Math.round(tau/DEG)+' °/cm.':'This figure needs WebGL 2, which this browser does not provide.';
+$('lg').textContent=gl?'Rope radius r = 0.5 cm. Violet lines: two markers, half a turn apart. Rope texture: 10 strands around, aligned with the braid. dk = dl·(τ − κ), where τ = sin α·cos α / (R + r) = '+Math.round(tau/DEG)+' °/cm.':'This figure needs WebGL 2, which this browser does not provide.';
 if(gl)draw(geo);requestAnimationFrame(frame);}
 
 // Orthographic projection matching the canvas version: view() rotation, fitted to the rope.
@@ -173,10 +178,10 @@ const mvp=new Float32Array([...[0,1,2].flatMap(j=>[kx*R[j][0],ky*R[j][1],-kz*R[j
 gl.useProgram(prog);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);
 gl.uniformMatrix4fv(U.uMVP,false,mvp);gl.uniformMatrix3fv(U.uRot,false,new Float32Array(R.flat()));
 const L=[-0.35,0.55,1],ln=Math.hypot(...L);gl.uniform3f(U.uLight,L[0]/ln,L[1]/ln,L[2]/ln);
-gl.uniform1f(U.uSpin,spin);gl.uniform1f(U.uKap,kap);gl.uniform1f(U.uPulled,pulled);gl.uniform1f(U.uD,D);gl.uniform1f(U.uStep,STEP);gl.uniform1f(U.uStructMix,STRUCT_MIX);
+gl.uniform1f(U.uSpin,spin);gl.uniform1f(U.uKap,kap);gl.uniform1f(U.uPulled,pulled);gl.uniform1f(U.uD,D);gl.uniform1f(U.uStep,STEP);gl.uniform1f(U.uStructMix,STRUCT_MIX);gl.uniform1f(U.uMarkerW,0.2);gl.uniform3fv(U.uMarker,hex(C.mk).map(x=>x/255));
 gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tex);gl.uniform1i(U.uTex,0);gl.uniform2fv(U.uTexScale,texScale);
 gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,struct);gl.uniform1i(U.uStruct,1);gl.uniform2fv(U.uStructScale,structScale);gl.uniform1f(U.uStructGain,structGain);
-const objs=[[bar,1,C.cs],[rope,0,C.ro]],drawIdx=(obj,idx,prim)=>{gl.bindVertexArray(obj.vao);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,idx.buf);gl.drawElements(prim,idx.count,gl.UNSIGNED_INT,0);};
+const objs=[[bar,1,barColor()],[rope,0,C.ro]],drawIdx=(obj,idx,prim)=>{gl.bindVertexArray(obj.vao);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,idx.buf);gl.drawElements(prim,idx.count,gl.UNSIGNED_INT,0);};
 if(wf.checked){
 // Hidden-line wireframe: lay down depth from the (slightly pushed back) faces, then draw the edges.
 gl.colorMask(false,false,false,false);gl.enable(gl.POLYGON_OFFSET_FILL);gl.polygonOffset(1,1);gl.uniform1i(U.uMode,2);

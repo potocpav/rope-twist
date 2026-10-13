@@ -160,6 +160,23 @@
       font-weight: 600;
     }
 
+    math[display="block"] {
+      display: block math;
+      margin: 24px 0;
+      font-size: 1.15em;
+      text-align: center;
+    }
+
+    p.where {
+      margin-bottom: 4px;
+    }
+
+    ul.where {
+      margin-top: 0;
+      list-style: none;
+      padding-left: 1.5em;
+    }
+
     .photo a {
       display: block;
     }
@@ -455,11 +472,11 @@
 
       <h2>What <i>exactly</i> is rope twist?</h2>
 
-      Rope twist is not an invisible or mysterious property, nor is it caused by the rope sheath moving relative to the
-      rope core (at least not in most cases).
+      <p>Rope twist is not an invisible or mysterious property, nor is it caused by the rope sheath moving relative to
+        the rope core (at least not in most cases).</p>
 
       <p>Rope twist is simply the rotation of a rope around its own axis. When the rate of rotation is high enough,
-        the rope starts buckling, end eventually starts to forms loops and generally becomes tangled.
+        the rope starts buckling, and eventually starts to form loops and generally becomes tangled.
       </p>
 
 
@@ -469,14 +486,14 @@
             alt="Three photos of the same orange braided rope on a white background: straight with no twist, in a gentle S-shaped curve with one twist, and buckled into a pronounced wave with two twists.">
         </a>
         <figcaption><b>Figure 2.</b> Rope with zero, one and two twists along its length. Rope is marked with a black
-          line to show the twist. Twisted ropes aturally buckle into loops, and they resist being pulled into a straight
+          line to show the twist. Twisted ropes naturally buckle into loops, and they resist being pulled into a straight
           line.</figcaption>
       </figure>
 
       <p>
         In virtually all scenarios, rope twist is induced by holding one end of the rope stationary, while the other
         end is forced to spin around its axis. One end is commonly held stationary because it is fixed to an anchor,
-        tied in to a climber, or just lying on the ground. The other end if the rope is forced to spin around its axis
+        tied in to a climber, or just lying on the ground. The other end of the rope is forced to spin around its axis
         by running
         through a fixed point, or by running through a belay or rappel device. Depending on the exact geometry
         of the setup, rope twist may be induced.
@@ -484,28 +501,75 @@
 
       <h2>Twisting physics</h2>
 
-      Because climbing rope sheath is diagonally braided, ropes can be bent easily, but are very resistent to
-      twisting. Rope will remain untwisted, unless considerable force is applied. But the definition of "untwisted" is not trivial -
-      what does it mean for a rope running around obstacles not to be twisted?
+      <p>
+        Because climbing rope sheath is diagonally braided, ropes can be bent easily, but are very resistant to
+        twisting. Rope will remain untwisted, unless considerable force is applied. But the definition of "untwisted" is
+        not trivial —
+        what does it mean for a rope running around obstacles along complicated curves not to be twisted?
+      </p>
 
-      <p>Rope can become twisted in several ways:
+      <p>
+        The answer comes from Kirchhoff's rod theory. Following <a
+          href="https://rotations.berkeley.edu/kinematics-of-rods/">this article</a>, we can model rope as a <i>material
+          curve</i> running through space. Whenever the curve is planar, its geometric torsion is zero, and no twist is
+        induced.
+        This is the case for a straight rope, but also rope running over a pulley, through a tube-style device, or
+        through most anchors.
+      </p>
+
+      <p>
+        The simplest case which <i>does</i> induce twist is a rope wrapped around a bar in a helix.
+        By substituting into equation (54.1) <i>τ</i> from equation (31), and setting zero strain <i>v</i><sub>3</sub> =
+        <i>v</i><sub>03</sub> = 0 from the article, we get the following intrinsic twist rate:
+      </p>
+
+      <math display="block">
+        <mrow>
+          <mfrac><mrow><mi mathvariant="normal">d</mi><mi>φ</mi></mrow><mrow><mi mathvariant="normal">d</mi><mi>l</mi></mrow></mfrac>
+          <mo>=</mo>
+          <mfrac><mn>1</mn><mrow><mi>R</mi><mo>+</mo><mi>r</mi></mrow></mfrac>
+          <mo>⋅</mo><mi>sin</mi><mo>&#x2061;</mo><mi>α</mi><mo>⋅</mo><mi>cos</mi><mo>&#x2061;</mo><mi>α</mi>
+        </mrow>
+      </math>
+
+      <p class="where">where</p>
+      <ul class="where">
+        <li><i>φ</i> is the rotation of the rope about its own axis (in radians),</li>
+        <li><i>l</i> is the length of rope that has run around the bar,</li>
+        <li><i>R</i> is the radius of the bar,</li>
+        <li><i>r</i> is the radius of the rope,</li>
+        <li><i>α</i> is the wrap angle (Figure 3).</li>
+      </ul>
+
+      <figure class="photo" id="fig-3">
+        <img src="images/helix-diagram.png" width="1500" height="701"
+          alt="Diagram of a rope wrapped once around a horizontal bar in a helix, labelled with bar radius R, rope radius r, wrap angle α, and the rope's rotation φ about its own axis as it moves.">
+        <figcaption><b>Figure 3.</b> Rope wrapped around a bar in a helix: bar radius <i>R</i>, rope radius <i>r</i>,
+          wrap angle <i>α</i>. As the rope runs around the bar, it rotates about its own axis by angle <i>φ</i>.
+        </figcaption>
+      </figure>
+
+      <p>
+        When a rope slides around the bar, this intrinsic rotation is transferred from the helical section of the rope to the straight sections leading to and from the bar, which causes the rope to twist.
+      </p>
+
+      <p>Rope can become twisted in several ways:</p>
       <ul>
         <li>Improper coiling and un-coiling,</li>
         <li>Running the rope through some configurations of fixed points,</li>
         <li>Belaying or rappelling with a device that causes the rope to twist.</li>
       </ul>
-      </p>
 
-      All these causes are analyzed in detail in the following sections.
+      <p>All these causes are analyzed in detail in the following sections.</p>
 
       <h2>Coiling the rope</h2>
 
-      There are three practical methods of coiling the rope:
+      <p>There are three practical methods of coiling the rope:</p>
 
-      <figure id="fig-3">
+      <figure id="fig-4">
         <iframe id="viz-2" src="viz/rope-twist.html"
           title="Interactive animation: a braided rope pulled around a tilted bar, with a marker line that spins as the rope runs"></iframe>
-        <figcaption><b>Figure 3.</b> A braided rope pulled around a bar at an oblique angle. The two violet lines, half
+        <figcaption><b>Figure 4.</b> A braided rope pulled around a bar at an oblique angle. The two violet lines, half
           a
           turn apart, are markers along the rope. Change the wrap angle, bar radius, number of turns and twist strain to
           see how fast the rope

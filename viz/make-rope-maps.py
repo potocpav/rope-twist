@@ -46,7 +46,9 @@ def tile():
     v, u = np.mgrid[0:N, 0:N] / CELL           # cell coordinates; row index = v, column = u
     i, j = np.floor(u).astype(int), np.floor(v).astype(int)
     fu, fv = u % 1.0, v % 1.0
-    along_v = (i + j) % 2 == 0                 # checkerboard of carrier directions
+    # Checkerboard of carrier directions, matching rope-texture.png (one cell = 2 x 2 colour pixels):
+    # carriers along u (image rows) are on top where i + j is even, carriers along v where it is odd.
+    along_v = (i + j) % 2 == 1
     h = np.where(along_v, carrier(fv, fu), carrier(fu, fv))
     # Per-yarn variation, so the weave doesn't look stamped: a small random height offset per yarn.
     ycoord = np.where(along_v, fu, fv) * YARNS

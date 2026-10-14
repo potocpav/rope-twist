@@ -43,13 +43,13 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 </div>
 <div class="controls">
 <label for="al">Wrap angle (<i>α</i>)</label><input type="range" id="al" min="30" max="83" step="1" value="45"><output id="ao">45°</output>
-<label for="sv">Pull speed</label><input type="range" id="sv" min="0" max="20" step="1" value="5"><output id="so">5 cm/s</output>
+<label for="sv">Pull speed</label><input type="range" id="sv" min="-10" max="10" step="1" value="5"><output id="so">5 cm/s</output>
 </div>
 <div class="stats">
 <div class="stat"><div>Rope pulled per one full turn</div><div id="ot">18.8 cm</div></div>
 <div class="stat"><div>Spin rate</div><div id="or">0.32 rev/s</div></div>
 </div>
-<p class="note" id="lg"></p>
+<p class="note" id="lg" hidden>This figure needs WebGL 2, which this browser does not provide.</p>
 </div>
 <script src="rope.js"></script>
 <script>
@@ -62,6 +62,7 @@ const R0=1,TURNS=1;
 const C=Rope.THEMES.light.c,{rr,NS,cross,view}=Rope,DEG=Math.PI/180,STEP=2*Math.PI/NS,D=rr*STEP;
 const cv=document.getElementById('c'),$=id=>document.getElementById(id);
 const gl=cv.getContext('webgl2',{antialias:true,premultipliedAlpha:false});
+if(!gl)$('lg').hidden=false;
 let W,H,dpr=window.devicePixelRatio||1;
 function resize(){W=cv.clientWidth;H=Math.round(W*0.55);cv.width=W*dpr;cv.height=H*dpr;cv.style.height=H+cv.offsetWidth-W+'px';} // plus the border, so the drawing area stays H tall
 resize();addEventListener('resize',resize);
@@ -187,19 +188,27 @@ return mesh(rings);}
 function barMesh(R0){const rings=[];for(let z=-40;z<=40;z+=1)rings.push({c:[0,0,z],t:[0,0,1],u:[1,0,0],r:R0,nc:1,nt:0,s:0});return mesh(rings);}
 
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-let pulled=0,spin=0,playing=!reduce,last=performance.now(),geo=null,geoK=null,rope=null,bar=null;
+let pulled=0,spin=0,last=performance.now(),geo=null,geoK=null,rope=null,bar=null;
 const al=$('al'),sv=$('sv'),pp=$('pp');
 // Steepest wrap angle before neighbouring coils touch: adjacent turns lie 2π(R0+rr)·cos α apart, measured
 // perpendicular to the rope, which must be at least the rope diameter 2rr.
 al.max=Math.floor(Math.acos(rr/(Math.PI*(R0+rr)))/DEG);
 const ICON_PAUSE='<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg>';
 const ICON_PLAY='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11a.8.8 0 0 0 1.2.7l9-5.5a.8.8 0 0 0 0-1.4l-9-5.5A.8.8 0 0 0 4 2.5z"/></svg>';
-function setBtn(){pp.innerHTML=playing?ICON_PAUSE:ICON_PLAY;pp.setAttribute('aria-label',playing?'Pause':'Play');}
-setBtn();pp.onclick=()=>{playing=!playing;setBtn();};
+// Play/pause follows the pull speed: the animation is paused exactly when the speed is 0. Pausing
+// remembers the speed and sets it to 0; playing restores it. Sliding the speed to 0 counts as a
+// pause with nothing to remember, so playing then starts at the default speed.
+const DEFAULT_SPEED=+sv.defaultValue;let resume=DEFAULT_SPEED;
+const playing=()=>+sv.value!==0; // negative speeds pull the rope backwards
+if(reduce)sv.value=0; // start paused
+function setBtn(){pp.innerHTML=playing()?ICON_PAUSE:ICON_PLAY;pp.setAttribute('aria-label',playing()?'Pause':'Play');}
 // Reset: sliders back to their defaults, and play. Shown only while a slider is off its default.
 const rs=$('rs'),sliders=[al,sv],showReset=()=>{rs.hidden=sliders.every(r=>r.value===r.defaultValue);};
+pp.onclick=()=>{if(playing()){resume=+sv.value;sv.value=0;}else{sv.value=resume;resume=DEFAULT_SPEED;}setBtn();showReset();};
+sv.addEventListener('input',()=>{if(!playing())resume=DEFAULT_SPEED;setBtn();});
 sliders.forEach(r=>r.addEventListener('input',showReset));
-rs.onclick=()=>{sliders.forEach(r=>r.value=r.defaultValue);showReset();playing=true;setBtn();pp.focus();};
+rs.onclick=()=>{sliders.forEach(r=>r.value=r.defaultValue);resume=DEFAULT_SPEED;setBtn();showReset();pp.focus();};
+setBtn();showReset();
 function frame(now){const dt=Math.min(0.05,(now-last)/1000);last=now;
 const adeg=+al.value,a=adeg*DEG,v=+sv.value;
 // buildWrap measures the wrap angle from the bar's cross-sectional plane.
@@ -207,12 +216,11 @@ if(geoK!==adeg){geo=Rope.buildWrap(Math.PI/2-a,R0,TURNS);geoK=adeg;
 // Helix centreline as built by buildWrap (radius, z per radian, start angle π/2, z at start), for the bar's contact shadow.
 const Rh=R0+rr,zpr=Rh/Math.tan(a);geo.alpha=a;geo.helix=[Rh,zpr,Math.PI/2,-zpr*Math.PI*TURNS];if(gl){rope&&rope.free();bar&&bar.free();rope=ropeMesh(geo);bar=barMesh(R0);}}
 // Contact strip locked to bar  =>  whole rope spins at tau per length pulled.
-if(playing){const dl=v*dt;pulled=(pulled+dl)%(NS*D);spin=(spin+geo.tw*dl)%(2*Math.PI);}
+{const dl=v*dt;pulled=(pulled+dl)%(NS*D);spin=(spin+geo.tw*dl)%(2*Math.PI);}
 const tau=Math.sin(a)*Math.cos(a)/(R0+rr);
-$('ao').textContent=adeg+'°';$('so').textContent=v+' cm/s';
+$('ao').textContent=adeg+'°';$('so').textContent=String(v).replace('-','−')+' cm/s';
 $('ot').textContent=(2*Math.PI/tau).toFixed(1)+' cm';
-$('or').textContent=(v*tau/(2*Math.PI)).toFixed(2)+' rev/s';
-$('lg').textContent=gl?'Bar radius R = 1 cm, rope radius r = 0.5 cm. Black lines: two markers, half a turn apart. dφ/dl = sin α·cos α / (R + r) = '+Math.round(tau/DEG)+' °/cm.':'This figure needs WebGL 2, which this browser does not provide.';
+$('or').textContent=(v*tau/(2*Math.PI)).toFixed(2).replace('-','−')+' rev/s';
 if(gl)draw(geo);requestAnimationFrame(frame);}
 
 // Orthographic projection through view(), centred on the wrap. The view is VIEW cm wide, widened when

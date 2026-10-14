@@ -142,7 +142,6 @@
       width: 100%;
       height: 900px;
       border: 0;
-      border-bottom: 1px solid var(--line);
       background: var(--bg);
     }
 
@@ -227,7 +226,9 @@
       fill: currentColor;
     }
 
-    h2 {
+    h2,
+    h3,
+    h4 {
       scroll-margin-top: 24px;
     }
 
@@ -241,6 +242,8 @@
     }
 
     h2:hover .anchor,
+    h3:hover .anchor,
+    h4:hover .anchor,
     .anchor:focus-visible {
       opacity: 1;
     }
@@ -278,6 +281,16 @@
       border-left: 2px solid var(--line);
       color: var(--muted);
       text-decoration: none;
+    }
+
+    /* Subsections: indented by heading level. */
+    .toc .toc-h3 a {
+      padding-left: 26px;
+    }
+
+    .toc .toc-h4 a {
+      padding-left: 40px;
+      font-size: 13px;
     }
 
     .toc a:hover {
@@ -469,7 +482,7 @@
       </figure>
 
 
-      <h2>What <i>exactly</i> is rope twist?</h2>
+      <h2>Twisting physics</h2>
 
       <p>Rope twist is not an invisible or mysterious property, nor is it caused by the rope sheath moving relative to
         the rope core (at least not in most cases).</p>
@@ -499,7 +512,7 @@
         of the setup, rope twist may be induced.
       </p>
 
-      <h2>Twisting physics</h2>
+      <h3>Theory</h3>
 
       <p>
         Because climbing rope sheath is diagonally braided, ropes can be bent easily, but are very resistant to
@@ -574,28 +587,55 @@
       </figure>
       <p>
         When the rope slides around the bar, this intrinsic rotation is transferred from the helical section of the rope
-        to the straight sections leading to and from the bar, which causes the rope to twist, as can be seen in Figure 4 below.
+        to the straight sections leading to and from the bar, which causes the rope to twist, as can be seen in Figure 4
+        below.
       </p>
 
       <p>Some notes on the twist rate result:</p>
       <ul>
-        <li>The twist is not caused by friction, but by the rope trajectory. Even with zero friction, the rope would still twist.</li>
-        <li>The twist rate is highest for a rope running at 45° to the bar. The twist rate is zero when the rope is wrapped around the bar at a right angle.</li>
+        <li>The twist is not caused by friction, but by the rope geometry. Even with zero friction, the rope would still
+          twist.</li>
+        <li>The twist rate is highest for a rope running at 45° to the bar. The twist rate is zero when the rope is
+          wrapped around the bar at a right angle.</li>
         <li>The twist rate is higher for smaller bend radii, and smaller rope diameter.</li>
-        <li>The twist rate is independent of the number of turns, rope velocity and rope tension. A quarter turn should induce the same twist rate as a full turn - more on that later.</li>
+        <li>The twist rate is independent of the number of turns, rope velocity and rope tension. A quarter turn should
+          induce the same twist rate as a full turn - more on that later.</li>
 
       </ul>
 
       <figure id="fig-4">
         <iframe id="viz-2" src="viz/rope-twist.html"
           title="Interactive animation: a braided rope pulled around a tilted bar, with a marker line that spins as the rope runs"></iframe>
-        <figcaption><b>Figure 4.</b> A braided rope pulled around a bar at an oblique angle. The two black lines, half
-          a
-          turn apart, are markers along the rope. Change the wrap angle, bar radius, number of turns and twist strain to
-          see how fast the rope
-          spins.</figcaption>
+        <figcaption><b>Figure 4.</b> A braided rope pulled around a bar at an oblique angle. Rope is marked with black
+          lines to better show the twist. Rope radius is 5&nbsp;mm, bar radius is 10&nbsp;mm.</figcaption>
       </figure>
 
+      <h3>Complex configurations</h3>
+
+      <p>TODO: Describe how complex configurations induce rope twist.</p>
+
+      <h3>Limitations</h3>
+
+      <p>As shown above, the model predicts rope to twist quite severly, regardless of how many turns the rope has run
+        around
+        the bar. Even a slight 30-degree bend over an edge should induce significant twist - but that is not what we
+        observe.
+        So far I found two explanations, which limit induced rope twists:
+      </p>
+
+      <h4>Rope buckling</h4>
+
+      When rope tension is low, rope twist is limited, because the rope is not forced to follow the straightest path
+      around the obstacle.
+      Instead, it will change its shape in ways which limit the intrinsic rotation, and thus limit the induced twist.
+
+      <h4>Rope slipping</h4>
+
+      Normally, the rope follows the zero-strain path around the obstacle. But when the number of turns is low, or when
+      the turn radius is large, the rope may deviate from the zero-strain path, and rotate relative to the bar to
+      relieve some of the accumulated torsion. This, again, limits the induced twist.
+
+      <h2>Applications</h2>
 
       <p>Rope can become twisted in several ways:</p>
       <ul>
@@ -604,32 +644,29 @@
         <li>Belaying or rappelling with a device that causes the rope to twist.</li>
       </ul>
 
+      <h3>Anchor configuration</h3>
+
+      <p>TODO: Describe how anchor configuration induce rope twist.</p>
+
+      <h3>Belaying and rappelling</h3>
+
+      <p>TODO: Describe how belay devices induce rope twist.</p>
+      
+      <h4>Figure-8 belay device</h4>
+
+      <p>TODO: Describe how the Figure-8 belay device induce rope twist.</p>
+
+      <h4>Munter hitch</h4>
+
+      <p>TODO: Describe how the Munter hitch induce rope twist.</p>
+
+      <h4>Gri-Gri</h4>
+
+      <p>TODO: Describe how the Gri-Gri induce rope twist.</p>
+
+      <h3>Rope coiling</h3>
+
       <p>All these causes are analyzed in detail in the following sections.</p>
-
-      <h2>Coiling the rope</h2>
-
-      <p>There are three practical methods of coiling the rope:</p>
-
-      <h2>The setup</h2>
-      <p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Describe the geometry: a rope of
-        radius r wrapped around a bar of radius R at wrap angle α.</p>
-
-      <h2>Why the rope spins</h2>
-      <p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Friction locks the contact strip
-        to
-        the bar, so the rope keeps its orientation relative to the bar's surface while it is wrapped.</p>
-      <div class="eq">dk = dl · sin α · cos α / (R + r)</div>
-      <p class="placeholder">Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-
-      <h2>Twist strain</h2>
-      <p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. What happens when the rope already
-        carries torsional strain κ.</p>
-      <div class="eq">dk = dl · (τ − κ)</div>
-
-      <h2>What this means at the crag</h2>
-      <p class="placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Practical consequences for
-        belaying,
-        rappelling and coiling.</p>
 
       <footer>
         Source and visualization code: <a
@@ -638,14 +675,15 @@
     </main>
   </div>
   <script>
-    // Table of contents and heading links, built from the article's h2 headings.
+    // Table of contents and heading links, built from the article's h2-h4 headings.
     (function () {
       const toc = document.getElementById('toc');
       const list = toc.querySelector('ol');
       const btn = document.querySelector('.toc-toggle');
       const slug = t => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-      const entry = (href, text) => {
+      const entry = (href, text, level = 2) => {
         const li = document.createElement('li'), a = document.createElement('a');
+        if (level > 2) li.className = 'toc-h' + level;
         a.href = href;
         a.textContent = text;
         li.append(a);
@@ -653,7 +691,7 @@
         return a;
       };
       const intro = entry('#top', 'Introduction');
-      const sections = [...document.querySelectorAll('main h2')].map(h => {
+      const sections = [...document.querySelectorAll('main :is(h2, h3, h4)')].map(h => {
         const title = h.textContent.trim();
         h.id ||= slug(title);
         const anchor = document.createElement('a');
@@ -662,7 +700,7 @@
         anchor.textContent = '#';
         anchor.setAttribute('aria-label', 'Link to section: ' + title);
         h.append(anchor);
-        return { h, link: entry('#' + h.id, title) };
+        return { h, link: entry('#' + h.id, title, +h.tagName[1]) };
       });
 
       // Highlight the section currently being read: the last heading above a line near the top

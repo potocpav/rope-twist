@@ -17,6 +17,7 @@ canvas{width:100%;display:block;background:#fff;border:1px solid var(--outline);
 .overlay{position:absolute;left:12px;bottom:12px;display:flex;gap:8px;}
 .overlay button{width:40px;height:36px;border:1px solid #d6d4cc;border-radius:8px;background:rgba(255,255,255,.85);color:#1f1e1c;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .overlay button:hover{background:#f3f2ee;}
+.overlay button[hidden]{display:none;}
 button svg{width:16px;height:16px;fill:currentColor;}
 input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:20px;background:transparent;margin:0;}
 input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:var(--line);}
@@ -37,7 +38,7 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 <canvas id="c" aria-label="Animated 3D rendering of a textured rope wrapped once around a horizontal grey bar; two marker lines on opposite sides of the rope spin as the rope runs."></canvas>
 <div class="overlay">
 <button id="pp" aria-label="Pause"></button>
-<button id="rs" aria-label="Reset" title="Reset"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5a5.5 5.5 0 1 1-5.2 3.7.75.75 0 1 1 1.4.5A4 4 0 1 0 8 4h-.6l1.1 1.1a.75.75 0 0 1-1 1L5.2 3.8a.75.75 0 0 1 0-1.1L7.5.5a.75.75 0 0 1 1 1L7.4 2.5z"/></svg></button>
+<button id="rs" aria-label="Reset" title="Reset" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5a5.5 5.5 0 1 1-5.2 3.7.75.75 0 1 1 1.4.5A4 4 0 1 0 8 4h-.6l1.1 1.1a.75.75 0 0 1-1 1L5.2 3.8a.75.75 0 0 1 0-1.1L7.5.5a.75.75 0 0 1 1 1L7.4 2.5z"/></svg></button>
 </div>
 </div>
 <div class="controls">
@@ -67,51 +68,83 @@ resize();addEventListener('resize',resize);
 
 // Shaders. Rope vertices carry (s, a): arc length along the centreline and angle around it in the
 // zero-twist frame. The material angle is a - spin and the material position along the rope
-// is s - pulled; the texture is mapped diagonally in these coordinates, so its rows follow the two
+// is s - pulled; the textures are mapped diagonally in these coordinates, so their rows follow the two
 // helical braid directions (one strand step STEP around per row step D along).
+// Shading is done in linear colour, in view space (x right, y up, z toward the viewer, orthographic,
+// so the view direction is +z): a key light, a dim fill, sky/ground ambient scaled by occlusion, and a
+// soft sheen. The weave's normal map is applied through a tangent frame built from screen-space
+// derivatives of the position and map coordinates, so the mesh needs no tangent attributes.
 const VS=`#version 300 es
 in vec3 aPos;in vec3 aNrm;in vec2 aSA;
 uniform mat4 uMVP;uniform mat3 uRot;
-out vec3 vN;out vec2 vSA;
-void main(){gl_Position=uMVP*vec4(aPos,1.);vN=uRot*aNrm;vSA=aSA;}`;
+out vec3 vN,vV,vW;out vec2 vSA;
+void main(){gl_Position=uMVP*vec4(aPos,1.);vN=uRot*aNrm;vV=uRot*aPos;vW=aPos;vSA=aSA;}`;
 const FS=`#version 300 es
 precision highp float;
-in vec3 vN;in vec2 vSA;
+in vec3 vN,vV,vW;in vec2 vSA;
 uniform int uMode; // 0 textured rope, 1 plain shaded (bar)
-uniform vec3 uColor,uMarker,uLight;uniform sampler2D uTex,uStruct;uniform vec2 uTexScale,uStructScale;uniform float uStructGain;
-uniform float uSpin,uPulled,uD,uStep,uStructMix,uMarkerW;
+uniform vec3 uColor,uMarker,uLight,uFill;uniform sampler2D uTex,uNormal,uAO;uniform vec2 uTexScale,uMapScale;
+uniform float uSpin,uPulled,uD,uStep,uMarkerW,uR0,uRr,uSinA;
+uniform vec4 uHelix; // helix centreline: radius, z per radian, start angle, z at start
 const float PI=3.14159265359;
 out vec4 o;
+vec3 lin(vec3 c){return pow(c,vec3(2.2));}
+// Perturb geometric normal N by tangent-space normal m whose x, y follow map coordinates st.
+vec3 perturb(vec3 N,vec3 m,vec2 st){
+  vec3 dp1=dFdx(vV),dp2=dFdy(vV);vec2 d1=dFdx(st),d2=dFdy(st);
+  vec3 p2=cross(dp2,N),p1=cross(N,dp1),T=p2*d1.x+p1*d2.x,B=p2*d1.y+p1*d2.y;
+  float k=inversesqrt(max(max(dot(T,T),dot(B,B)),1e-20));
+  return normalize(T*k*m.x+B*k*m.y+N*m.z);
+}
 void main(){
-  vec3 c=uColor;
+  vec3 N=normalize(vN),n=N,alb;
+  float ao=1.,spec,shine;
   if(uMode==0){
     float phi=vSA.y-uSpin,q=phi/uStep,p=(vSA.x-uPulled)/uD;
-    vec2 uv=uTexScale*vec2(q-p,q+p);
-    c=texture(uTex,uv).rgb*mix(1.,texture(uStruct,uv*uStructScale).r*uStructGain,uStructMix);
-    if(abs(mod(phi+.5*PI,PI)-.5*PI)<uMarkerW)c=uMarker; // two marker lines, at material angles 0 and π
+    vec2 uv=uTexScale*vec2(q-p,q+p),st=uv*uMapScale;
+    alb=lin(texture(uTex,uv).rgb);
+    if(abs(mod(phi+.5*PI,PI)-.5*PI)<uMarkerW)alb=lin(uMarker); // two marker lines, at material angles 0 and π
+    n=perturb(N,texture(uNormal,st).xyz*2.-1.,st);
+    ao=texture(uAO,st).r;
+    // Contact with the bar: the rope's underside, close to the bar's surface, sees little light.
+    ao*=mix(.35,1.,smoothstep(uR0,uR0+1.2*uRr,length(vW.xy)));
+    spec=.06;shine=12.;
+  }else{
+    alb=lin(uColor);
+    // Contact shadow under the wrapped rope: distance from this point to the helix centreline,
+    // across the rope (the helix crosses the bar's surface at the wrap angle).
+    float th=uHelix.z+mod(atan(vW.y,vW.x)-uHelix.z,2.*PI),dz=vW.z-(uHelix.w+uHelix.y*(th-uHelix.z));
+    float d=length(vec2(dz*uSinA,uRr));
+    ao=mix(.3,1.,smoothstep(uRr,3.5*uRr,d));
+    spec=.25;shine=40.;
   }
-  vec3 n=normalize(vN);
-  o=vec4(c*(.4+.6*max(dot(n,uLight),0.)),1.);
+  vec3 V=vec3(0,0,1),Hk=normalize(uLight+V);
+  float key=max(dot(n,uLight),0.),fill=max(dot(n,uFill),0.);
+  vec3 amb=mix(vec3(.16,.15,.14),vec3(.34,.35,.37),.5+.5*n.y); // ground below, sky above
+  vec3 c=alb*(amb*ao+(.95*key+.18*fill)*mix(1.,ao,.6));
+  c+=spec*pow(max(dot(n,Hk),0.),shine)*ao*key*vec3(1);
+  c+=alb*.12*pow(1.-max(dot(n,V),0.),3.)*ao; // fibre fuzz catching light at grazing angles
+  o=vec4(pow(clamp(c,0.,1.),vec3(1./2.2)),1.);
 }`;
 function shader(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(s));return s;}
 let prog,U={};
 if(gl){prog=gl.createProgram();gl.attachShader(prog,shader(gl.VERTEX_SHADER,VS));gl.attachShader(prog,shader(gl.FRAGMENT_SHADER,FS));gl.linkProgram(prog);
 if(!gl.getProgramParameter(prog,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(prog));
-for(const n of['uMVP','uRot','uMode','uColor','uMarker','uLight','uTex','uTexScale','uStruct','uStructScale','uStructGain','uSpin','uPulled','uD','uStep','uStructMix','uMarkerW'])U[n]=gl.getUniformLocation(prog,n);}
+for(const n of['uMVP','uRot','uMode','uColor','uMarker','uLight','uFill','uTex','uTexScale','uNormal','uAO','uMapScale','uSpin','uPulled','uD','uStep','uMarkerW','uR0','uRr','uSinA','uHelix'])U[n]=gl.getUniformLocation(prog,n);}
 
 // Rope textures, both repeating, with texture x along one braid direction and y along the other.
 // Colour, rope-texture.png (nearest sampling): the image height spans the NS strands around the rope,
 // and pixels cover equal steps along both braid directions whatever the image size. One trip around
 // the rope shifts it by 1 image in y and height/width images in x, so it wraps seamlessly when the
 // height is a multiple of the width.
-// Structure, rope-structure.jpg (smooth, mipmapped): a greyscale 2x2-strand patch, tiled once per
-// STRUCT x STRUCT colour pixels and multiplied onto the colour, normalized to its mean brightness so
-// the rope keeps its overall tone, and applied at STRUCT_MIX strength (1 = full, 0 = none). It wraps seamlessly when the colour image height is a multiple of STRUCT.
-const STRUCT=4,STRUCT_MIX=0.5;
+// Weave, rope-normal.png and rope-ao.png (smooth, mipmapped; made by make-rope-maps.py): normal map
+// and ambient occlusion of one 2x2-strand tile of the braid, tiled once per STRUCT x STRUCT colour
+// pixels. They wrap seamlessly when the colour image height is a multiple of STRUCT.
+const STRUCT=4;
 const hex=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
 // Bar colour: the palette grey (C.cs), lightened halfway to white.
 const barColor=()=>'#'+hex(C.cs).map(v=>Math.round((v+255)/2).toString(16).padStart(2,'0')).join('');
-let tex=null,texScale=[1/NS,1/NS],struct=null,structScale=[1,1],structGain=1;
+let tex=null,texScale=[1/NS,1/NS],normal=null,occl=null,mapScale=[1,1];
 function loadTexture(url,smooth,fallback,onload){const t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);
 gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array(fallback)); // until the image loads
 const set=min=>{for(const[p,v]of[[gl.TEXTURE_MIN_FILTER,min],[gl.TEXTURE_MAG_FILTER,smooth?gl.LINEAR:gl.NEAREST],[gl.TEXTURE_WRAP_S,gl.REPEAT],[gl.TEXTURE_WRAP_T,gl.REPEAT]])gl.texParameteri(gl.TEXTURE_2D,p,v);};
@@ -119,13 +152,13 @@ set(smooth?gl.LINEAR:gl.NEAREST);
 const img=new Image();img.onload=()=>{gl.bindTexture(gl.TEXTURE_2D,t);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);
 if(smooth){gl.generateMipmap(gl.TEXTURE_2D);set(gl.LINEAR_MIPMAP_LINEAR);}onload(img);};img.src=url;return t;}
 if(gl){
+gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL,gl.NONE); // the maps are data, not colours
 tex=loadTexture('rope-texture.png',false,[...hex(C.ro),255],img=>{const w=img.naturalWidth,h=img.naturalHeight;
-texScale=[h/(NS*w),1/NS];structScale=[w/STRUCT,h/STRUCT];
+texScale=[h/(NS*w),1/NS];mapScale=[w/STRUCT,h/STRUCT];
 if(h%w)console.warn(`rope-texture.png is ${w}x${h}: height is not a multiple of width, so the texture will show a seam around the rope.`);
-if(h%STRUCT)console.warn(`rope-texture.png height ${h} is not a multiple of ${STRUCT}, so the structure texture will show a seam around the rope.`);});
-struct=loadTexture('rope-structure.jpg',true,[255,255,255,255],img=>{const k=document.createElement('canvas').getContext('2d');
-k.canvas.width=img.naturalWidth;k.canvas.height=img.naturalHeight;k.drawImage(img,0,0);const d=k.getImageData(0,0,k.canvas.width,k.canvas.height).data;
-let sum=0;for(let i=0;i<d.length;i+=4)sum+=d[i];structGain=255*d.length/4/sum;});}
+if(h%STRUCT)console.warn(`rope-texture.png height ${h} is not a multiple of ${STRUCT}, so the weave maps will show a seam around the rope.`);});
+normal=loadTexture('rope-normal.png',true,[128,128,255,255],()=>{});
+occl=loadTexture('rope-ao.png',true,[255,255,255,255],()=>{});}
 
 // Mesh from rings of vertices. Ring: centre c, unit tangent t, frame u (b = t x u), radius r,
 // normal mix (nc radial, nt along t; caps tilt the normal), arc length s. M segments around.
@@ -163,11 +196,16 @@ const ICON_PAUSE='<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" 
 const ICON_PLAY='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11a.8.8 0 0 0 1.2.7l9-5.5a.8.8 0 0 0 0-1.4l-9-5.5A.8.8 0 0 0 4 2.5z"/></svg>';
 function setBtn(){pp.innerHTML=playing?ICON_PAUSE:ICON_PLAY;pp.setAttribute('aria-label',playing?'Pause':'Play');}
 setBtn();pp.onclick=()=>{playing=!playing;setBtn();};
-$('rs').onclick=()=>{for(const r of[al,sv])r.value=r.defaultValue;playing=true;setBtn();}; // sliders back to their defaults, and play
+// Reset: sliders back to their defaults, and play. Shown only while a slider is off its default.
+const rs=$('rs'),sliders=[al,sv],showReset=()=>{rs.hidden=sliders.every(r=>r.value===r.defaultValue);};
+sliders.forEach(r=>r.addEventListener('input',showReset));
+rs.onclick=()=>{sliders.forEach(r=>r.value=r.defaultValue);showReset();playing=true;setBtn();pp.focus();};
 function frame(now){const dt=Math.min(0.05,(now-last)/1000);last=now;
 const adeg=+al.value,a=adeg*DEG,v=+sv.value;
 // buildWrap measures the wrap angle from the bar's cross-sectional plane.
-if(geoK!==adeg){geo=Rope.buildWrap(Math.PI/2-a,R0,TURNS);geoK=adeg;if(gl){rope&&rope.free();bar&&bar.free();rope=ropeMesh(geo);bar=barMesh(R0);}}
+if(geoK!==adeg){geo=Rope.buildWrap(Math.PI/2-a,R0,TURNS);geoK=adeg;
+// Helix centreline as built by buildWrap (radius, z per radian, start angle π/2, z at start), for the bar's contact shadow.
+const Rh=R0+rr,zpr=Rh/Math.tan(a);geo.alpha=a;geo.helix=[Rh,zpr,Math.PI/2,-zpr*Math.PI*TURNS];if(gl){rope&&rope.free();bar&&bar.free();rope=ropeMesh(geo);bar=barMesh(R0);}}
 // Contact strip locked to bar  =>  whole rope spins at tau per length pulled.
 if(playing){const dl=v*dt;pulled=(pulled+dl)%(NS*D);spin=(spin+geo.tw*dl)%(2*Math.PI);}
 const tau=Math.sin(a)*Math.cos(a)/(R0+rr);
@@ -187,10 +225,13 @@ const R=[view([1,0,0]),view([0,1,0]),view([0,0,1])],kx=2*s/W,ky=2*s/H,kz=1/100; 
 const mvp=new Float32Array([...[0,1,2].flatMap(j=>[kx*R[j][0],ky*R[j][1],-kz*R[j][2],0]),-kx*mx,-ky*my,0,1]);
 gl.useProgram(prog);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);
 gl.uniformMatrix4fv(U.uMVP,false,mvp);gl.uniformMatrix3fv(U.uRot,false,new Float32Array(R.flat()));
-const L=[-0.35,0.55,1],ln=Math.hypot(...L);gl.uniform3f(U.uLight,L[0]/ln,L[1]/ln,L[2]/ln);
-gl.uniform1f(U.uSpin,spin);gl.uniform1f(U.uPulled,pulled);gl.uniform1f(U.uD,D);gl.uniform1f(U.uStep,STEP);gl.uniform1f(U.uStructMix,STRUCT_MIX);gl.uniform1f(U.uMarkerW,0.2);gl.uniform3f(U.uMarker,0,0,0);
+const unit=v=>{const l=Math.hypot(...v);return v.map(x=>x/l);};
+gl.uniform3fv(U.uLight,unit([-0.35,0.55,1]));gl.uniform3fv(U.uFill,unit([0.6,-0.3,0.5]));
+gl.uniform1f(U.uSpin,spin);gl.uniform1f(U.uPulled,pulled);gl.uniform1f(U.uD,D);gl.uniform1f(U.uStep,STEP);gl.uniform1f(U.uMarkerW,0.2);gl.uniform3f(U.uMarker,0,0,0);
+gl.uniform1f(U.uR0,R0);gl.uniform1f(U.uRr,rr);gl.uniform1f(U.uSinA,Math.sin(m.alpha));gl.uniform4fv(U.uHelix,m.helix);
 gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tex);gl.uniform1i(U.uTex,0);gl.uniform2fv(U.uTexScale,texScale);
-gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,struct);gl.uniform1i(U.uStruct,1);gl.uniform2fv(U.uStructScale,structScale);gl.uniform1f(U.uStructGain,structGain);
+gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,normal);gl.uniform1i(U.uNormal,1);
+gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,occl);gl.uniform1i(U.uAO,2);gl.uniform2fv(U.uMapScale,mapScale);
 for(const[obj,mode,col]of[[bar,1,barColor()],[rope,0,C.ro]]){gl.uniform1i(U.uMode,mode);gl.uniform3fv(U.uColor,hex(col).map(x=>x/255));
 gl.bindVertexArray(obj.vao);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,obj.ib);gl.drawElements(gl.TRIANGLES,obj.count,gl.UNSIGNED_INT,0);}
 gl.bindVertexArray(null);}

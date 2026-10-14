@@ -527,7 +527,7 @@
         curve running through space. Whenever the curve is planar, its geometric torsion is zero, and no twist is
         induced.
         This is the case for a straight rope, but also rope running over a pulley, through a tube-style device, or
-        through many anchor configurations.
+        through some anchor configurations.
       </p>
 
       <p>
@@ -582,7 +582,7 @@
         <img src="images/helix-diagram.png" width="1500" height="701"
           alt="Diagram of a rope wrapped once around a horizontal bar in a helix, labelled with bar radius R, rope radius r, wrap angle α, and the rope's rotation φ about its own axis as it moves.">
         <figcaption><b>Figure 3.</b> Rope wrapped around a bar in a helix: bar radius <i>R</i>, rope radius <i>r</i>,
-          wrap angle <i>α</i>. As the rope runs around the bar, it rotates about its own axis by angle <i>φ</i>.
+          wrap angle <i>α</i>. As the rope runs around the bar, it rotates about its own axis by angle <i>ϕ</i>.
         </figcaption>
       </figure>
       <p>
@@ -592,9 +592,10 @@
       </p>
 
       <p>Some notes on the twist rate result:</p>
-      
+
       <ul>
-        <li>Twisting is not caused by friction, but by rope geometry. Even with zero friction, the rope would still twist.</li>
+        <li>Twisting is not caused by friction, but by rope geometry. Even with zero friction, the rope would still
+          twist.</li>
         <li>Twist rate is highest for a rope running at 45° to the bar. The twist rate is zero when the rope is
           wrapped around the bar at a right angle.</li>
         <li>Twist rate is higher for smaller bend radii, and smaller rope diameters.</li>
@@ -610,6 +611,20 @@
       </figure>
 
       <h3>Complex configurations</h3>
+
+      The simple helical model above is sufficient to approximate some simple real-world examples, like a rope running
+      through a tube-style device, or over
+      a single carabiner. More complex systems, like the Munter hitch or a two-point anchor, can be described by
+      decomposing them into multiple helical sections. To find
+      how these systems behave, we need to analyze the interactions between multiple helical sections placed along the
+      rope's path.
+
+      At first glance, each helical section seems to force its own twist rate on the rope - but that is clearly impossible. 
+      Rope running through a system of obstacles can only twist at one rate, because
+      otherwise, over time, rope twist between two obstacles would accumulate without limit.
+      The following sections analyze how the elementary helical sections interact with each other to produce the final twist rate.
+
+      <h3>Pre-twisted ropes</h3>
 
       <p>TODO: Describe how complex configurations induce rope twist.</p>
 

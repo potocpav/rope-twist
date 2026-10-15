@@ -19,8 +19,8 @@ canvas{width:100%;display:block;background:#fff;border:1px solid var(--outline);
 .seg button:last-child{border-radius:0 8px 8px 0;}
 .seg button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff;}
 .controls output{font-size:14px;font-weight:500;text-align:right;font-variant-numeric:tabular-nums;}
-/* Pause and reset buttons, overlaid on the canvas's lower left corner; the canvas is always white, so fixed light colours. */
-.overlay{position:absolute;left:12px;bottom:12px;display:flex;gap:8px;}
+/* Pause and reset buttons, overlaid at the bottom centre of the canvas, between the two vertical ropes; the canvas is always white, so fixed light colours. */
+.overlay{position:absolute;left:50%;transform:translateX(-50%);bottom:12px;display:flex;gap:8px;}
 .overlay button{width:40px;height:36px;border:1px solid #d6d4cc;border-radius:8px;background:rgba(255,255,255,.85);color:#1f1e1c;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .overlay button:hover{background:#f3f2ee;}
 button svg{width:16px;height:16px;fill:currentColor;}
@@ -52,9 +52,9 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 <label id="b1l">Right bar</label><div class="seg" role="group" aria-labelledby="b1l" id="b1"><button data-t="-1">−45°</button><button data-t="0">0°</button><button data-t="1">+45°</button></div><output id="b1o"></output>
 </div>
 <div class="stats">
-<div class="stat"><div>Spin rate, left rope</div><div id="ol">0.00 rev/s</div></div>
+<div class="stat"><div>Spin rate, left rope</div><div id="ol">0.0 turns/m</div></div>
 <div class="stat"><div>Twist between the bars</div><div id="ok">0.0 turns/m</div></div>
-<div class="stat"><div>Spin rate, right rope</div><div id="or">0.00 rev/s</div></div>
+<div class="stat"><div>Spin rate, right rope</div><div id="or">0.0 turns/m</div></div>
 </div>
 <p class="note">Bar angles are the wrap angle <i>α</i>: how far the rope crosses each bar off square. At 0° the bar points at the viewer; at ±45° it lies diagonally across the view, with the rope going behind it first (+) or in front of it first (−).</p>
 <p class="note" id="lg" hidden>This figure needs WebGL 2, which this browser does not provide.</p>
@@ -310,11 +310,12 @@ if(moved)setBars(bars[0].t,bars[1].t);
 bars.forEach((b,i)=>{$('b'+i+'o').textContent='α '+String(Math.round(Math.asin(geo.bars[i].sa)*180/Math.PI)).replace('-','−')+'°';});
 const[a0,,,d0]=spins();for(let i=0;i<4;i++)stepSpin(v,dt/4);const[,pB,pC,pD]=spins();
 pulled=(pulled+v*dt)%(NS*D);
-// Smoothed spin rates of the two tails (rev/s), from the change in their angles.
-if(dt>0){const k=Math.min(1,dt*8);rateL+=k*(SG*(pA-a0)/dt/(2*Math.PI)-rateL);rateR+=k*(SG*(pD-d0)/dt/(2*Math.PI)-rateR);}
+// Smoothed spin rates of the two tails (turns per metre of rope pulled), from the change in their angles;
+// held while the rope stands still.
+if(dt>0&&v!==0){const k=Math.min(1,dt*8),f=SG*100/(2*Math.PI*v*dt);rateL+=k*(f*(pA-a0)-rateL);rateR+=k*(f*(pD-d0)-rateR);}
 pA-=2*Math.PI*Math.floor(pA/(2*Math.PI)); // keep the angles small
 $('so').textContent=String(v).replace('-','−')+' cm/s';
-$('ol').textContent=fmt(rateL,2)+' rev/s';$('or').textContent=fmt(rateR,2)+' rev/s';
+$('ol').textContent=fmt(rateL,1)+' turns/m';$('or').textContent=fmt(rateR,1)+' turns/m';
 $('ok').textContent=fmt(SG*km*100/(2*Math.PI),1)+' turns/m';
 if(gl)draw();requestAnimationFrame(frame);}
 

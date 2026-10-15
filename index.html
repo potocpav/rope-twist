@@ -612,17 +612,49 @@
 
       <h3>Complex configurations</h3>
 
-      The simple helical model above is sufficient to approximate some simple real-world examples, like a rope running
-      through a tube-style device, or over
-      a single carabiner. More complex systems, like the Munter hitch or a two-point anchor, can be described by
-      decomposing them into multiple helical sections. To find
-      how these systems behave, we need to analyze the interactions between multiple helical sections placed along the
-      rope's path.
+      <p>
+        The simple helical model above is sufficient to approximate some simple real-world examples, like a rope running
+        through a tube-style device, or over
+        a single carabiner. More complex systems, like the Munter hitch or a two-point anchor, can be described by
+        decomposing them into multiple helical sections. To find
+        how these systems behave as a whole, we need to analyze the interactions between multiple helical sections
+        placed along the
+        rope's path.
+      </p>
 
-      At first glance, each helical section seems to force its own twist rate on the rope - but that is clearly impossible. 
-      Rope running through a system of obstacles can only twist at one rate, because
-      otherwise, over time, rope twist between two obstacles would accumulate without limit.
-      The following sections analyze how the elementary helical sections interact with each other to produce the final twist rate.
+      <p>
+        As we saw, a helix imparts a rotation rate <math>
+          <mfrac>
+            <mrow>
+              <mi>d</mi>
+              <mi>φ</mi>
+            </mrow>
+            <mrow>
+              <mi>d</mi>
+              <mi>l</mi>
+            </mrow>
+          </mfrac>
+        </math> to the rope. When multiple helical sections are placed along the rope's path and their rotation rates are the same,
+        then the whole system's twist rate is equal to the sections' twist rates.
+
+      </p>
+
+      <p>
+        At first glance, each helical section seems to force its own twist rate on the rope - but that is clearly
+        impossible.
+        Rope running through a system of obstacles can only twist at one rate, because
+        otherwise, over time, rope twist between two obstacles would accumulate without limit.
+        The following sections analyze how the elementary helical sections interact with each other to produce the final
+        twist rate.
+      </p>
+
+      <figure id="fig-5">
+        <iframe id="viz-3" src="viz/two-bars.html"
+          title="Interactive animation: a rope bent over two bars in turn, showing twist building up in the rope between them"></iframe>
+        <figcaption><b>Figure 5.</b> A rope bent 90° over two bars. The left bar faces the viewer (wrap angle 90°) and
+          forces no spin; the right bar is set diagonally (wrap angle 45°, half a turn). Twist builds up between the
+          bars until it cancels the right bar's spin. Rope radius is 5&nbsp;mm, bar radius is 10&nbsp;mm.</figcaption>
+      </figure>
 
       <h3>Pre-twisted ropes</h3>
 

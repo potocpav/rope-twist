@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spin and torsion</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;}
+.wrap{padding:16px 0;} /* full width of the iframe, which spans the article's text column */
+canvas{width:100%;display:block;background:#fff;border:1px solid var(--outline);border-radius:8px;}
+.stage{position:relative;}
+/* Pause button, overlaid on the canvas's lower left corner; the canvas is always white, so fixed light colours. */
+.overlay{position:absolute;left:12px;bottom:12px;display:flex;gap:8px;}
+.overlay button{width:40px;height:36px;border:1px solid #d6d4cc;border-radius:8px;background:rgba(255,255,255,.85);color:#1f1e1c;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.overlay button:hover{background:#f3f2ee;}
+button svg{width:16px;height:16px;fill:currentColor;}
+.labels{display:grid;grid-template-columns:1fr 1fr;margin-top:8px;text-align:center;}
+.labels b{display:block;font-size:15px;font-weight:500;}
+.labels span{font-size:13px;color:var(--muted);}
+.controls{display:grid;grid-template-columns:120px minmax(0,1fr) 70px;align-items:center;gap:8px 12px;margin:14px 0;}
+.controls label{font-size:14px;color:var(--muted);}
+.controls output{font-size:14px;font-weight:500;text-align:right;font-variant-numeric:tabular-nums;}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:20px;background:transparent;margin:0;}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:var(--line);}
+input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:var(--line);}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);margin-top:-7px;border:none;}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent);border:none;}
+input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+.note{font-size:12px;line-height:1.5;color:var(--muted);margin:10px 0 0;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="stage">
+<canvas id="c" aria-label="Animated 3D rendering of two short vertical ropes side by side, seen slightly from above, turning back and forth. A white grid painted on each rope shows how it is turned: the left rope turns as a whole, the right one is twisted along its length."></canvas>
+<div class="overlay"><button id="pp" aria-label="Pause"></button></div>
+</div>
+<div class="labels">
+<div><b>Spin</b><span>the whole rope turns by <i>θ</i></span></div>
+<div><b>Torsion</b><span>the top turns by <i>θ</i> against the bottom</span></div>
+</div>
+<div class="controls">
+<label for="th">Rotation (<i>θ</i>)</label><input type="range" id="th" min="-360" max="360" step="1" value="0"><output id="to">0°</output>
+</div>
+<p class="note" id="lg" hidden>This figure needs WebGL 2, which this browser does not provide.</p>
+</div>
+<script src="rope.js"></script>
+<script>
+// Two straight vertical ropes of length LEN, side by side, seen slightly from above so their top ends
+// show. Both carry the same rope textures and white grid as Figures 4 and 5. The left rope is turned
+// about its axis by θ all along (spin); the right one is turned by 0 at its bottom end, rising evenly to
+// θ at its top end (torsion), so its twist is θ/LEN all along.
+// The 3D scene always uses the light palette on a white canvas; the controls follow the page theme.
+const LEN=5,GAP=5; // rope length, distance between the ropes (cm)
+const C=Rope.THEMES.light.c,{rr,NS,cross}=Rope,DEG=Math.PI/180,STEP=2*Math.PI/NS,D=rr*STEP;
+const cv=document.getElementById('c'),$=id=>document.getElementById(id);
+const gl=cv.getContext('webgl2',{antialias:true,premultipliedAlpha:false});
+if(!gl)$('lg').hidden=false;
+let W,H,dpr=window.devicePixelRatio||1;
+function resize(){W=cv.clientWidth;H=Math.round(W*0.6);cv.width=W*dpr;cv.height=H*dpr;cv.style.height=H+cv.offsetWidth-W+'px';draw();} // plus the border, so the drawing area stays H tall
+
+// Shaders, as in Figure 4, without the bar. Rope vertices carry (s, a): arc length along the rope from
+// its bottom end and angle around it. The material angle is a - spin(s), with spin(s) running linearly
+// from uSpin.x at the bottom end to uSpin.y at the top.
+const VS=`#version 300 es
+in vec3 aPos;in vec3 aNrm;in vec2 aSA;
+uniform mat4 uMVP,uModel;uniform mat3 uRot;
+out vec3 vN,vV;out vec2 vSA;
+void main(){vec4 w=uModel*vec4(aPos,1.);gl_Position=uMVP*w;vN=uRot*mat3(uModel)*aNrm;vV=uRot*w.xyz;vSA=aSA;}`;
+const FS=`#version 300 es
+precision highp float;
+in vec3 vN,vV;in vec2 vSA;
+uniform int uMode; // 0 textured rope, 1 plain shaded (rope core)
+uniform vec3 uColor,uLight,uFill;uniform sampler2D uTex,uNormal,uAO;uniform vec2 uTexScale,uMapScale,uSpin;
+uniform float uD,uStep,uRr,uGridL,uLen;
+const float PI=3.14159265359,GRID_N=6.,GRID_W=.02; // grid: lines around the rope, line half-width (cm)
+out vec4 o;
+float gridLine(float x,float period){
+  float d=abs(fract(x/period+.5)-.5)*period,aa=fwidth(x)*.75;
+  return 1.-smoothstep(GRID_W-aa,GRID_W+aa,d);
+}
+vec3 lin(vec3 c){return pow(c,vec3(2.2));}
+vec3 perturb(vec3 N,vec3 m,vec2 st){
+  vec3 dp1=dFdx(vV),dp2=dFdy(vV);vec2 d1=dFdx(st),d2=dFdy(st);
+  vec3 p2=cross(dp2,N),p1=cross(N,dp1),T=p2*d1.x+p1*d2.x,B=p2*d1.y+p1*d2.y;
+  float k=inversesqrt(max(max(dot(T,T),dot(B,B)),1e-20));
+  return normalize(T*k*m.x+B*k*m.y+N*m.z);
+}
+void main(){
+  vec3 N=normalize(vN),n=N,alb;
+  float ao=1.,spec=.25,shine=40.,grid=0.;
+  if(uMode==0){
+    float phi=vSA.y-mix(uSpin.x,uSpin.y,clamp(vSA.x/uLen,0.,1.)),q=phi/uStep,p=vSA.x/uD;
+    vec2 uv=uTexScale*vec2(q-p,q+p),st=uv*uMapScale;
+    alb=lin(texture(uTex,uv).rgb);n=perturb(N,texture(uNormal,st).xyz*2.-1.,st);
+    ao=texture(uAO,st).r;spec=.06;shine=12.;
+    grid=max(gridLine(phi*uRr,2.*PI*uRr/GRID_N),gridLine(vSA.x,uGridL));
+  }else alb=lin(uColor);
+  vec3 V=vec3(0,0,1),Hk=normalize(uLight+V);
+  float key=max(dot(n,uLight),0.),fill=max(dot(n,uFill),0.);
+  vec3 amb=mix(vec3(.16,.15,.14),vec3(.34,.35,.37),.5+.5*n.y); // ground below, sky above
+  vec3 c=alb*(amb*ao+(.95*key+.18*fill)*mix(1.,ao,.6));
+  c+=spec*pow(max(dot(n,Hk),0.),shine)*ao*key*vec3(1);
+  c=mix(c,vec3(.95)*(.5+.5*max(dot(N,uLight),0.))*mix(1.,ao,.5),.9*grid);
+  c+=alb*.12*pow(1.-max(dot(n,V),0.),3.)*ao; // fibre fuzz catching light at grazing angles
+  o=vec4(pow(clamp(c,0.,1.),vec3(1./2.2)),1.);
+}`;
+function shader(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(s));return s;}
+let prog,U={};
+if(gl){prog=gl.createProgram();gl.attachShader(prog,shader(gl.VERTEX_SHADER,VS));gl.attachShader(prog,shader(gl.FRAGMENT_SHADER,FS));gl.linkProgram(prog);
+if(!gl.getProgramParameter(prog,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(prog));
+for(const n of['uMVP','uModel','uRot','uMode','uColor','uLight','uFill','uTex','uTexScale','uNormal','uAO','uMapScale','uSpin','uD','uStep','uRr','uGridL','uLen'])U[n]=gl.getUniformLocation(prog,n);}
+
+// Rope textures, as in Figure 4 (see rope-twist.html).
+const STRUCT=4,GRID_L=NS*D/3;
+const hex=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+let tex=null,texScale=[1/NS,1/NS],normal=null,occl=null,mapScale=[1,1];
+function loadTexture(url,smooth,fallback,onload){const t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);
+gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array(fallback));
+const set=min=>{for(const[p,v]of[[gl.TEXTURE_MIN_FILTER,min],[gl.TEXTURE_MAG_FILTER,smooth?gl.LINEAR:gl.NEAREST],[gl.TEXTURE_WRAP_S,gl.REPEAT],[gl.TEXTURE_WRAP_T,gl.REPEAT]])gl.texParameteri(gl.TEXTURE_2D,p,v);};
+set(smooth?gl.LINEAR:gl.NEAREST);
+const img=new Image();img.onload=()=>{gl.bindTexture(gl.TEXTURE_2D,t);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);
+if(smooth){gl.generateMipmap(gl.TEXTURE_2D);set(gl.LINEAR_MIPMAP_LINEAR);}onload(img);draw();};img.src=url;return t;}
+if(gl){
+gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL,gl.NONE);
+tex=loadTexture('rope-texture.png',false,[...hex(C.ro),255],img=>{const w=img.naturalWidth,h=img.naturalHeight;texScale=[h/(NS*w),1/NS];mapScale=[w/STRUCT,h/STRUCT];});
+normal=loadTexture('rope-normal.png',true,[128,128,255,255],()=>{});
+occl=loadTexture('rope-ao.png',true,[255,255,255,255],()=>{});}
+
+// Meshes are built about the rope's own axis (y, through the origin) and placed with a model matrix.
+// Tubes of rings along y, as in Figure 4's mesh: ring y, radius r, normal mix (nc radial, nt along y).
+// Angle a around the axis runs from +z toward +x.
+const M=24;
+function tube(rings){const pos=[],nrm=[],sa=[],tri=[];
+rings.forEach(([y,r,nc,nt])=>{for(let j=0;j<=M;j++){const a=2*Math.PI*j/M,ca=Math.cos(a),sn=Math.sin(a);
+pos.push(r*sn,y,r*ca);nrm.push(sn*nc,nt,ca*nc);sa.push(y,a);}});
+for(let i=0;i<rings.length-1;i++)for(let j=0;j<M;j++){const v=i*(M+1)+j,w=v+M+1;tri.push(v,w,v+1,v+1,w,w+1);}
+return{pos,nrm,sa,tri};}
+// Rope from y = 0 to LEN; its end faces show the sheath, an annulus from CORE·rr out to rr.
+const CORE=0.8;
+function ropeMesh(){const r=[[0,CORE*rr,0,-1],[0,rr,0,-1]];for(let i=0;i<=48;i++)r.push([LEN*i/48,rr,1,0]);r.push([LEN,rr,0,1],[LEN,CORE*rr,0,1]);return upload(tube(r));}
+// Rope core: light grey discs filling the end faces inside the sheath (joined by a tube hidden inside the rope).
+const coreMesh=()=>upload(tube([[0,0,0,-1],[0,CORE*rr,0,-1],[LEN,CORE*rr,0,1],[LEN,0,0,1]]));
+function upload({pos,nrm,sa,tri}){const vao=gl.createVertexArray();gl.bindVertexArray(vao);
+[[pos,3,'aPos'],[nrm,3,'aNrm'],[sa,2,'aSA']].forEach(([d,k,name])=>{const buf=gl.createBuffer(),loc=gl.getAttribLocation(prog,name);
+gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(d),gl.STATIC_DRAW);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,k,gl.FLOAT,false,0,0);});
+const ib=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint32Array(tri),gl.STATIC_DRAW);
+gl.bindVertexArray(null);return{vao,ib,count:tri.length};}
+const rope=gl?ropeMesh():null,core=gl?coreMesh():null;
+const model=x=>new Float32Array([1,0,0,0,0,1,0,0,0,0,1,0,x,0,0,1]); // move to x
+
+// θ swings between -AMP and AMP, sinusoidally with period PERIOD, unless paused. Dragging the slider
+// pauses at the chosen angle; playing continues the swing from there.
+const AMP=180,PERIOD=8,th=$('th'),pp=$('pp');
+const ICON_PAUSE='<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg>';
+const ICON_PLAY='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11a.8.8 0 0 0 1.2.7l9-5.5a.8.8 0 0 0 0-1.4l-9-5.5A.8.8 0 0 0 4 2.5z"/></svg>';
+let theta=0,phase=0,playing=!matchMedia('(prefers-reduced-motion: reduce)').matches,last=performance.now();
+function setBtn(){pp.innerHTML=playing?ICON_PAUSE:ICON_PLAY;pp.setAttribute('aria-label',playing?'Pause':'Play');}
+function show(){th.value=Math.round(theta);$('to').textContent=String(Math.round(theta)).replace('-','−')+'°';draw();}
+pp.onclick=()=>{playing=!playing;setBtn();};
+th.addEventListener('input',()=>{playing=false;setBtn();theta=+th.value;
+// Phase that gives this angle, on the half of the swing heading the way it was already going.
+const p=Math.asin(Math.max(-1,Math.min(1,theta/AMP)));phase=Math.cos(phase)>=0?p:Math.PI-p;show();});
+function frame(now){const dt=Math.min(0.05,(now-last)/1000);last=now;
+if(playing){phase=(phase+2*Math.PI*dt/PERIOD)%(2*Math.PI);theta=AMP*Math.sin(phase);show();}
+requestAnimationFrame(frame);}
+setBtn();requestAnimationFrame(frame);
+
+// Orthographic view, VIEW cm wide, looking down at the ropes by PITCH: [screen x, screen y (up), depth
+// toward the viewer].
+const VIEW=10,PITCH=20*DEG,cp=Math.cos(PITCH),sp=Math.sin(PITCH);
+const view=p=>[p[0],cp*p[1]-sp*p[2],sp*p[1]+cp*p[2]];
+function draw(){if(!gl||!W)return;
+gl.viewport(0,0,cv.width,cv.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+const s=W/VIEW,my=view([0,LEN/2,0])[1];
+const R=[view([1,0,0]),view([0,1,0]),view([0,0,1])],kx=2*s/W,ky=2*s/H,kz=1/100;
+gl.useProgram(prog);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);
+gl.uniformMatrix4fv(U.uMVP,false,new Float32Array([...[0,1,2].flatMap(j=>[kx*R[j][0],ky*R[j][1],-kz*R[j][2],0]),0,-ky*my,0,1]));
+gl.uniformMatrix3fv(U.uRot,false,new Float32Array(R.flat()));
+const unit=v=>{const l=Math.hypot(...v);return v.map(x=>x/l);};
+gl.uniform3fv(U.uLight,unit([-0.35,0.55,1]));gl.uniform3fv(U.uFill,unit([0.6,-0.3,0.5]));
+gl.uniform1f(U.uD,D);gl.uniform1f(U.uStep,STEP);gl.uniform1f(U.uRr,rr);gl.uniform1f(U.uGridL,GRID_L);gl.uniform1f(U.uLen,LEN);
+gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tex);gl.uniform1i(U.uTex,0);gl.uniform2fv(U.uTexScale,texScale);
+gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,normal);gl.uniform1i(U.uNormal,1);
+gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,occl);gl.uniform1i(U.uAO,2);gl.uniform2fv(U.uMapScale,mapScale);
+const a=theta*DEG,drawObj=(o,m)=>{gl.uniformMatrix4fv(U.uModel,false,m);gl.bindVertexArray(o.vao);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,o.ib);gl.drawElements(gl.TRIANGLES,o.count,gl.UNSIGNED_INT,0);};
+gl.uniform3fv(U.uColor,[0.8,0.79,0.77]); // light grey core
+// Spin turns the whole rope by θ; torsion turns its top end by θ and its bottom end not at all.
+for(const[x,spin]of[[-GAP/2,[a,a]],[GAP/2,[0,a]]]){
+gl.uniform1i(U.uMode,0);gl.uniform2fv(U.uSpin,spin);drawObj(rope,model(x));
+gl.uniform1i(U.uMode,1);drawObj(core,model(x));}
+gl.bindVertexArray(null);}
+resize();addEventListener('resize',resize);
+</script>
+</body>
+</html>

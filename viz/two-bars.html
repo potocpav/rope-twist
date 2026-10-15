@@ -12,6 +12,12 @@ canvas{width:100%;display:block;background:#fff;border:1px solid var(--outline);
 .stage{position:relative;}
 .controls{display:grid;grid-template-columns:120px minmax(0,1fr) 70px;align-items:center;gap:8px 12px;margin:14px 0;}
 .controls label{font-size:14px;color:var(--muted);}
+.seg{display:flex;}
+.seg button{flex:1;min-width:0;height:30px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:inherit;font-size:14px;font-variant-numeric:tabular-nums;cursor:pointer;}
+.seg button+button{border-left:0;}
+.seg button:first-child{border-radius:8px 0 0 8px;}
+.seg button:last-child{border-radius:0 8px 8px 0;}
+.seg button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff;}
 .controls output{font-size:14px;font-weight:500;text-align:right;font-variant-numeric:tabular-nums;}
 /* Pause and reset buttons, overlaid on the canvas's lower left corner; the canvas is always white, so fixed light colours. */
 .overlay{position:absolute;left:12px;bottom:12px;display:flex;gap:8px;}
@@ -34,7 +40,7 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 <body>
 <div class="wrap">
 <div class="stage">
-<canvas id="c" aria-label="Animated 3D rendering: a textured rope runs up from below, bends over a bar that faces the viewer, runs across to a second bar set diagonally, wraps half a turn around it and runs back down. A white grid painted on the rope shows twist building up between the bars."></canvas>
+<canvas id="c" aria-label="Animated 3D rendering: a textured rope runs up from below, bends 90° over a first bar, runs across to a second bar, bends 90° over it and runs back down. Each bar can be set square to the rope, pointing at the viewer, or turned 45° either way. A white grid painted on the rope shows twist building up between the bars."></canvas>
 <div class="overlay">
 <button id="pp" aria-label="Pause"></button>
 <button id="rs" aria-label="Reset" title="Reset"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5a5.5 5.5 0 1 1-5.2 3.7.75.75 0 1 1 1.4.5A4 4 0 1 0 8 4h-.6l1.1 1.1a.75.75 0 0 1-1 1L5.2 3.8a.75.75 0 0 1 0-1.1L7.5.5a.75.75 0 0 1 1 1L7.4 2.5z"/></svg></button>
@@ -42,20 +48,25 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 </div>
 <div class="controls">
 <label for="sv">Pull speed</label><input type="range" id="sv" min="-10" max="10" step="1" value="5"><output id="so">5 cm/s</output>
+<label id="b0l">Left bar</label><div class="seg" role="group" aria-labelledby="b0l" id="b0"><button data-t="-1">−45°</button><button data-t="0">0°</button><button data-t="1">+45°</button></div><output id="b0o"></output>
+<label id="b1l">Right bar</label><div class="seg" role="group" aria-labelledby="b1l" id="b1"><button data-t="-1">−45°</button><button data-t="0">0°</button><button data-t="1">+45°</button></div><output id="b1o"></output>
 </div>
 <div class="stats">
 <div class="stat"><div>Spin rate, left rope</div><div id="ol">0.00 rev/s</div></div>
 <div class="stat"><div>Twist between the bars</div><div id="ok">0.0 turns/m</div></div>
 <div class="stat"><div>Spin rate, right rope</div><div id="or">0.00 rev/s</div></div>
 </div>
+<p class="note">Bar angles: how far the rope crosses each bar off square, 90° − <i>α</i>. At 0° the bar points at the viewer; at ±45° it lies diagonally across the view, with the rope going behind it first (+) or in front of it first (−).</p>
 <p class="note" id="lg" hidden>This figure needs WebGL 2, which this browser does not provide.</p>
 </div>
 <script src="rope.js"></script>
 <script>
-// Two bars of radius R0 side by side, in the screen plane (x right, y up, z toward the viewer). The rope
-// runs up from below, bends 90° over the left bar, whose axis points at the viewer (wrap angle 90°, a
-// quarter turn), runs across to the right, and wraps half a turn around the right bar, whose axis runs
-// diagonally from upper left to lower right (wrap angle 45°). There it bends 90° again and runs back down.
+// Two bars of radius R0 side by side (x right, y up, z toward the viewer). The rope runs up from below,
+// bends 90° over the left bar, runs across to the right, bends 90° over the right bar and runs back down.
+// Each bar is set at an angle t·90° (t from -1 to 1, animated between -1, 0 and 1): at 0 its axis points at
+// the viewer and the rope wraps a quarter turn square across it (wrap angle α = 90°); at ±1 its axis lies
+// diagonally in the screen plane and the rope wraps half a turn at α = 45° (+1, going behind the bar first)
+// or α = 135° (-1, the mirror image: in front first).
 // Braid row spacing D equals the arc width of one strand (rr·STEP): texture pixels are square on the surface.
 // The 3D scene always uses the light palette on a white canvas; the controls follow the page theme.
 const R0=1,LM=7; // bar radius, length of the straight rope between the bars (cm)
@@ -67,30 +78,43 @@ let W,H,dpr=window.devicePixelRatio||1;
 function resize(){W=cv.clientWidth;H=Math.round(W*0.6);cv.width=W*dpr;cv.height=H*dpr;cv.style.height=H+cv.offsetWidth-W+'px';} // plus the border, so the drawing area stays H tall
 resize();addEventListener('resize',resize);
 
-// Geometry. Rh: radius of the rope centreline on a bar. Left bar: axis +z through the origin; the rope
-// runs up along x = -Rh and leaves the top of the bar along +x. Right bar: axis A2 = (1,-1,0)/√2 through
-// C2, with E1 = (1,1,0)/√2 (in the screen plane, toward the upper right) and +z completing its frame.
-// Its helix p(θ) = C2 + Rh(cos θ·E1 + sin θ·z) + Rh·θ·cot α·A2, for θ from -π/2 (behind the bar) to π/2
-// (in front of it), has tangent +x at the start and -y at the end. C2 is placed so that the helix starts
-// level with the top of the left bar, LM to its right, at z = 0.
-const Rh=R0+rr,AL2=Math.PI/4,K2=Rh/Math.tan(AL2),S2=Math.SQRT1_2;
-const A2=[S2,-S2,0],E1=[S2,S2,0],C2=[LM+K2*Math.PI/2*S2,Rh-K2*Math.PI/2*S2,Rh];
-const NI=40,LIN=30; // samples and length (cm) of each straight tail
-function buildPath(){const P=[],Tg=[],K=[];
-const seg=(p,t)=>{P.push(p);Tg.push(t);};
-for(let i=NI;i>0;i--)seg([-Rh,-LIN*i/NI,0],[0,1,0]);
-K.push(P.length);for(let i=0,n=60;i<=n;i++){const f=Math.PI-Math.PI/2*i/n;seg([Rh*Math.cos(f),Rh*Math.sin(f),0],[Math.sin(f),-Math.cos(f),0]);}
-K.push(P.length-1);for(let i=1,n=30;i<n;i++)seg([LM*i/n,Rh,0],[1,0,0]);
-const hp=f=>add(add(C2,add(mul(E1,Rh*Math.cos(f)),[0,0,Rh*Math.sin(f)])),mul(A2,K2*f)),ht=f=>nrm(add(add(mul(E1,-Rh*Math.sin(f)),[0,0,Rh*Math.cos(f)]),mul(A2,K2)));
-K.push(P.length);for(let i=0,n=180;i<=n;i++){const f=-Math.PI/2+Math.PI*i/n;seg(hp(f),ht(f));}
-K.push(P.length-1);const pe=P[P.length-1];for(let i=1;i<=NI;i++)seg(add(pe,[0,-LIN*i/NI,0]),[0,-1,0]);
-const{U,S,L}=Rope.rmf(P,Tg,[1,0,0]);
+// Geometry. Rh: radius of the rope centreline on a bar. A bar bending the rope from direction din to dout
+// has its axis a in the plane of n = din × dout (pointing at the viewer) and m = din + dout (the bend's
+// diagonal), a = n cos(t·90°) + m sin(t·90°), so the rope meets it at the same angle α on both sides:
+// cos α = a·din = a·dout. The rope's centreline on it is a helix about the axis, p(θ) = c + Rh(cos θ·e1 +
+// sin θ·e2) + kθ·a with k = Rh·cot α, from θ = 0, where its tangent is din, to θ = ψ (the wrap angle
+// around the bar), where it is dout; e2 is the part of din across the axis, and e1 = e2 × a is the bar's
+// outward normal where the rope arrives.
+const Rh=R0+rr,NI=40,LIN=30; // NI samples and length LIN (cm) of each straight tail
+function barGeom(din,dout,t){const g=t*Math.PI/2,n=nrm(cross(din,dout)),m=nrm(add(din,dout));
+const a=nrm(add(mul(n,Math.cos(g)),mul(m,Math.sin(g)))),ca=dot(a,din),e2=nrm(sub(din,mul(a,ca))),e1=cross(e2,a);
+const co=nrm(sub(dout,mul(a,dot(a,dout))));let psi=Math.atan2(dot(a,cross(e2,co)),dot(e2,co));if(psi<=1e-9)psi+=2*Math.PI;
+const k=Rh*ca/Math.sqrt(1-ca*ca);
+return{a,e1,e2,k,psi,ca,p:th=>add(mul(e1,Rh*Math.cos(th)),add(mul(e2,Rh*Math.sin(th)),mul(a,k*th))),
+tg:th=>nrm(add(mul(e1,-Rh*Math.sin(th)),add(mul(e2,Rh*Math.cos(th)),mul(a,k))))};}
+// The whole path for bar angles t1, t2. The rope runs LM straight across from the left bar to the right
+// one, from x = -LM/2 to LM/2 along the x axis, and the bars are placed to match, so this stretch of rope
+// stays put whatever the angles. So does its texture: the zero-twist frame is turned to be the same there
+// whatever the angles, and arc length s is counted from a fixed value there.
+function buildPath(t1,t2){const P=[],Tg=[],K=[],seg=(p,t)=>{P.push(p);Tg.push(t);};
+const b1=barGeom([0,1,0],[1,0,0],t1),b2=barGeom([1,0,0],[0,-1,0],t2);
+const x1=[-LM/2,0,0];b1.c=sub(x1,b1.p(b1.psi));b2.c=sub([LM/2,0,0],b2.p(0));
+const helix=b=>{const n=Math.max(30,Math.round(b.psi*60));for(let i=0;i<=n;i++){const th=b.psi*i/n;seg(add(b.c,b.p(th)),b.tg(th));}};
+const e1=add(b1.c,b1.p(0));for(let i=NI;i>0;i--)seg(add(e1,[0,-LIN*i/NI,0]),[0,1,0]);
+K.push(P.length);helix(b1);K.push(P.length-1);
+for(let i=1,n=30;i<n;i++)seg(add(x1,[LM*i/n,0,0]),[1,0,0]);
+K.push(P.length);helix(b2);K.push(P.length-1);
+const x2=P[P.length-1];for(let i=1;i<=NI;i++)seg(add(x2,[0,-LIN*i/NI,0]),[0,-1,0]);
+const r=Rope.rmf(P,Tg,[1,0,0]),U=r.U,iB=K[1],ref=[0,0,1];
+const dl=Math.atan2(dot(cross(U[iB],ref),Tg[iB]),dot(U[iB],ref)),cd=Math.cos(dl),sd=Math.sin(dl);
+for(let i=0;i<U.length;i++)U[i]=add(mul(U[i],cd),mul(cross(Tg[i],U[i]),sd)); // turned about each tangent
+const S=r.S.map(x=>x-r.S[iB]+100);
 // Rate (rad/cm) at which the zero-twist frame turns relative to a bar's outward normal, over the
-// samples i0..i1 in contact with the bar (axis a through c): the spin the bar forces, as in Figure 4.
-const tw=(i0,i1,c,a)=>{let psi=0,prev=null;for(let i=i0;i<=i1;i++){const d=sub(P[i],c),h=nrm(sub(d,mul(a,dot(d,a)))),u=U[i],b=cross(Tg[i],u),ang=Math.atan2(dot(h,b),dot(h,u));
+// samples i0..i1 in contact with the bar: the spin the bar forces, as in Figure 4.
+const tw=(i0,i1,b)=>{let psi=0,prev=null;for(let i=i0;i<=i1;i++){const d=sub(P[i],b.c),h=nrm(sub(d,mul(b.a,dot(d,b.a)))),u=U[i],bn=cross(Tg[i],u),ang=Math.atan2(dot(h,bn),dot(h,u));
 if(prev!==null){let x=ang-prev;psi+=Math.atan2(Math.sin(x),Math.cos(x));}prev=ang;}return psi/(S[i1]-S[i0]);};
-return{P,Tg,U,S,L,ks:K.map(i=>S[i]),tau:[tw(K[0],K[1],[0,0,0],[0,0,1]),tw(K[2],K[3],C2,A2)]};}
-const geo=buildPath(),[sA,sB,sC,sD]=geo.ks,L1=sB-sA,L2=sD-sC,TAU1=geo.tau[0],TAU2=geo.tau[1];
+return{P,Tg,U,S,ks:K.map(i=>S[i]),tau:[tw(K[0],K[1],b1),tw(K[2],K[3],b2)],bars:[b1,b2],};}
+let geo,sA,sB,sC,sD,L1,L2,TAU1,TAU2;
 
 // Shaders, as in Figure 4, except that the rope's spin varies along it. Rope vertices carry (s, a): arc
 // length along the centreline and angle around it in the zero-twist frame. The material angle is
@@ -206,10 +230,10 @@ rings.forEach(({c,t,u,r,nc,nt,s})=>{const b=cross(t,u);for(let j=0;j<=M;j++){con
 for(let k=0;k<3;k++){const rad=u[k]*ca+b[k]*sn;pos.push(c[k]+r*rad);nrmv.push(rad*nc+t[k]*nt);}sa.push(s,a);}});
 for(let i=0;i<n-1;i++)for(let j=0;j<M;j++){const v=i*(M+1)+j,w=v+M+1;tri.push(v,w,v+1,v+1,w,w+1);}
 const vao=gl.createVertexArray();gl.bindVertexArray(vao);
-[[pos,3,'aPos'],[nrmv,3,'aNrm'],[sa,2,'aSA']].forEach(([d,k,name])=>{const buf=gl.createBuffer(),loc=gl.getAttribLocation(prog,name);
-gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(d),gl.STATIC_DRAW);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,k,gl.FLOAT,false,0,0);});
-const ib=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint32Array(tri),gl.STATIC_DRAW);
-gl.bindVertexArray(null);return{vao,ib,count:tri.length};}
+const bufs=[];[[pos,3,'aPos'],[nrmv,3,'aNrm'],[sa,2,'aSA']].forEach(([d,k,name])=>{const buf=gl.createBuffer(),loc=gl.getAttribLocation(prog,name);
+bufs.push(buf);gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(d),gl.STATIC_DRAW);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,k,gl.FLOAT,false,0,0);});
+const ib=gl.createBuffer();bufs.push(ib);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint32Array(tri),gl.STATIC_DRAW);
+gl.bindVertexArray(null);return{vao,ib,count:tri.length,free(){gl.deleteVertexArray(vao);bufs.forEach(b=>gl.deleteBuffer(b));}};}
 const RING=0.25;
 function ropeMesh(m){const N=m.P.length,rings=[],idx=[0];
 for(let i=1;i<N;i++)if(m.S[i]-m.S[idx[idx.length-1]]>=RING*0.999||i===N-1)idx.push(i);
@@ -219,20 +243,20 @@ for(const i of idx)rings.push({c:m.P[i],t:m.Tg[i],u:m.U[i],r:rr,nc:1,nt:0,s:m.S[
 rings.push(cap(N-1,1,rr),cap(N-1,1,0));
 return mesh(rings);}
 // Bar: cylinder through c along axis t (u at right angles to it), from k0 to k1 along the axis, with
-// flat ends and small bevelled edges. Left bar: pointing at the viewer, its front face just in front of
-// the rope. Right bar: short enough for both its ends to show.
-const BEV=0.12,c45=Math.SQRT1_2,b45=BEV*(1-c45);
+// flat ends and small bevelled edges. Each bar is BAR long, centred on the rope's contact, so a bar
+// pointing at the viewer shows only its end face, and a diagonal one shows both ends.
+const BEV=0.12,c45=Math.SQRT1_2,b45=BEV*(1-c45),BAR=7.6;
 function barMesh(c,t,u,k0,k1){const ring=(k,r,nc,nt)=>({c:add(c,mul(t,k)),t,u,r,nc,nt,s:0}),rings=[];
 rings.push(ring(k0,0,0,-1),ring(k0,R0-BEV,0,-1),ring(k0+b45,R0-b45,c45,-c45));
 const n=Math.ceil((k1-k0)/0.5);for(let i=0;i<=n;i++)rings.push(ring(k0+BEV+(k1-k0-2*BEV)*i/n,R0,1,0));
 rings.push(ring(k1-b45,R0-b45,c45,c45),ring(k1,R0-BEV,0,1),ring(k1,0,0,1));
 return mesh(rings);}
-const bar1=()=>barMesh([0,0,0],[0,0,1],[1,0,0],-4,1.5),bar2=()=>barMesh(C2,A2,E1,-3.8,3.8);
-// Each bar's local frame and contact centreline, for the shader: [origin, x, y, axis], uHelix, uArc.
-const BARS=[
-{frame:[[0,0,0],[1,0,0],[0,1,0],[0,0,1]],helix:[Rh,0,Math.PI,0],arc:[-1,Math.PI/2]},
-{frame:[C2,E1,[0,0,1],A2],helix:[Rh,K2,-Math.PI/2,-K2*Math.PI/2],arc:[1,Math.PI]}];
-let rope=null;if(gl){rope=ropeMesh(geo);BARS[0].mesh=bar1();BARS[1].mesh=bar2();}
+// Rebuild the path and meshes for bar angles t1, t2. Each bar's local frame and contact centreline, for
+// the shader: [origin, x, y, axis], uHelix, uArc.
+let rope=null,BARS=[];
+function setBars(t1,t2){geo=buildPath(t1,t2);[sA,sB,sC,sD]=geo.ks;L1=sB-sA;L2=sD-sC;[TAU1,TAU2]=geo.tau;
+if(!gl)return;rope&&rope.free();BARS.forEach(b=>b.mesh.free());rope=ropeMesh(geo);
+BARS=geo.bars.map(b=>({frame:[b.c,b.e1,b.e2,b.a],helix:[Rh,b.k,0,0],arc:[1,b.psi],mesh:barMesh(b.c,b.a,b.e1,b.k*b.psi/2-BAR/2,b.k*b.psi/2+BAR/2)}));}
 
 // Spin of the rope: its angle in the zero-twist frame, pA, pB (ends of the left bar's contact) and pC, pD
 // (right bar), and its twist (slope of the angle) km between the bars. The free rope carries the same
@@ -244,9 +268,9 @@ let rope=null;if(gl){rope=ropeMesh(geo);BARS[0].mesh=bar1();BARS[1].mesh=bar2();
 // difference in torque between the rope arriving and the rope leaving over to the bar. Pressed onto the bar
 // about evenly along the contact, the rope takes about the same friction torque per length all along it,
 // so its torque, and so its twist, changes linearly from one side's to the other's: no kinks in the spin.
-// Running left to right, the incoming rope is untwisted, so the left bar (τ = 0) does not turn it; the
-// right bar turns its rope, which twists the rope between the bars, until that twist cancels the bar's τ
-// and the rope stops turning.
+// Running left to right, the incoming rope is untwisted, so the left bar turns it at its own τ (none, when
+// square to the rope); the right bar turns its rope too, which twists the rope between the bars, until
+// that twist makes up the difference between the two bars' τ and the whole rope turns at the left bar's rate.
 let pA=0,km=0;
 const spins=()=>{const pB=pA+km*L1/2,pC=pB+km*LM;return[pA,pB,pC,pC+km*L2/2];};
 function stepSpin(v,dt){let[,pB,pC,pD]=spins();
@@ -265,12 +289,21 @@ if(reduce)sv.value=0;
 function setBtn(){pp.innerHTML=playing()?ICON_PAUSE:ICON_PLAY;pp.setAttribute('aria-label',playing()?'Pause':'Play');}
 pp.onclick=()=>{if(playing()){resume=+sv.value;sv.value=0;}else{sv.value=resume;resume=DEFAULT_SPEED;}setBtn();};
 sv.addEventListener('input',()=>{if(!playing())resume=DEFAULT_SPEED;setBtn();});
-// Reset: the speed back to its default, the rope untwisted, and play.
-$('rs').onclick=()=>{sv.value=sv.defaultValue;resume=DEFAULT_SPEED;pA=km=0;setBtn();pp.focus();};
-setBtn();
-// Signs: positive spin is the direction the right bar turns the rope when it is pulled left to right.
-const SG=Math.sign(TAU2)||1,fmt=(x,d)=>(Math.abs(x)<0.5*10**-d?0:x).toFixed(d).replace('-','−');
+// Bar angles: each bar eases from its current angle to the chosen one over TURN seconds.
+const TURN=0.8,DEFAULT_T=[0,1],bars=DEFAULT_T.map(t=>({t,from:t,to:t,t0:0}));
+const ease=x=>x*x*(3-2*x);
+function setTarget(i,to){const b=bars[i];b.from=b.t;b.to=to;b.t0=performance.now();if(reduce)b.from=to;
+$('b'+i).querySelectorAll('button').forEach(e=>e.setAttribute('aria-pressed',+e.dataset.t===to));}
+[0,1].forEach(i=>$('b'+i).querySelectorAll('button').forEach(e=>e.onclick=()=>setTarget(i,+e.dataset.t)));
+// Reset: the speed and bar angles back to their defaults, the rope untwisted, and play.
+$('rs').onclick=()=>{sv.value=sv.defaultValue;resume=DEFAULT_SPEED;pA=km=0;DEFAULT_T.forEach((t,i)=>setTarget(i,t));setBtn();pp.focus();};
+setBtn();DEFAULT_T.forEach((t,i)=>setTarget(i,t));setBars(...DEFAULT_T);
+// Signs: positive spin is the direction a bar at +45° turns the rope when it is pulled left to right.
+const SG=Math.sign(buildPath(0,1).tau[1])||1,fmt=(x,d)=>(Math.abs(x)<0.5*10**-d?0:x).toFixed(d).replace('-','−');
 function frame(now){const dt=Math.min(0.05,(now-last)/1000);last=now;const v=+sv.value;
+let moved=false;for(const b of bars){const t=b.from+(b.to-b.from)*ease(Math.min(1,Math.max(0,(now-b.t0)/1000/TURN)));if(t!==b.t){b.t=t;moved=true;}}
+if(moved)setBars(bars[0].t,bars[1].t);
+bars.forEach((b,i)=>{$('b'+i+'o').textContent='α '+Math.round(Math.acos(geo.bars[i].ca)*180/Math.PI)+'°';});
 const[a0,,,d0]=spins();for(let i=0;i<4;i++)stepSpin(v,dt/4);const[,pB,pC,pD]=spins();
 pulled=(pulled+v*dt)%(NS*D);
 // Smoothed spin rates of the two tails (rev/s), from the change in their angles.
@@ -281,10 +314,11 @@ $('ol').textContent=fmt(rateL,2)+' rev/s';$('or').textContent=fmt(rateR,2)+' rev
 $('ok').textContent=fmt(SG*km*100/(2*Math.PI),1)+' turns/m';
 if(gl)draw();requestAnimationFrame(frame);}
 
-// Orthographic front view, VIEW cm wide, framing both bars with the rope's tails running off the bottom.
-const VIEW=16,MX=4.6;
+// Orthographic front view, VIEW cm wide and fixed, framing both bars at any angle with the rope's tails
+// running off the bottom.
+const VIEW=18,MX=0,TOP=2.4; // fits every bar angle: x from -9 to 9, top at y = TOP
 function draw(){gl.viewport(0,0,cv.width,cv.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
-const s=W/VIEW,kx=2*s/W,ky=2*s/H,kz=1/100,my=Rh+rr+1.8-H/(2*s);
+const s=W/VIEW,kx=2*s/W,ky=2*s/H,kz=1/100,my=TOP-H/(2*s);
 gl.useProgram(prog);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);
 gl.uniformMatrix4fv(U.uMVP,false,new Float32Array([kx,0,0,0,0,ky,0,0,0,0,-kz,0,-kx*MX,-ky*my,0,1]));
 const unit=v=>{const l=Math.hypot(...v);return v.map(x=>x/l);};
@@ -292,7 +326,7 @@ gl.uniform3fv(U.uLight,unit([-0.35,0.55,1]));gl.uniform3fv(U.uFill,unit([0.6,-0.
 gl.uniform1f(U.uPulled,pulled);gl.uniform1f(U.uD,D);gl.uniform1f(U.uStep,STEP);gl.uniform1f(U.uGridL,GRID_L);
 gl.uniform1f(U.uR0,R0);gl.uniform1f(U.uRr,rr);
 gl.uniform4fv(U.uKs,[sA,sB,sC,sD]);gl.uniform4fv(U.uKp,spins());gl.uniform4fv(U.uKk,[0,km,km,0]);
-gl.uniform3fv(U.uAxO,[0,0,0,...C2]);gl.uniform3fv(U.uAxA,[0,0,1,...A2]);
+gl.uniform3fv(U.uAxO,geo.bars.flatMap(b=>b.c));gl.uniform3fv(U.uAxA,geo.bars.flatMap(b=>b.a));
 gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tex);gl.uniform1i(U.uTex,0);gl.uniform2fv(U.uTexScale,texScale);
 gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,normal);gl.uniform1i(U.uNormal,1);
 gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,occl);gl.uniform1i(U.uAO,2);gl.uniform2fv(U.uMapScale,mapScale);

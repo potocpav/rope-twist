@@ -42,7 +42,7 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 </div>
 </div>
 <div class="controls">
-<label for="al">Wrap angle (<i>α</i>)</label><input type="range" id="al" min="30" max="83" step="1" value="45"><output id="ao">45°</output>
+<label for="al">Wrap angle (<i>α</i>)</label><input type="range" id="al" min="7" max="60" step="1" value="45"><output id="ao">45°</output>
 <label for="sv">Pull speed</label><input type="range" id="sv" min="-10" max="10" step="1" value="5"><output id="so">5 cm/s</output>
 </div>
 <div class="stats">
@@ -56,8 +56,8 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 // Braid row spacing D equals the arc width of one strand (rr·STEP), so both braid directions run at
 // 45° to the rope axis and at right angles to each other: texture pixels are square on the surface.
 // The 3D scene always uses the light palette on a white canvas; the controls follow the page theme.
-// The rope wraps once around a bar of radius R0; the wrap angle α is measured from the bar axis, as in
-// the article's helix diagram.
+// The rope wraps once around a bar of radius R0; the wrap angle α is measured from a line square across
+// the bar, as in the article: 0° when the rope runs straight across it.
 const R0=1,TURNS=1;
 const C=Rope.THEMES.light.c,{rr,NS,cross,view}=Rope,DEG=Math.PI/180,STEP=2*Math.PI/NS,D=rr*STEP;
 const cv=document.getElementById('c'),$=id=>document.getElementById(id);
@@ -85,7 +85,7 @@ precision highp float;
 in vec3 vN,vV,vW;in vec2 vSA;
 uniform int uMode; // 0 textured rope, 1 plain shaded (bar)
 uniform vec3 uColor,uLight,uFill;uniform sampler2D uTex,uNormal,uAO;uniform vec2 uTexScale,uMapScale;
-uniform float uSpin,uPulled,uD,uStep,uR0,uRr,uSinA,uGridL;
+uniform float uSpin,uPulled,uD,uStep,uR0,uRr,uCosA,uGridL;
 uniform vec4 uHelix; // helix centreline: radius, z per radian, start angle, z at start
 const float PI=3.14159265359,GRID_N=6.,GRID_W=.02; // grid: lines around the rope, line half-width (cm)
 out vec4 o;
@@ -121,7 +121,7 @@ void main(){
     // Contact shadow under the wrapped rope: distance from this point to the helix centreline,
     // across the rope (the helix crosses the bar's surface at the wrap angle).
     float th=uHelix.z+mod(atan(vW.y,vW.x)-uHelix.z,2.*PI),dz=vW.z-(uHelix.w+uHelix.y*(th-uHelix.z));
-    float d=length(vec2(dz*uSinA,uRr));
+    float d=length(vec2(dz*uCosA,uRr)); // dz·cos α: across the rope
     ao=mix(.3,1.,smoothstep(uRr,3.5*uRr,d));
     spec=.25;shine=40.;
   }
@@ -139,7 +139,7 @@ function shader(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);g
 let prog,U={};
 if(gl){prog=gl.createProgram();gl.attachShader(prog,shader(gl.VERTEX_SHADER,VS));gl.attachShader(prog,shader(gl.FRAGMENT_SHADER,FS));gl.linkProgram(prog);
 if(!gl.getProgramParameter(prog,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(prog));
-for(const n of['uMVP','uRot','uMode','uColor','uLight','uFill','uTex','uTexScale','uNormal','uAO','uMapScale','uSpin','uPulled','uD','uStep','uR0','uRr','uSinA','uHelix','uGridL'])U[n]=gl.getUniformLocation(prog,n);}
+for(const n of['uMVP','uRot','uMode','uColor','uLight','uFill','uTex','uTexScale','uNormal','uAO','uMapScale','uSpin','uPulled','uD','uStep','uR0','uRr','uCosA','uHelix','uGridL'])U[n]=gl.getUniformLocation(prog,n);}
 
 // Rope textures, both repeating, with texture x along one braid direction and y along the other.
 // Colour, rope-texture.png (nearest sampling): the image height spans the NS strands around the rope,
@@ -201,9 +201,9 @@ function barMesh(R0){const rings=[];for(let z=-40;z<=40;z+=1)rings.push({c:[0,0,
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let pulled=0,spin=0,last=performance.now(),geo=null,geoK=null,rope=null,bar=null;
 const al=$('al'),sv=$('sv'),pp=$('pp');
-// Steepest wrap angle before neighbouring coils touch: adjacent turns lie 2π(R0+rr)·cos α apart, measured
+// Smallest wrap angle before neighbouring coils touch: adjacent turns lie 2π(R0+rr)·sin α apart, measured
 // perpendicular to the rope, which must be at least the rope diameter 2rr.
-al.max=Math.floor(Math.acos(rr/(Math.PI*(R0+rr)))/DEG);
+al.min=Math.ceil(Math.asin(rr/(Math.PI*(R0+rr)))/DEG);
 const ICON_PAUSE='<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg>';
 const ICON_PLAY='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11a.8.8 0 0 0 1.2.7l9-5.5a.8.8 0 0 0 0-1.4l-9-5.5A.8.8 0 0 0 4 2.5z"/></svg>';
 // Play/pause follows the pull speed: the animation is paused exactly when the speed is 0. Pausing
@@ -222,10 +222,10 @@ rs.onclick=()=>{sliders.forEach(r=>r.value=r.defaultValue);resume=DEFAULT_SPEED;
 setBtn();showReset();
 function frame(now){const dt=Math.min(0.05,(now-last)/1000);last=now;
 const adeg=+al.value,a=adeg*DEG,v=+sv.value;
-// buildWrap measures the wrap angle from the bar's cross-sectional plane.
-if(geoK!==adeg){geo=Rope.buildWrap(Math.PI/2-a,R0,TURNS);geoK=adeg;
+// buildWrap measures the wrap angle from the bar's cross-sectional plane, as α is.
+if(geoK!==adeg){geo=Rope.buildWrap(a,R0,TURNS);geoK=adeg;
 // Helix centreline as built by buildWrap (radius, z per radian, start angle π/2, z at start), for the bar's contact shadow.
-const Rh=R0+rr,zpr=Rh/Math.tan(a);geo.alpha=a;geo.helix=[Rh,zpr,Math.PI/2,-zpr*Math.PI*TURNS];if(gl){rope&&rope.free();bar&&bar.free();rope=ropeMesh(geo);bar=barMesh(R0);}}
+const Rh=R0+rr,zpr=Rh*Math.tan(a);geo.alpha=a;geo.helix=[Rh,zpr,Math.PI/2,-zpr*Math.PI*TURNS];if(gl){rope&&rope.free();bar&&bar.free();rope=ropeMesh(geo);bar=barMesh(R0);}}
 // Contact strip locked to bar  =>  whole rope spins at tau per length pulled.
 // pulled wraps every colour-texture period, which is also a whole number of grid rings.
 {const dl=v*dt;pulled=(pulled+dl)%(NS*D);spin=(spin+geo.tw*dl)%(2*Math.PI);}
@@ -236,7 +236,7 @@ $('or').textContent=(v*tau/(2*Math.PI)).toFixed(2).replace('-','−')+' rev/s';
 if(gl)draw(geo);requestAnimationFrame(frame);}
 
 // Orthographic projection through view(), centred on the wrap. The view is VIEW cm wide, widened when
-// a shallow wrap angle makes the helix longer, so the whole turn and some lead-in stay visible.
+// a large wrap angle makes the helix longer, so the whole turn and some lead-in stay visible.
 const VIEW=18;
 function draw(m){gl.viewport(0,0,cv.width,cv.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
 let z0=1e9,z1=-1e9;m.P.forEach(p=>{if(Math.abs(p[0])<R0+rr+0.01&&Math.abs(p[1])<R0+rr+0.01){z0=Math.min(z0,p[2]);z1=Math.max(z1,p[2]);}}); // the helix
@@ -248,7 +248,7 @@ gl.uniformMatrix4fv(U.uMVP,false,mvp);gl.uniformMatrix3fv(U.uRot,false,new Float
 const unit=v=>{const l=Math.hypot(...v);return v.map(x=>x/l);};
 gl.uniform3fv(U.uLight,unit([-0.35,0.55,1]));gl.uniform3fv(U.uFill,unit([0.6,-0.3,0.5]));
 gl.uniform1f(U.uSpin,spin);gl.uniform1f(U.uPulled,pulled);gl.uniform1f(U.uD,D);gl.uniform1f(U.uStep,STEP);gl.uniform1f(U.uGridL,GRID_L);
-gl.uniform1f(U.uR0,R0);gl.uniform1f(U.uRr,rr);gl.uniform1f(U.uSinA,Math.sin(m.alpha));gl.uniform4fv(U.uHelix,m.helix);
+gl.uniform1f(U.uR0,R0);gl.uniform1f(U.uRr,rr);gl.uniform1f(U.uCosA,Math.cos(m.alpha));gl.uniform4fv(U.uHelix,m.helix);
 gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tex);gl.uniform1i(U.uTex,0);gl.uniform2fv(U.uTexScale,texScale);
 gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,normal);gl.uniform1i(U.uNormal,1);
 gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,occl);gl.uniform1i(U.uAO,2);gl.uniform2fv(U.uMapScale,mapScale);

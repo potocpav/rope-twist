@@ -40,7 +40,7 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 <body>
 <div class="wrap">
 <div class="stage">
-<canvas id="c" aria-label="Animated 3D rendering: a textured rope runs up from below, bends 90° over a first bar, runs across to a second bar, bends 90° over it and runs back down. Each bar can be set square to the rope, pointing at the viewer, or turned 45° either way. A white grid painted on the rope shows twist building up between the bars."></canvas>
+<canvas id="c" aria-label="Animated 3D rendering: a textured rope runs up from below, bends 90° over a first bar, runs across to a second bar, bends 90° over it and runs back down. Each bar can be set square to the rope, pointing at the viewer, or turned 45° either way. A white grid painted on the rope shows torsion building up between the bars."></canvas>
 <div class="overlay">
 <button id="pp" aria-label="Pause"></button>
 <button id="rs" aria-label="Reset" title="Reset"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5a5.5 5.5 0 1 1-5.2 3.7.75.75 0 1 1 1.4.5A4 4 0 1 0 8 4h-.6l1.1 1.1a.75.75 0 0 1-1 1L5.2 3.8a.75.75 0 0 1 0-1.1L7.5.5a.75.75 0 0 1 1 1L7.4 2.5z"/></svg></button>
@@ -49,16 +49,16 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 <div class="controls">
 <label for="sv">Pull speed</label><input type="range" id="sv" min="-10" max="10" step="1" value="5"><output id="so">5 cm/s</output>
 <label id="b0l">Left bar</label><div class="seg" role="group" aria-labelledby="b0l" id="b0"><button data-t="-1">−45°</button><button data-t="0">0°</button><button data-t="1">+45°</button></div><output id="b0o"></output>
-<label for="c0">Left resistance</label><input type="range" id="c0" min="0.1" max="4" step="0.1" value="1.2"><output id="s0" title="Share of the left bar's contact that is twisted">0%</output>
+<label for="c0">Left resistance</label><input type="range" id="c0" min="0.1" max="4" step="0.1" value="1.2"><output id="s0" title="Share of the left bar's contact that carries torsion">0%</output>
 <label id="b1l">Right bar</label><div class="seg" role="group" aria-labelledby="b1l" id="b1"><button data-t="-1">−45°</button><button data-t="0">0°</button><button data-t="1">+45°</button></div><output id="b1o"></output>
-<label for="c1">Right resistance</label><input type="range" id="c1" min="0.1" max="4" step="0.1" value="1.2"><output id="s1" title="Share of the right bar's contact that is twisted">0%</output>
+<label for="c1">Right resistance</label><input type="range" id="c1" min="0.1" max="4" step="0.1" value="1.2"><output id="s1" title="Share of the right bar's contact that carries torsion">0%</output>
 </div>
 <div class="stats">
-<div class="stat"><div>Spin rate, left rope</div><div id="ol">0.0 turns/m</div></div>
-<div class="stat"><div>Twist between the bars</div><div id="ok">0.0 turns/m</div></div>
-<div class="stat"><div>Spin rate, right rope</div><div id="or">0.0 turns/m</div></div>
+<div class="stat"><div>Spin rate <i>ω</i>, left rope</div><div id="ol">0.0 turns/m</div></div>
+<div class="stat"><div>Torsion <i>θ</i> between the bars</div><div id="ok">0.0 turns/m</div></div>
+<div class="stat"><div>Spin rate <i>ω</i>, right rope</div><div id="or">0.0 turns/m</div></div>
 </div>
-<p class="note">Bar angles are the wrap angle <i>α</i>: how far the rope crosses each bar off square. At 0° the bar points at the viewer; at ±45° it lies diagonally across the view, with the rope going behind it first (+) or in front of it first (−). Resistance sets how much twist each bar can hold back: the more, the tighter, longer and squarer the rope's bend around it. Each bar brings the twist down at most at a fixed rate along it, so the twist reaches only part way round it; the percentage beside each resistance is that part. At 100% the twist reaches all the way round, which is all the bar can hold: the rope slips there, turning about its own axis against the bar.</p>
+<p class="note">Bar angles are the wrap angle <i>α</i>: how far the rope crosses each bar off square. At 0° the bar points at the viewer; at ±45° it lies diagonally across the view, with the rope going behind it first (+) or in front of it first (−). Resistance sets how much torsion each bar can hold back: the more, the tighter, longer and squarer the rope's bend around it. Each bar brings the torsion down at most at a fixed rate along it, so the torsion reaches only part way round it; the percentage beside each resistance is that part. At 100% the torsion reaches all the way round, which is all the bar can hold: the rope slips there, turning about its own axis against the bar.</p>
 <p class="note" id="lg" hidden>This figure needs WebGL 2, which this browser does not provide.</p>
 </div>
 <script src="rope.js"></script>

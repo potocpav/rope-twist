@@ -37,11 +37,11 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 <div class="overlay"><button id="pp" aria-label="Pause"></button></div>
 </div>
 <div class="labels">
-<div><b>Spin</b><span>the whole rope turns by <i>θ</i></span></div>
-<div><b>Torsion</b><span>the top turns by <i>θ</i> against the bottom</span></div>
+<div><b>Spin</b><span>the whole rope turns by <i>φ</i></span></div>
+<div><b>Torsion</b><span>the top turns by <i>φ</i> against the bottom</span></div>
 </div>
 <div class="controls">
-<label for="th">Rotation (<i>θ</i>)</label><input type="range" id="th" min="-360" max="360" step="1" value="0"><output id="to">0°</output>
+<label for="th">Rotation (<i>φ</i>)</label><input type="range" id="th" min="-360" max="360" step="1" value="0"><output id="to">0°</output>
 </div>
 <p class="note" id="lg" hidden>This figure needs WebGL 2, which this browser does not provide.</p>
 </div>
@@ -49,8 +49,8 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 <script>
 // Two straight vertical ropes of length LEN, side by side, seen slightly from above so their top ends
 // show. Both carry the same rope textures and white grid as Figures 4 and 5. The left rope is turned
-// about its axis by θ all along (spin); the right one is turned by 0 at its bottom end, rising evenly to
-// θ at its top end (torsion), so its twist is θ/LEN all along.
+// about its axis by φ all along (spin); the right one is turned by 0 at its bottom end, rising evenly to
+// φ at its top end (torsion), so its torsion is φ/LEN all along.
 // The 3D scene always uses the light palette on a white canvas; the controls follow the page theme.
 const LEN=5,GAP=5; // rope length, distance between the ropes (cm)
 const C=Rope.THEMES.light.c,{rr,NS,cross}=Rope,DEG=Math.PI/180,STEP=2*Math.PI/NS,D=rr*STEP;
@@ -150,7 +150,7 @@ gl.bindVertexArray(null);return{vao,ib,count:tri.length};}
 const rope=gl?ropeMesh():null,core=gl?coreMesh():null;
 const model=x=>new Float32Array([1,0,0,0,0,1,0,0,0,0,1,0,x,0,0,1]); // move to x
 
-// θ swings between -AMP and AMP, sinusoidally with period PERIOD, unless paused. Dragging the slider
+// φ swings between -AMP and AMP, sinusoidally with period PERIOD, unless paused. Dragging the slider
 // pauses at the chosen angle; playing continues the swing from there.
 const AMP=180,PERIOD=8,th=$('th'),pp=$('pp');
 const ICON_PAUSE='<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg>';
@@ -186,7 +186,7 @@ gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,normal);gl.uniform1i(
 gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,occl);gl.uniform1i(U.uAO,2);gl.uniform2fv(U.uMapScale,mapScale);
 const a=theta*DEG,drawObj=(o,m)=>{gl.uniformMatrix4fv(U.uModel,false,m);gl.bindVertexArray(o.vao);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,o.ib);gl.drawElements(gl.TRIANGLES,o.count,gl.UNSIGNED_INT,0);};
 gl.uniform3fv(U.uColor,[0.8,0.79,0.77]); // light grey core
-// Spin turns the whole rope by θ; torsion turns its top end by θ and its bottom end not at all.
+// Spin turns the whole rope by φ; torsion turns its top end by φ and its bottom end not at all.
 for(const[x,spin]of[[-GAP/2,[a,a]],[GAP/2,[0,a]]]){
 gl.uniform1i(U.uMode,0);gl.uniform2fv(U.uSpin,spin);drawObj(rope,model(x));
 gl.uniform1i(U.uMode,1);drawObj(core,model(x));}

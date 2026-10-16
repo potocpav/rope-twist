@@ -10,7 +10,7 @@ html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,
 .wrap{padding:16px 0;} /* full width of the iframe, which spans the article's text column */
 canvas{width:100%;display:block;background:#fff;border:1px solid var(--outline);border-radius:8px;}
 .stage{position:relative;}
-.controls{display:grid;grid-template-columns:120px minmax(0,1fr) 70px;align-items:center;gap:8px 12px;margin:14px 0;}
+.controls{display:grid;grid-template-columns:130px minmax(0,1fr) 80px;align-items:center;gap:8px 12px;margin:14px 0;}
 .controls label{font-size:14px;color:var(--muted);}
 .seg{display:flex;}
 .seg button{flex:1;min-width:0;height:30px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:inherit;font-size:14px;font-variant-numeric:tabular-nums;cursor:pointer;}
@@ -49,14 +49,16 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 <div class="controls">
 <label for="sv">Pull speed</label><input type="range" id="sv" min="-10" max="10" step="1" value="5"><output id="so">5 cm/s</output>
 <label id="b0l">Left bar</label><div class="seg" role="group" aria-labelledby="b0l" id="b0"><button data-t="-1">−45°</button><button data-t="0">0°</button><button data-t="1">+45°</button></div><output id="b0o"></output>
+<label for="c0">Left resistance</label><input type="range" id="c0" min="0.1" max="4" step="0.1" value="1.2"><output id="s0" title="Share of the left bar's contact that is twisted">0%</output>
 <label id="b1l">Right bar</label><div class="seg" role="group" aria-labelledby="b1l" id="b1"><button data-t="-1">−45°</button><button data-t="0">0°</button><button data-t="1">+45°</button></div><output id="b1o"></output>
+<label for="c1">Right resistance</label><input type="range" id="c1" min="0.1" max="4" step="0.1" value="1.2"><output id="s1" title="Share of the right bar's contact that is twisted">0%</output>
 </div>
 <div class="stats">
 <div class="stat"><div>Spin rate, left rope</div><div id="ol">0.0 turns/m</div></div>
 <div class="stat"><div>Twist between the bars</div><div id="ok">0.0 turns/m</div></div>
 <div class="stat"><div>Spin rate, right rope</div><div id="or">0.0 turns/m</div></div>
 </div>
-<p class="note">Bar angles are the wrap angle <i>α</i>: how far the rope crosses each bar off square. At 0° the bar points at the viewer; at ±45° it lies diagonally across the view, with the rope going behind it first (+) or in front of it first (−).</p>
+<p class="note">Bar angles are the wrap angle <i>α</i>: how far the rope crosses each bar off square. At 0° the bar points at the viewer; at ±45° it lies diagonally across the view, with the rope going behind it first (+) or in front of it first (−). Resistance sets how much twist each bar can hold back: the more, the tighter, longer and squarer the rope's bend around it. Each bar brings the twist down at most at a fixed rate along it, so the twist reaches only part way round it; the percentage beside each resistance is that part. At 100% the twist reaches all the way round, which is all the bar can hold: the rope slips there, turning about its own axis against the bar.</p>
 <p class="note" id="lg" hidden>This figure needs WebGL 2, which this browser does not provide.</p>
 </div>
 <script src="rope.js"></script>
@@ -122,7 +124,7 @@ let geo,sA,sB,sC,sD,L1,L2,LM,TAU1,TAU2;
 
 // Shaders, as in Figure 4, except that the rope's spin varies along it. Rope vertices carry (s, a): arc
 // length along the centreline and angle around it in the zero-twist frame. The material angle is
-// a - spin(s). Its slope, the twist, is given at the four contact ends uKs (uKk) and is linear in
+// a - spin(s). Its slope, the twist, is given at the four ends of the twisted stretch uKs (uKk) and is linear in
 // between, so spin(s) runs from its value uKp at the start of each stretch as a quadratic over a contact,
 // linearly between the bars, and stays constant along the two tails. The material position along the rope is s - pulled.
 // The bars use their own local frame (uBarX, uBarY, and the axis uBarZ, from origin uBarO) for the
@@ -150,7 +152,7 @@ float gridLine(float x,float period){
   return 1.-smoothstep(GRID_W-aa,GRID_W+aa,d);
 }
 // Spin over a stretch from s0 to s1 starting at p0, with the twist changing linearly from k0 to k1.
-float seg(float s,float s0,float s1,float p0,float k0,float k1){float x=clamp(s-s0,0.,s1-s0);return p0+x*(k0+.5*(k1-k0)*x/(s1-s0));}
+float seg(float s,float s0,float s1,float p0,float k0,float k1){float x=clamp(s-s0,0.,s1-s0);return p0+x*(k0+.5*(k1-k0)*x/max(s1-s0,1e-4));}
 float spinAt(float s){return s<uKs.x?uKp.x:s<uKs.y?seg(s,uKs.x,uKs.y,uKp.x,uKk.x,uKk.y):s<uKs.z?seg(s,uKs.y,uKs.z,uKp.y,uKk.y,uKk.z):s<uKs.w?seg(s,uKs.z,uKs.w,uKp.z,uKk.z,uKk.w):uKp.w;}
 vec3 lin(vec3 c){return pow(c,vec3(2.2));}
 // Distance from bar-local point l, at angle t around the bar from the start of the contact, to the rope's
@@ -262,28 +264,56 @@ function setBars(t1,t2){geo=buildPath(t1,t2);[sA,sB,sC,sD]=geo.ks;L1=sB-sA;L2=sD
 if(!gl)return;rope&&rope.free();BARS.forEach(b=>b.mesh.free());rope=ropeMesh(geo);
 BARS=geo.bars.map(b=>({frame:[b.c,b.e1,b.e2,b.a],helix:[Rh,b.k,0,0],arc:[1,b.psi],mesh:barMesh(b.c,b.a,b.e1,b.k*b.psi/2-BAR/2,b.k*b.psi/2+BAR/2)}));}
 
-// Spin of the rope: its angle in the zero-twist frame, pA, pB (ends of the left bar's contact) and pC, pD
-// (right bar), and its twist (slope of the angle) km between the bars. The free rope carries the same
-// torque all along, so it is twisted uniformly: km between the bars, and none along the two free tails,
-// which turn rigidly with the contact ends they meet.
-// A bar grips the rope where it arrives: there, the rope keeps its angle to the bar's surface, so it turns
-// at v(τ - k), where τ is the spin the bar forces and k is the twist of the arriving rope (as in Figure 4,
-// where k = 0). Along the rest of the contact the rope slips about its own axis, and friction carries the
-// difference in torque between the rope arriving and the rope leaving over to the bar. Pressed onto the bar
-// about evenly along the contact, the rope takes about the same friction torque per length all along it,
-// so its torque, and so its twist, changes linearly from one side's to the other's: no kinks in the spin.
-// Running left to right, the incoming rope is untwisted, so the left bar turns it at its own τ (none, when
-// square to the rope); the right bar turns its rope too, which twists the rope between the bars, until
-// that twist makes up the difference between the two bars' τ and the whole rope turns at the left bar's rate.
-let pA=0,km=0;
-const spins=()=>{const pB=pA+km*L1/2,pC=pB+km*LM;return[pA,pB,pC,pC+km*L2/2];};
-function stepSpin(v,dt){let[,pB,pC,pD]=spins();
-if(v>=0){const dA=v*TAU1*dt;km+=(v*(TAU2-km)*dt-dA)/(L1/2+LM);pA+=dA;}
-else{const dB=v*(TAU1-km)*dt;km+=(v*TAU2*dt-dB)/(LM+L2/2);pA=pB+dB-km*L1/2;}}
+// Spin of the rope: its angle in the zero-twist frame, and its twist (slope of the angle) km between the
+// bars. The free rope carries the same torque all along, so it is twisted uniformly: km between the bars,
+// and none along the two free tails, which turn rigidly with the contacts they meet.
+// A bent rope resists turning about its own axis: every turn takes each fibre from the outside of the bend
+// to the inside and back, and the strands rub against each other as they do. So the rope on a bar keeps its
+// angle to its bend (towards the bar's axis) where it arrives, and turns at v(τ - k), where τ is the spin
+// the bar forces and k is the twist of the arriving rope (as in Figure 4, where k = 0). The resistance per
+// length is taken as proportional to (r/R')², where R' = (R0 + rr)/cos²α is the radius of the rope's bend,
+// and it is constant along a bar, so it can bring the twist down at most at a constant rate along the
+// contact: from km at the side facing the other bar down to none over a share f = |km|/C of the contact,
+// where C = c·rr²·ψ·cos³α/(R0 + rr) is the most twist the bar can hold back (that rate times the contact
+// length ψ(R0 + rr)/cos α) and c is the bar's bend resistance. The rest of the contact, towards the tail,
+// is untwisted. Both tails are untwisted, so the twist between the bars is at most the smaller of the two
+// bars' C, where the weaker bar's twist reaches all round it (f = 1); there it slips (both, sharing it, if
+// they are equally strong) and the twist stays put. If the weaker bar is the one the rope runs over first,
+// its slip lets the twist out as spin of the whole rope; if it is the second one, the spin it forces is
+// lost to slip.
+// Running left to right without slip, the incoming rope is untwisted, so the left bar turns it at its own
+// τ (none, when square to the rope); the right bar turns its rope too, which twists the rope between the
+// bars, until that twist makes up the difference between the two bars' τ and the whole rope turns at the
+// left bar's rate.
+// State: pA, the angle of the left tail, and km. caps: both bars' C.
+let pA=0,km=0,caps=[1,1];
+const capacity=(b,c)=>{const ca=Math.sqrt(1-b.sa*b.sa);return c*rr*rr*b.psi*ca*ca*ca/Rh;};
+// Share of each bar's contact that is twisted (more than 1 while the twist is above what it can hold).
+const shares=()=>caps.map(C=>C>1e-9?Math.abs(km)/C:km?Infinity:0),fr=()=>shares().map(f=>Math.min(1,f));
+// Angles at the four ends of the twisted stretch: where the twist starts on the left bar, the two ends of
+// the rope between the bars, and where it ends on the right bar; and those points' arc lengths.
+const spins=()=>{const[f0,f1]=fr(),pB=pA+km*f0*L1/2,pC=pB+km*LM;return[pA,pB,pC,pC+km*f1*L2/2];};
+const knots=()=>{const[f0,f1]=fr();return[sB-f0*L1,sB,sC,sC+f1*L2];};
+function stepSpin(v,dt,cs){const pB=spins()[1],C=geo.bars.map((b,i)=>capacity(b,cs[i])),cap=Math.min(...C);caps=C;
+// Slip shares: all to the weaker bar, or half each if they are equally strong.
+const g1=Math.abs(C[0]-C[1])<1e-9?0.5:C[0]<C[1]?1:0,[f0,f1]=fr();
+// Stuck rates of the upstream (u) and downstream (d) contact entries, and how fast the angle difference
+// between them changes with km: over the rope between the bars, and over the twisted share of the bar
+// nearer the upstream tail (whose twisted length grows with km too, while it is less than the whole bar).
+const fw=v>=0,wu=fw?v*TAU1:v*TAU2,wd=fw?v*(TAU2-km):v*(TAU1-km),su=fw?g1:1-g1;
+const X=fw?LM+L1*(f0<1?f0:0.5):LM+L2*(f1<1?f1:0.5);
+// New twist: as the stuck rates would make it, but no more than the cap (and eased down to it if it is
+// above, after the bars or the bend resistance change).
+let kn=km+(fw?wd-wu:wu-wd)/X*dt;
+if(Math.abs(km)>cap)kn=km+(Math.sign(km)*cap-km)*Math.min(1,4*dt);else kn=Math.max(-cap,Math.min(cap,kn));
+// Slip makes up the difference (an angle over this step), shared between the bars; each contact entry turns
+// as it would stuck, plus its slip.
+const def=(fw?wd-wu:wu-wd)*dt-X*(kn-km),du=wu*dt+(fw?1:-1)*su*def,dd=wd*dt-(fw?1:-1)*(1-su)*def;
+if(fw){pA+=du;km=kn;}else{const b=pB+dd;km=kn;pA=b-km*fr()[0]*L1/2;}}
 
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let pulled=0,last=performance.now(),rateL=0,rateR=0;
-const sv=$('sv'),pp=$('pp');
+const sv=$('sv'),cr=[$('c0'),$('c1')],pp=$('pp');
 const ICON_PAUSE='<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg>';
 const ICON_PLAY='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11a.8.8 0 0 0 1.2.7l9-5.5a.8.8 0 0 0 0-1.4l-9-5.5A.8.8 0 0 0 4 2.5z"/></svg>';
 // Play/pause follows the pull speed, as in Figure 4: paused exactly when the speed is 0.
@@ -299,8 +329,8 @@ const ease=x=>x*x*(3-2*x);
 function setTarget(i,to){const b=bars[i];b.from=b.t;b.to=to;b.t0=performance.now();if(reduce)b.from=to;
 $('b'+i).querySelectorAll('button').forEach(e=>e.setAttribute('aria-pressed',+e.dataset.t===to));}
 [0,1].forEach(i=>$('b'+i).querySelectorAll('button').forEach(e=>e.onclick=()=>setTarget(i,+e.dataset.t)));
-// Reset: the speed and bar angles back to their defaults, the rope untwisted, and play.
-$('rs').onclick=()=>{sv.value=sv.defaultValue;resume=DEFAULT_SPEED;pA=km=0;DEFAULT_T.forEach((t,i)=>setTarget(i,t));setBtn();pp.focus();};
+// Reset: the speed, bend resistance and bar angles back to their defaults, the rope untwisted, and play.
+$('rs').onclick=()=>{sv.value=sv.defaultValue;cr.forEach(e=>e.value=e.defaultValue);resume=DEFAULT_SPEED;pA=km=0;DEFAULT_T.forEach((t,i)=>setTarget(i,t));setBtn();pp.focus();};
 setBtn();DEFAULT_T.forEach((t,i)=>setTarget(i,t));setBars(...DEFAULT_T);
 // Signs: positive spin is the direction a bar at +45° turns the rope when it is pulled left to right.
 const SG=Math.sign(buildPath(0,1).tau[1])||1,fmt=(x,d)=>(Math.abs(x)<0.5*10**-d?0:x).toFixed(d).replace('-','−');
@@ -308,13 +338,14 @@ function frame(now){const dt=Math.min(0.05,(now-last)/1000);last=now;const v=+sv
 let moved=false;for(const b of bars){const t=b.from+(b.to-b.from)*ease(Math.min(1,Math.max(0,(now-b.t0)/1000/TURN)));if(t!==b.t){b.t=t;moved=true;}}
 if(moved)setBars(bars[0].t,bars[1].t);
 bars.forEach((b,i)=>{$('b'+i+'o').textContent='α '+String(Math.round(Math.asin(geo.bars[i].sa)*180/Math.PI)).replace('-','−')+'°';});
-const[a0,,,d0]=spins();for(let i=0;i<4;i++)stepSpin(v,dt/4);const[,pB,pC,pD]=spins();
+const[a0,,,d0]=spins();for(let i=0;i<4;i++)stepSpin(v,dt/4,cr.map(e=>+e.value));const[,pB,pC,pD]=spins();
 pulled=(pulled+v*dt)%(NS*D);
 // Smoothed spin rates of the two tails (turns per metre of rope pulled), from the change in their angles;
 // held while the rope stands still.
 if(dt>0&&v!==0){const k=Math.min(1,dt*8),f=SG*100/(2*Math.PI*v*dt);rateL+=k*(f*(pA-a0)-rateL);rateR+=k*(f*(pD-d0)-rateR);}
 pA-=2*Math.PI*Math.floor(pA/(2*Math.PI)); // keep the angles small
 $('so').textContent=String(v).replace('-','−')+' cm/s';
+shares().forEach((f,i)=>{$('s'+i).textContent=(isFinite(f)?Math.round(100*f):'∞ ')+'%';});
 $('ol').textContent=fmt(rateL,1)+' turns/m';$('or').textContent=fmt(rateR,1)+' turns/m';
 $('ok').textContent=fmt(SG*km*100/(2*Math.PI),1)+' turns/m';
 if(gl)draw();requestAnimationFrame(frame);}
@@ -330,7 +361,7 @@ const unit=v=>{const l=Math.hypot(...v);return v.map(x=>x/l);};
 gl.uniform3fv(U.uLight,unit([-0.35,0.55,1]));gl.uniform3fv(U.uFill,unit([0.6,-0.3,0.5]));
 gl.uniform1f(U.uPulled,pulled);gl.uniform1f(U.uD,D);gl.uniform1f(U.uStep,STEP);gl.uniform1f(U.uGridL,GRID_L);
 gl.uniform1f(U.uR0,R0);gl.uniform1f(U.uRr,rr);
-gl.uniform4fv(U.uKs,[sA,sB,sC,sD]);gl.uniform4fv(U.uKp,spins());gl.uniform4fv(U.uKk,[0,km,km,0]);
+gl.uniform4fv(U.uKs,knots());gl.uniform4fv(U.uKp,spins());gl.uniform4fv(U.uKk,[0,km,km,0]);
 gl.uniform3fv(U.uAxO,geo.bars.flatMap(b=>b.c));gl.uniform3fv(U.uAxA,geo.bars.flatMap(b=>b.a));
 gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tex);gl.uniform1i(U.uTex,0);gl.uniform2fv(U.uTexScale,texScale);
 gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,normal);gl.uniform1i(U.uNormal,1);

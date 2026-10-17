@@ -622,8 +622,11 @@
         a pulley, through a tube-style device, or through some simple anchor configurations.
       </p>
 
+      <h3>Simplest case</h3>
+
       <p>
-        The simplest case which <i>does</i> induce twist is a rope wrapped around a bar at an angle. Running the rope
+        The simplest case which <i>does</i> induce twist is a rope wrapped around a bar at an angle (<a
+          href="#fig-3">Figure 3</a>). Running the rope
         along such a path forces the rope to rotate about its own axis at the rate of <math>
           <mi>ω</mi>
         </math>
@@ -635,8 +638,12 @@
 
         <p>
           The mathematical model comes from Kirchhoff's rod theory. Following <a
-            href="https://rotations.berkeley.edu/kinematics-of-rods/">this article</a>, rope twist <i>φ</i> changes over
-          its arc-length <i>s</i> as follows (equation (54.1)):
+            href="https://rotations.berkeley.edu/kinematics-of-rods/">this article</a>, rope twist <math>
+            <mi>φ</mi>
+          </math> changes over
+          its arc-length <math>
+            <mi>s</mi>
+          </math> as follows (equation (54.1)):
         </p>
 
         <div class="eq" id="eq-1" data-n="1">
@@ -665,10 +672,21 @@
 
         <p class="where">where</p>
         <ul class="where">
-          <li><i>φ</i> is rope angle of twist with respect to its Frenet frame,</li>
-          <li><i>s</i> is position along the rope's path,</li>
-          <li><i>ν</i><sub>3</sub> is rope torsion,</li>
-          <li><i>τ</i> is the geometric torsion of the helix formed by rope's centreline.
+          <li><math>
+              <mi>φ</mi>
+            </math> is rope angle of twist with respect to its Frenet frame,</li>
+          <li><math>
+              <mi>s</mi>
+            </math> is position along the rope's path,</li>
+          <li><math>
+              <msub>
+                <mi>ν</mi>
+                <mn>3</mn>
+              </msub>
+            </math> is rope torsion,</li>
+          <li><math>
+              <mi>τ</mi>
+            </math> is the geometric torsion of the helix formed by rope's centreline.
           </li>
         </ul>
 
@@ -687,7 +705,9 @@
             </mfrac>
           </math>.
           A bent rope resists turning about its own axis, so as the rope slides, each piece of it
-          preserves its angle <i>φ</i> to the bar. In a short time <math>
+          preserves its angle <math>
+            <mi>φ</mi>
+          </math> to the bar. In a short time <math>
             <mi mathvariant="normal">d</mi>
             <mi>t</mi>
           </math>, a piece of rope moves along the bar by
@@ -699,7 +719,9 @@
             <mo>&#x2062;</mo>
             <mi mathvariant="normal">d</mi>
             <mi>t</mi>
-          </math>, where <i>v</i> is the velocity of the rope, and its angle stays constant:
+          </math>, where <math>
+            <mi>v</mi>
+          </math> is the velocity of the rope, and its angle stays constant:
         </p>
 
         <div class="eq" id="eq-2" data-n="2">
@@ -844,7 +866,14 @@
         </div>
 
         <p>
-          For simplicity, we assume that the rope has no torsion (<i>ν</i><sub>3</sub> = 0). After labelling the rotation rate <math>
+          For simplicity, we assume that the rope has no torsion (<math>
+            <msub>
+              <mi>ν</mi>
+              <mn>3</mn>
+            </msub>
+            <mo>=</mo>
+            <mn>0</mn>
+          </math>). After labelling the rotation rate <math>
             <mi>ω</mi>
             <mo>=</mo>
             <mfrac>
@@ -857,7 +886,9 @@
                 <mi>t</mi>
               </mrow>
             </mfrac>
-          </math> and expanding <i>τ</i> (equation (31) from the article):
+          </math> and expanding <math>
+            <mi>τ</mi>
+          </math> (equation (31) from the article):
         </p>
 
         <div class="eq" id="eq-6" data-n="6">
@@ -917,28 +948,38 @@
 
       <p class="where">where</p>
       <ul class="where">
-        <li><i>ω</i> is the rotation rate of the rope about its axis (in radians per second),</li>
-        <li><i>v</i> is the rope's velocity,</li>
-        <li><i>α</i> is the wrap angle,</li>
-        <li><i>R</i> is the radius of the bar,</li>
-        <li><i>r</i> is the radius of the rope.</li>
+        <li><math>
+            <mi>ω</mi>
+          </math> is the rotation rate of the rope about its axis (in radians per second),</li>
+        <li><math>
+            <mi>v</mi>
+          </math> is the rope's velocity,</li>
+        <li><math>
+            <mi>α</mi>
+          </math> is the wrap angle,</li>
+        <li><math>
+            <mi>R</mi>
+          </math> is the radius of the bar,</li>
+        <li><math>
+            <mi>r</mi>
+          </math> is the radius of the rope.</li>
       </ul>
 
       <figure class="photo" id="fig-3">
         <img src="images/helix-diagram.png" width="1500" height="701"
           alt="Diagram of a rope wrapped once around a horizontal bar in a helix, labelled with bar radius R, rope radius r, wrap angle α, and the rope's rotation φ about its own axis as it moves.">
-        <figcaption><b>Figure 3.</b> Rope wrapped around a bar in a helix: bar radius <i>R</i>, rope radius <i>r</i>,
-          wrap angle <i>α</i>. As the rope runs around the bar, it rotates about its own axis by angle <i>ϕ</i>.
+        <figcaption><b>Figure 3.</b> Rope wrapped around a bar in a helix: bar radius <math>
+            <mi>R</mi>
+          </math>, rope radius <math>
+            <mi>r</mi>
+          </math>,
+          wrap angle <math>
+            <mi>α</mi>
+          </math>. As the rope runs around the bar, it rotates with angular speed <math>
+            <mi>ω</mi>
+          </math>.
         </figcaption>
       </figure>
-
-
-
-      This shows that rope naturally rotates around its own axis when
-      it travels along a helical path.
-
-      See <a href="#fig-3">Figure 3</a> below for a diagram.
-
 
       <aside class="callout callout-info">
         <svg viewBox="0 0 16 16" aria-hidden="true">
@@ -948,67 +989,12 @@
       </aside>
 
       <p>
-        Rope twist over time and space can be expressed succintly as a total differential:
+        This shows that rope naturally spins when
+        it travels along a helical path. Note that this is not a result of friction, but a result of rope geometry.
+        Even with zero friction, it would still spin. Likewise, rope tension does not play a role.
       </p>
 
-      <div class="eq" id="eq-8" data-n="8">
-        <math display="block">
-          <mrow>
-            <mi mathvariant="normal">d</mi>
-            <mi>φ</mi>
-            <mo>=</mo>
-            <mrow>
-              <mo>(</mo>
-              <msub>
-                <mi>ν</mi>
-                <mn>3</mn>
-              </msub>
-              <mo>−</mo>
-              <mfrac>
-                <mrow>
-                  <mi>sin</mi>
-                  <mo>&#x2061;</mo>
-                  <mi>α</mi>
-                  <mo>⋅</mo>
-                  <mi>cos</mi>
-                  <mo>&#x2061;</mo>
-                  <mi>α</mi>
-                </mrow>
-                <mrow>
-                  <mi>R</mi>
-                  <mo>+</mo>
-                  <mi>r</mi>
-                </mrow>
-              </mfrac>
-              <mo>)</mo>
-            </mrow>
-            <mo>⋅</mo>
-            <mrow>
-              <mo stretchy="false">(</mo>
-              <mi mathvariant="normal">d</mi>
-              <mi>s</mi>
-              <mo>−</mo>
-              <mi>v</mi>
-              <mo>&#x2062;</mo>
-              <mi mathvariant="normal">d</mi>
-              <mi>t</mi>
-              <mo stretchy="false">)</mo>
-            </mrow>
-          </mrow>
-        </math>
-      </div>
-
-      <p>
-        , this intrinsic rotation is transferred from the helical section of the rope
-        to the straight sections leading to and from the bar, which causes the rope to spin, as can be seen in <a
-          href="#fig-4">Figure 4</a>
-        below.
-      </p>
-
-      <p>Some notes on this result, for a rope arriving at the bar untwisted, which therefore spins at the rate
-        <i>τ</i>:
-      </p>
-
+      <p>Some notes on this result:
       <ul>
         <li>Spinning is not caused by friction, but by rope geometry. Even with zero friction, the rope would still
           spin.</li>
@@ -1027,10 +1013,16 @@
       </figure>
 
       <p>
-        So far, the rope arriving at the bar was untwisted. In general, the rotation <i>φ</i> of the rope about its own
+        So far, the rope arriving at the bar was untwisted. In general, the rotation <math>
+          <mi>φ</mi>
+        </math> of the rope about its own
         axis can change in two different ways, which are easy to confuse (<a href="#fig-5">Figure 5</a>). Below,
-        <i>l</i> is the length of
-        rope pulled past a fixed place, and <i>s</i> is the position along the rope at one moment:
+        <math>
+          <mi>l</mi>
+        </math> is the length of
+        rope pulled past a fixed place, and <math>
+          <mi>s</mi>
+        </math> is the position along the rope at one moment:
       </p>
 
       <table class="defs">
@@ -1107,8 +1099,18 @@
       </div>
 
       <p>
-        with <i>τ</i> from the formula above. A rope arriving untwisted (<i>θ</i> = 0)
-        spins at the full <i>τ</i>, as in <a href="#fig-4">Figure 4</a>; a rope that already carries torsion <i>τ</i>
+        with <math>
+          <mi>τ</mi>
+        </math> from the formula above. A rope arriving untwisted (<math>
+          <mi>θ</mi>
+          <mo>=</mo>
+          <mn>0</mn>
+        </math>)
+        spins at the full <math>
+          <mi>τ</mi>
+        </math>, as in <a href="#fig-4">Figure 4</a>; a rope that already carries torsion <math>
+          <mi>τ</mi>
+        </math>
         runs around the bar
         without spinning at all.
       </p>
@@ -1134,7 +1136,9 @@
       </p>
 
       <p>
-        As we saw, a helix imparts a spin rate <i>ω</i> to the rope. When multiple helical sections are placed along
+        As we saw, a helix imparts a spin rate <math>
+          <mi>ω</mi>
+        </math> to the rope. When multiple helical sections are placed along
         the rope's path and their spin rates are the same,
         then the whole system's spin rate is equal to the sections' spin rates.
       </p>

@@ -1,6 +1,6 @@
 # How Climbing Ropes Twist
 
-Text and analysis by me, code by Claude
+Text and analysis by me, code by Claude.
 
 A blog post on why a climbing rope twists.
 

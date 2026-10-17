@@ -5,6 +5,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>How Climbing Ropes Twist</title>
+  <script>
+    // Apply a theme chosen earlier with the theme switch before the page is first drawn, so it does not flash.
+    try { const t = localStorage.getItem('rope-twist-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) { }
+  </script>
   <meta name="description" content="Why a climbing rope spins about its own axis when pulled around a bar at an angle.">
   <style>
     :root {
@@ -211,6 +215,12 @@
       font-weight: 600;
     }
 
+    /* Math in one installed math font that has every symbol it uses, so its letters and spacing match:
+       macOS has STIX Two Math, Windows Cambria Math, and many Linux systems Latin Modern or DejaVu Math. */
+    math {
+      font-family: "STIX Two Math", "Cambria Math", "Latin Modern Math", "DejaVu Math TeX Gyre", math;
+    }
+
     math[display="block"] {
       display: block math;
       margin: 24px 0;
@@ -218,17 +228,13 @@
       text-align: center;
     }
 
-    /* Numbered display equations: the number sits at the right, counted through the article. */
-    body {
-      counter-reset: eq;
-    }
-
+    /* Numbered display equations: the number (data-n) sits at the right. The numbers are given in the markup,
+       not counted in CSS, so they stay right while the derivation is collapsed and its equations are hidden. */
     .eq {
       display: flex;
       align-items: center;
       gap: 12px;
       margin: 24px 0;
-      counter-increment: eq;
     }
 
     .eq math[display="block"] {
@@ -238,10 +244,30 @@
     }
 
     .eq::after {
-      content: "(" counter(eq) ")";
+      content: "(" attr(data-n) ")";
       flex: none;
       color: var(--muted);
       font-variant-numeric: tabular-nums;
+    }
+
+    /* Collapsible derivation, closed by default, in a bordered box. */
+    details.derivation {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 16px;
+      margin: 24px 0;
+    }
+
+    details.derivation>summary {
+      cursor: pointer;
+      padding: 12px 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      font-weight: 600;
+    }
+
+    details.derivation[open]>summary {
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 16px;
     }
 
     p.where {
@@ -561,12 +587,13 @@
       </figure>
 
 
-      <h2>Twisting physics</h2>
+      <h2>Theory</h2>
 
       <p>Rope twist is not an invisible or mysterious property, nor is it caused by the rope sheath moving relative to
         the rope core (at least not in most cases). Rope twist is simply the rotation of a rope around its own axis.
-        When the rate of rotation is high enough,
-        the rope starts buckling, and eventually starts forming loops and becomes tangled.
+        When one end of the rope is held stationary, and the other end is spun, the rope accumulates twist.
+        When the number of twists is high enough, the rope starts buckling and eventually forms loops and becomes
+        tangled.
       </p>
 
 
@@ -581,61 +608,73 @@
       </figure>
 
       <p>
-        In virtually all scenarios, rope twist is induced by holding one end of the rope stationary, while the other
-        end is forced to spin around its axis. One end is commonly held stationary because it is fixed to an anchor,
-        tied in to a climber, or just lying on the ground. The other end of the rope is forced to spin around its axis
-        by running through an obstacle - a runner, an anchor, or a belay device.
-      </p>
-
-      <h3>Theory</h3>
-
-      <p>
         Because climbing rope sheath is diagonally braided, ropes bend easily, but are very resistant to <i>torsion</i>
         - a technical term for twisting along a rope's length.
-        Because of this, when running around obstacles, ropes will bend, but will remain mostly untwisted.
-        It turns out, rather surprisingly, that this tendency to follow untwisted paths is what makes the rope spin,
-        and eventually, become tangled. We need to understand the details of rope rotation when running around
-        obstacles, which is the subject of the next section.
-      </p>
+        Given this property, when running around obstacles, ropes will bend, but will remain mostly untwisted.
+        It turns out, rather surprisingly, that this tendency to remain untwisted when following curved paths is
+        what makes the rope spin, and as a result, become twisted and tangled.
 
-      <aside class="callout callout-info">
-        <svg viewBox="0 0 16 16" aria-hidden="true">
-          <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0Zm0 3.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2ZM9 12H7V7h2v5Z" />
-        </svg>
-        <p>The math section may need to be hidden by default.</p>
-      </aside>
+      </p>
+      <p>
+        In order to quantify this effect, we need to understand the details of how ropes behave when running around
+        obstacles. We can model rope as a curve running through space. When the curve is planar, the rope bends in an
+        obvious fashion, and no twist is induced. This is the case for a straight rope, but also rope running over
+        a pulley, through a tube-style device, or through some simple anchor configurations.
+      </p>
 
       <p>
-        The mathematical model comes from Kirchhoff's rod theory. Following <a
-          href="https://rotations.berkeley.edu/kinematics-of-rods/">this article</a>, we can model rope as a material
-        curve running through space. When the curve is planar, rope bends in an obvious fashion, and no twist is induced
-        (geometric torsion is zero).
-        This is the case for a straight rope, but also rope running over a pulley, through a tube-style device, or
-        through some simple anchor configurations.
+        The simplest case which <i>does</i> induce twist is a rope wrapped around a bar at an angle. Running the rope
+        along such a path forces the rope to rotate about its own axis at the rate of <math>
+          <mi>ω</mi>
+        </math>
+        radians per second:
       </p>
 
-<h3>Helical configuration</h3>
+      <details class="derivation">
+        <summary>Mathematical derivation</summary>
 
-      <p>
-        The simplest case which <i>does</i> induce twist is a rope wrapped around a bar in a helix.
-        In the article above, by substituting the torsion <i>τ</i> of the helix from equation (31) into equation (54.1),
-        we find that the rope twists around the bar at the rate <math>
-          <mfrac>
-            <mrow>
-              <mi>∂</mi>
-              <mi>φ</mi>
-            </mrow>
-            <mrow>
-              <mi>∂</mi>
-              <mi>s</mi>
-            </mrow>
-          </mfrac>
-        </math>:
-      </p>
+        <p>
+          The mathematical model comes from Kirchhoff's rod theory. Following <a
+            href="https://rotations.berkeley.edu/kinematics-of-rods/">this article</a>, rope twist <i>φ</i> changes over
+          its arc-length <i>s</i> as follows (equation (54.1)):
+        </p>
 
-      <div class="eq" id="eq-1">
-        <math display="block">
-          <mrow>
+        <div class="eq" id="eq-1" data-n="1">
+          <math display="block">
+            <mrow>
+              <mfrac>
+                <mrow>
+                  <mi>∂</mi>
+                  <mi>φ</mi>
+                </mrow>
+                <mrow>
+                  <mi>∂</mi>
+                  <mi>s</mi>
+                </mrow>
+              </mfrac>
+              <mo>=</mo>
+              <msub>
+                <mi>ν</mi>
+                <mn>3</mn>
+              </msub>
+              <mo>−</mo>
+              <mi>τ</mi>
+            </mrow>
+          </math>
+        </div>
+
+        <p class="where">where</p>
+        <ul class="where">
+          <li><i>φ</i> is rope angle of twist with respect to its Frenet frame,</li>
+          <li><i>s</i> is position along the rope's path,</li>
+          <li><i>ν</i><sub>3</sub> is rope torsion,</li>
+          <li><i>τ</i> is the geometric torsion of the helix formed by rope's centreline.
+          </li>
+        </ul>
+
+        <p>
+          When the rope slides around the bar, we want to measure whether it rotates over time, expressed as
+          <math>
             <mfrac>
               <mrow>
                 <mi>∂</mi>
@@ -643,15 +682,219 @@
               </mrow>
               <mrow>
                 <mi>∂</mi>
-                <mi>s</mi>
+                <mi>t</mi>
               </mrow>
             </mfrac>
+          </math>.
+          A bent rope resists turning about its own axis, so as the rope slides, each piece of it
+          preserves its angle <i>φ</i> to the bar. In a short time <math>
+            <mi mathvariant="normal">d</mi>
+            <mi>t</mi>
+          </math>, a piece of rope moves along the bar by
+          <math>
+            <mi mathvariant="normal">d</mi>
+            <mi>s</mi>
             <mo>=</mo>
-            <msub>
-              <mi>ν</mi>
-              <mn>3</mn>
-            </msub>
-            <mo>−</mo>
+            <mi>v</mi>
+            <mo>&#x2062;</mo>
+            <mi mathvariant="normal">d</mi>
+            <mi>t</mi>
+          </math>, where <i>v</i> is the velocity of the rope, and its angle stays constant:
+        </p>
+
+        <div class="eq" id="eq-2" data-n="2">
+          <math display="block">
+            <mrow>
+              <mi mathvariant="normal">d</mi>
+              <mi>φ</mi>
+              <mo>=</mo>
+              <mfrac>
+                <mrow>
+                  <mi>∂</mi>
+                  <mi>φ</mi>
+                </mrow>
+                <mrow>
+                  <mi>∂</mi>
+                  <mi>s</mi>
+                </mrow>
+              </mfrac>
+              <mo>&#x2062;</mo>
+              <mi mathvariant="normal">d</mi>
+              <mi>s</mi>
+              <mo>+</mo>
+              <mfrac>
+                <mrow>
+                  <mi>∂</mi>
+                  <mi>φ</mi>
+                </mrow>
+                <mrow>
+                  <mi>∂</mi>
+                  <mi>t</mi>
+                </mrow>
+              </mfrac>
+              <mo>&#x2062;</mo>
+              <mi mathvariant="normal">d</mi>
+              <mi>t</mi>
+            </mrow>
+          </math>
+        </div>
+
+        <div class="eq" id="eq-3" data-n="3">
+          <math display="block">
+            <mrow>
+              <mn>0</mn>
+              <mo>=</mo>
+              <mrow>
+                <mo>(</mo>
+                <mfrac>
+                  <mrow>
+                    <mi>∂</mi>
+                    <mi>φ</mi>
+                  </mrow>
+                  <mrow>
+                    <mi>∂</mi>
+                    <mi>s</mi>
+                  </mrow>
+                </mfrac>
+                <mo>&#x2062;</mo>
+                <mi>v</mi>
+                <mo>+</mo>
+                <mfrac>
+                  <mrow>
+                    <mi>∂</mi>
+                    <mi>φ</mi>
+                  </mrow>
+                  <mrow>
+                    <mi>∂</mi>
+                    <mi>t</mi>
+                  </mrow>
+                </mfrac>
+                <mo>)</mo>
+              </mrow>
+              <mo>&#x2062;</mo>
+              <mi mathvariant="normal">d</mi>
+              <mi>t</mi>
+            </mrow>
+          </math>
+        </div>
+
+        <p>Therefore:</p>
+
+        <div class="eq" id="eq-4" data-n="4">
+          <math display="block">
+            <mrow>
+              <mfrac>
+                <mrow>
+                  <mi>∂</mi>
+                  <mi>φ</mi>
+                </mrow>
+                <mrow>
+                  <mi>∂</mi>
+                  <mi>t</mi>
+                </mrow>
+              </mfrac>
+              <mo>=</mo>
+              <mo>−</mo>
+              <mi>v</mi>
+              <mo>⋅</mo>
+              <mfrac>
+                <mrow>
+                  <mi>∂</mi>
+                  <mi>φ</mi>
+                </mrow>
+                <mrow>
+                  <mi>∂</mi>
+                  <mi>s</mi>
+                </mrow>
+              </mfrac>
+            </mrow>
+          </math>
+        </div>
+
+        <p>Substituting (1), we get the rotation rate:</p>
+
+        <div class="eq" id="eq-5" data-n="5">
+          <math display="block">
+            <mrow>
+              <mfrac>
+                <mrow>
+                  <mi>∂</mi>
+                  <mi>φ</mi>
+                </mrow>
+                <mrow>
+                  <mi>∂</mi>
+                  <mi>t</mi>
+                </mrow>
+              </mfrac>
+              <mo>=</mo>
+              <mi>v</mi>
+              <mo>⋅</mo>
+              <mrow>
+                <mo>(</mo>
+                <mi>τ</mi>
+                <mo>−</mo>
+                <msub>
+                  <mi>ν</mi>
+                  <mn>3</mn>
+                </msub>
+                <mo>)</mo>
+              </mrow>
+            </mrow>
+          </math>
+        </div>
+
+        <p>
+          For simplicity, we assume that the rope has no torsion (<i>ν</i><sub>3</sub> = 0). After labelling the rotation rate <math>
+            <mi>ω</mi>
+            <mo>=</mo>
+            <mfrac>
+              <mrow>
+                <mi>∂</mi>
+                <mi>φ</mi>
+              </mrow>
+              <mrow>
+                <mi>∂</mi>
+                <mi>t</mi>
+              </mrow>
+            </mfrac>
+          </math> and expanding <i>τ</i> (equation (31) from the article):
+        </p>
+
+        <div class="eq" id="eq-6" data-n="6">
+          <math display="block">
+            <mrow>
+              <mi>τ</mi>
+              <mo>=</mo>
+              <mfrac>
+                <mrow>
+                  <mi>sin</mi>
+                  <mo>&#x2061;</mo>
+                  <mi>α</mi>
+                  <mo>⋅</mo>
+                  <mi>cos</mi>
+                  <mo>&#x2061;</mo>
+                  <mi>α</mi>
+                </mrow>
+                <mrow>
+                  <mi>R</mi>
+                  <mo>+</mo>
+                  <mi>r</mi>
+                </mrow>
+              </mfrac>
+            </mrow>
+          </math>
+        </div>
+
+        <p>we finally get the equation below.</p>
+      </details>
+
+      <div class="eq" id="eq-7" data-n="7">
+        <math display="block">
+          <mrow>
+            <mi>ω</mi>
+            <mo>=</mo>
+            <mi>v</mi>
+            <mo>⋅</mo>
             <mfrac>
               <mrow>
                 <mi>sin</mi>
@@ -674,14 +917,11 @@
 
       <p class="where">where</p>
       <ul class="where">
-        <li><i>φ</i> is the rotation of the rope about its own axis, measured from the bar's outward normal (in
-          radians),</li>
-        <li><i>s</i> is the position along the rope path,</li>
-        <li><i>ν</i><sub>3</sub> is the torsion of the rope,</li>
+        <li><i>ω</i> is the rotation rate of the rope about its axis (in radians per second),</li>
+        <li><i>v</i> is the rope's velocity,</li>
+        <li><i>α</i> is the wrap angle,</li>
         <li><i>R</i> is the radius of the bar,</li>
-        <li><i>r</i> is the radius of the rope,</li>
-        <li><i>α</i> is the wrap angle, measured from a line square across the bar: 0° when the rope runs straight
-          across it (Figure 3).</li>
+        <li><i>r</i> is the radius of the rope.</li>
       </ul>
 
       <figure class="photo" id="fig-3">
@@ -692,189 +932,13 @@
         </figcaption>
       </figure>
 
-      <p>
-        When the rope slides around the bar, we want to measure whether any rope rotation rate is induced,
-        <math>
-          <mfrac>
-            <mrow>
-              <mi>∂</mi>
-              <mi>φ</mi>
-            </mrow>
-            <mrow>
-              <mi>∂</mi>
-              <mi>t</mi>
-            </mrow>
-          </mfrac>
-        </math>.
-        A bent rope resists turning about its own axis, so as the rope slides, each piece of it
-        preserves its angle <i>φ</i> to the bar. Thus, for any offset <i>a</i>, we have:
-      </p>
 
-      <div class="eq" id="eq-2">
-        <math display="block">
-          <mrow>
-            <mi>φ</mi>
-            <mo stretchy="false">(</mo>
-            <mi>s</mi>
-            <mo>,</mo>
-            <mi>t</mi>
-            <mo stretchy="false">)</mo>
-            <mo>=</mo>
-            <mi>φ</mi>
-            <mo stretchy="false">(</mo>
-            <mi>s</mi>
-            <mo>+</mo>
-            <mi>v</mi>
-            <mo>&#x2062;</mo>
-            <mi>a</mi>
-            <mo>,</mo>
-            <mi>t</mi>
-            <mo>+</mo>
-            <mi>a</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </math>
-      </div>
 
-      <p>
-        where <i>v</i> is the velocity of the rope. By substituting <i>a</i> = −<i>t</i>, we can express
-        time-dependent angle
-        <math>
-          <mi>φ</mi>
-          <mo stretchy="false">(</mo>
-          <mi>s</mi>
-          <mo>,</mo>
-          <mi>t</mi>
-          <mo stretchy="false">)</mo>
-        </math> in terms of static configuration <math>
-          <mi>φ</mi>
-          <mo stretchy="false">(</mo>
-          <mi>s</mi>
-          <mo>,</mo>
-          <mn>0</mn>
-          <mo stretchy="false">)</mo>
-        </math>:
-      </p>
+      This shows that rope naturally rotates around its own axis when
+      it travels along a helical path.
 
-      <div class="eq" id="eq-3">
-        <math display="block">
-          <mrow>
-            <mi>φ</mi>
-            <mo stretchy="false">(</mo>
-            <mi>s</mi>
-            <mo>,</mo>
-            <mi>t</mi>
-            <mo stretchy="false">)</mo>
-            <mo>=</mo>
-            <mi>φ</mi>
-            <mo stretchy="false">(</mo>
-            <mi>s</mi>
-            <mo>−</mo>
-            <mi>v</mi>
-            <mo>&#x2062;</mo>
-            <mi>t</mi>
-            <mo>,</mo>
-            <mn>0</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </math>
-      </div>
+      See <a href="#fig-3">Figure 3</a> below for a diagram.
 
-      <p>
-        Now, the rotation rate with respect to time can be expressed as:
-      </p>
-
-      <div class="eq" id="eq-4">
-        <math display="block">
-          <mrow>
-            <mfrac>
-              <mrow>
-                <mi>∂</mi>
-                <mi>φ</mi>
-              </mrow>
-              <mrow>
-                <mi>∂</mi>
-                <mi>t</mi>
-              </mrow>
-            </mfrac>
-            <mo>=</mo>
-            <mfrac>
-              <mrow>
-                <mi>∂</mi>
-                <mi>φ</mi>
-              </mrow>
-              <mrow>
-                <mi>∂</mi>
-                <mi>s</mi>
-              </mrow>
-            </mfrac>
-            <mo>⋅</mo>
-            <mfrac>
-              <mrow>
-                <mi>∂</mi>
-                <mo stretchy="false">(</mo>
-                <mi>s</mi>
-                <mo>−</mo>
-                <mi>v</mi>
-                <mo>&#x2062;</mo>
-                <mi>t</mi>
-                <mo stretchy="false">)</mo>
-              </mrow>
-              <mrow>
-                <mi>∂</mi>
-                <mi>t</mi>
-              </mrow>
-            </mfrac>
-          </mrow>
-        </math>
-      </div>
-
-      <p>Substituting (4), we finally get the rotation rate:</p>
-
-      <div class="eq" id="eq-5">
-        <math display="block">
-          <mrow>
-            <mfrac>
-              <mrow>
-                <mi>∂</mi>
-                <mi>φ</mi>
-              </mrow>
-              <mrow>
-                <mi>∂</mi>
-                <mi>t</mi>
-              </mrow>
-            </mfrac>
-            <mo>=</mo>
-            <mi>v</mi>
-            <mo>⋅</mo>
-            <mrow>
-              <mo>(</mo>
-              <mfrac>
-                <mrow>
-                  <mi>sin</mi>
-                  <mo>&#x2061;</mo>
-                  <mi>α</mi>
-                  <mo>⋅</mo>
-                  <mi>cos</mi>
-                  <mo>&#x2061;</mo>
-                  <mi>α</mi>
-                </mrow>
-                <mrow>
-                  <mi>R</mi>
-                  <mo>+</mo>
-                  <mi>r</mi>
-                </mrow>
-              </mfrac>
-              <mo>−</mo>
-              <msub>
-                <mi>ν</mi>
-                <mn>3</mn>
-              </msub>
-              <mo>)</mo>
-            </mrow>
-          </mrow>
-        </math>
-      </div>
 
       <aside class="callout callout-info">
         <svg viewBox="0 0 16 16" aria-hidden="true">
@@ -882,15 +946,15 @@
         </svg>
         <p>The blog post is fairly complete up to this point. Below, it's work in progress.</p>
       </aside>
-      
+
       <p>
         Rope twist over time and space can be expressed succintly as a total differential:
       </p>
 
-      <div class="eq" id="eq-6">
+      <div class="eq" id="eq-8" data-n="8">
         <math display="block">
           <mrow>
-            <mi>d</mi>
+            <mi mathvariant="normal">d</mi>
             <mi>φ</mi>
             <mo>=</mo>
             <mrow>
@@ -921,12 +985,12 @@
             <mo>⋅</mo>
             <mrow>
               <mo stretchy="false">(</mo>
-              <mi>d</mi>
+              <mi mathvariant="normal">d</mi>
               <mi>s</mi>
               <mo>−</mo>
               <mi>v</mi>
               <mo>&#x2062;</mo>
-              <mi>d</mi>
+              <mi mathvariant="normal">d</mi>
               <mi>t</mi>
               <mo stretchy="false">)</mo>
             </mrow>
@@ -936,7 +1000,8 @@
 
       <p>
         , this intrinsic rotation is transferred from the helical section of the rope
-        to the straight sections leading to and from the bar, which causes the rope to spin, as can be seen in Figure 4
+        to the straight sections leading to and from the bar, which causes the rope to spin, as can be seen in <a
+          href="#fig-4">Figure 4</a>
         below.
       </p>
 
@@ -963,7 +1028,8 @@
 
       <p>
         So far, the rope arriving at the bar was untwisted. In general, the rotation <i>φ</i> of the rope about its own
-        axis can change in two different ways, which are easy to confuse (Figure 5). Below, <i>l</i> is the length of
+        axis can change in two different ways, which are easy to confuse (<a href="#fig-5">Figure 5</a>). Below,
+        <i>l</i> is the length of
         rope pulled past a fixed place, and <i>s</i> is the position along the rope at one moment:
       </p>
 
@@ -1028,7 +1094,7 @@
 
       <p>A bar gripping the rope fixes the twist:</p>
 
-      <div class="eq" id="eq-7">
+      <div class="eq" id="eq-9" data-n="9">
         <math display="block">
           <mrow>
             <mi>ω</mi>
@@ -1042,7 +1108,8 @@
 
       <p>
         with <i>τ</i> from the formula above. A rope arriving untwisted (<i>θ</i> = 0)
-        spins at the full <i>τ</i>, as in Figure 4; a rope that already carries torsion <i>τ</i> runs around the bar
+        spins at the full <i>τ</i>, as in <a href="#fig-4">Figure 4</a>; a rope that already carries torsion <i>τ</i>
+        runs around the bar
         without spinning at all.
       </p>
 
@@ -1233,13 +1300,26 @@
       });
     })();
 
-    // Colour theme: set from the system preference (and again whenever it changes), or with the menu's
-    // theme switch (not remembered). Embedded figures are kept in sync with the page theme and sized to their content.
+    // Collapsible derivations remember whether they are open, in this browser only (and not at all where
+    // storage is blocked). Restored as the page loads, before it is first shown.
+    document.querySelectorAll('details.derivation').forEach((d, i) => {
+      const key = 'rope-twist-derivation-' + i;
+      try { if (localStorage.getItem(key) === 'open') d.open = true; } catch (e) { }
+      d.addEventListener('toggle', () => {
+        try { localStorage.setItem(key, d.open ? 'open' : 'closed'); } catch (e) { }
+      });
+    });
+
+    // Colour theme: set with the menu's theme switch, which is remembered in this browser (where storage is
+    // allowed), or else from the system preference (and again whenever it changes). Embedded figures are kept
+    // in sync with the page theme and sized to their content.
     (function () {
       const mq = matchMedia('(prefers-color-scheme: dark)');
       const frames = [...document.querySelectorAll('figure iframe')];
       const buttons = [...document.querySelectorAll('[data-theme-choice]')];
-      let theme;
+      const KEY = 'rope-twist-theme';
+      let theme, chosen = null;
+      try { const t = localStorage.getItem(KEY); if (t === 'light' || t === 'dark') chosen = t; } catch (e) { }
       const send = f => { try { f.contentWindow.postMessage({ type: 'rope-twist-theme', theme }, '*'); } catch (e) { } };
       const setTheme = t => {
         theme = t;
@@ -1247,10 +1327,14 @@
         buttons.forEach(b => b.setAttribute('aria-pressed', b.dataset.themeChoice === t));
         frames.forEach(send);
       };
-      setTheme(mq.matches ? 'dark' : 'light');
+      setTheme(chosen || (mq.matches ? 'dark' : 'light'));
       frames.forEach(f => f.addEventListener('load', () => send(f)));
-      mq.addEventListener('change', () => setTheme(mq.matches ? 'dark' : 'light'));
-      buttons.forEach(b => b.addEventListener('click', () => setTheme(b.dataset.themeChoice)));
+      mq.addEventListener('change', () => { if (!chosen) setTheme(mq.matches ? 'dark' : 'light'); });
+      buttons.forEach(b => b.addEventListener('click', () => {
+        chosen = b.dataset.themeChoice;
+        try { localStorage.setItem(KEY, chosen); } catch (e) { }
+        setTheme(chosen);
+      }));
       addEventListener('message', e => {
         if (!e.data || e.data.type !== 'rope-twist-height') return;
         const f = frames.find(f => f.contentWindow === e.source);

@@ -991,26 +991,90 @@
       <p>
         This shows that rope naturally spins when
         it travels along a helical path. Note that this is not a result of friction, but a result of rope geometry.
-        Even with zero friction, it would still spin. Likewise, rope tension does not play a role.
+        Even with zero friction, rope would still spin. Likewise, rope tension does not play a role in this result.
       </p>
 
-      <p>Some notes on this result:
+      <p>Some additional notes on this result:</p>
       <ul>
-        <li>Spinning is not caused by friction, but by rope geometry. Even with zero friction, the rope would still
-          spin.</li>
         <li>Spin rate is highest for a rope running at 45° to the bar. The spin rate is zero when the rope is
           wrapped around the bar at a right angle.</li>
-        <li>Spin rate is higher for smaller bend radii, and smaller rope diameters.</li>
-        <li>Spin rate is independent of the number of turns, rope velocity and rope tension. A quarter turn should
-          induce the same spin rate as a full turn - more on that later.</li>
+        <li>Spin rate is higher for smaller bend radii,</li>
       </ul>
+
+      <p>Spin rate is independent of the number of turns around the bar. A quarter turn induces the same spin rate as several full turns.
+        This makes the result applicable to the rope simply bending over a carabiner. However, there are factors
+        which limit the spin rate in such cases - more on that later.
+      </p>
 
       <figure id="fig-4">
         <iframe id="viz-2" src="viz/rope-twist.html"
           title="Interactive animation: a braided rope pulled around a bar at an angle, showing how the rope spins as a result"></iframe>
-        <figcaption><b>Figure 4.</b> A braided rope pulled around a bar at an angle, showing how the rope spins as a
-          result. Rope radius is 5&nbsp;mm, bar radius is 10&nbsp;mm.</figcaption>
+        <figcaption><b>Figure 4.</b> A rope pulled around a bar at an angle, showing how the rope spins as a
+          result. Rope radius is 5&nbsp;mm; the bar radius can be set from 0.5 to 2&nbsp;cm.</figcaption>
       </figure>
+
+      <details class="derivation">
+        <summary>Example calculation</summary>
+
+        <p>
+          Take a 10&nbsp;mm rope running over a carabiner whose bar is 10&nbsp;mm thick, at an angle of 45°, where
+          the spin is greatest. The radii are half the diameters:
+          <math><mi>r</mi><mo>=</mo><mn>5</mn><mtext>&nbsp;mm</mtext></math> and <math><mi>R</mi><mo>=</mo><mn>5</mn><mtext>&nbsp;mm</mtext></math>.
+          We want to calculate how much rope needs to be pulled over the carabiner to make the rope spin once.
+        </p>
+
+        <p>
+          Dividing equation (7) by the rope's velocity <math><mi>v</mi></math> gives how much the rope turns per
+          length of rope pulled over the bar:
+        </p>
+
+        <math display="block">
+          <mrow>
+            <mfrac>
+              <mi>ω</mi>
+              <mi>v</mi>
+            </mfrac>
+            <mo>=</mo>
+            <mfrac>
+              <mrow><mi>sin</mi><mo>&#x2061;</mo><mn>45</mn><mo>°</mo><mo>⋅</mo><mi>cos</mi><mo>&#x2061;</mo><mn>45</mn><mo>°</mo></mrow>
+              <mrow><mn>5</mn><mtext>&nbsp;mm</mtext><mo>+</mo><mn>5</mn><mtext>&nbsp;mm</mtext></mrow>
+            </mfrac>
+            <mo>=</mo>
+            <mfrac>
+              <mn>0.5</mn>
+              <mrow><mn>10</mn><mtext>&nbsp;mm</mtext></mrow>
+            </mfrac>
+            <mo>=</mo>
+            <mn>0.05</mn>
+            <mtext>&nbsp;rad/mm</mtext>
+          </mrow>
+        </math>
+
+        <p>
+          One full turn is <math><mn>2</mn><mo>&#x2062;</mo><mi>π</mi></math> radians, so the length of rope
+          pulled per turn is
+        </p>
+
+        <math display="block">
+          <mrow>
+            <mfrac>
+              <mrow><mn>2</mn><mo>&#x2062;</mo><mi>π</mi></mrow>
+              <mrow><mn>0.05</mn><mtext>&nbsp;rad/mm</mtext></mrow>
+            </mfrac>
+            <mo>≈</mo>
+            <mn>126</mn><mtext>&nbsp;mm</mtext>
+            <mo>≈</mo>
+            <mn>12.6</mn>
+            <mtext>&nbsp;cm</mtext>
+          </mrow>
+        </math>
+
+        <p>
+          So the rope turns once about its own axis for every 12.6&nbsp;cm pulled over the carabiner: about 8 turns per
+          metre. In practice, much less twist builds up than this, if the rope can't spin freely, because rope strongly 
+          resists such a large torsion.
+        </p>
+      </details>
 
       <p>
         So far, the rope arriving at the bar was untwisted. In general, the rotation <math>
@@ -1117,11 +1181,10 @@
 
       <figure id="fig-5">
         <iframe id="viz-3" src="viz/spin-torsion.html"
-          title="Interactive figure: two ropes side by side, one spun and one twisted by the same angle"></iframe>
-        <figcaption><b>Figure 5.</b> Spin and torsion, as the ropes turn back and forth by up to half a turn. Left:
-          the whole rope turns about its own axis by the same angle all along. Right: the bottom end is held and the
-          top end turns, so the rope is twisted along its length. The grid lines along the rope stay straight under
-          spin and wind into a helix under torsion. The grey discs on the ropes' ends are their cores.</figcaption>
+          title="Interactive figure: a straight rope twisted along its length, and a bent rope turning about its own axis"></iframe>
+        <figcaption><b>Figure 5.</b> Torsion and bent rotation visualization. Climbing ropes resist these deformations, which
+          makes them twist when pulled around obstacles at an oblique angle.
+        </figcaption>
       </figure>
 
       <h3>Complex configurations</h3>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Spin and torsion</title>
+<title>Torsion and bent rotation</title>
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;}
@@ -33,12 +33,12 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 <body>
 <div class="wrap">
 <div class="stage">
-<canvas id="c" aria-label="Animated 3D rendering of two short vertical ropes side by side, seen slightly from above, turning back and forth. A white grid painted on each rope shows how it is turned: the left rope turns as a whole, the right one is twisted along its length."></canvas>
+<canvas id="c" aria-label="Animated 3D rendering of two short ropes side by side, seen slightly from above, turning back and forth. On the left, a straight rope is twisted along its length; on the right, a rope bent into an upside-down U turns about its own axis all along while keeping its shape. A white grid painted on each rope shows how it is turned."></canvas>
 <div class="overlay"><button id="pp" aria-label="Pause"></button></div>
 </div>
 <div class="labels">
-<div><b>Spin</b><span>the whole rope turns by <i>φ</i></span></div>
-<div><b>Torsion</b><span>the top turns by <i>φ</i> against the bottom</span></div>
+<div><b>Torsion</b><span>the top turns against the bottom</span></div>
+<div><b>Bent rotation</b><span>bent rope spins about its axis</span></div>
 </div>
 <div class="controls">
 <label for="th">Rotation (<i>φ</i>)</label><input type="range" id="th" min="-360" max="360" step="1" value="0"><output id="to">0°</output>
@@ -47,10 +47,11 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 </div>
 <script src="rope.js"></script>
 <script>
-// Two straight vertical ropes of length LEN, side by side, seen slightly from above so their top ends
-// show. Both carry the same rope textures and white grid as Figures 4 and 5. The left rope is turned
-// about its axis by φ all along (spin); the right one is turned by 0 at its bottom end, rising evenly to
-// φ at its top end (torsion), so its torsion is φ/LEN all along.
+// Two short ropes side by side, seen slightly from above, with the same rope textures and white grid as
+// Figures 4 and 6. Left, torsion: a straight vertical rope of length LEN is turned by 0 at its bottom end,
+// rising evenly to φ at its top end, so its torsion is φ/LEN all along. Right, bent rotation: a rope bent
+// into an upside-down U (two vertical legs joined by a half circle) turns about its own axis by φ all
+// along, keeping its shape.
 // The 3D scene always uses the light palette on a white canvas; the controls follow the page theme.
 const LEN=5,GAP=5; // rope length, distance between the ropes (cm)
 const C=Rope.THEMES.light.c,{rr,NS,cross}=Rope,DEG=Math.PI/180,STEP=2*Math.PI/NS,D=rr*STEP;
@@ -139,6 +140,27 @@ for(let i=0;i<rings.length-1;i++)for(let j=0;j<M;j++){const v=i*(M+1)+j,w=v+M+1;
 return{pos,nrm,sa,tri};}
 // Rope from y = 0 to LEN; its end faces show the sheath, an annulus from CORE·rr out to rr.
 const CORE=0.8;
+// Bent rope: upside-down U, legs LEG high at x = ±BEND, joined by a half circle of radius BEND (centreline).
+// The path is planar, so its zero-twist frame is simply the plane's normal, +z, all along. Rings: centre c,
+// tangent t, radius r, normal mix (nc radial, nt along t), arc length s; angle a around the rope runs from +z
+// toward t × z, as in tube() for a rope running up.
+const LEG=3,BEND=1.25,UP=[0,0,1];
+function bentPath(){const P=[];
+for(let i=0;i<=24;i++)P.push({c:[-BEND,LEG*i/24,0],t:[0,1,0]});
+for(let i=1;i<=48;i++){const f=Math.PI*(1-i/48);P.push({c:[BEND*Math.cos(f),LEG+BEND*Math.sin(f),0],t:[Math.sin(f),-Math.cos(f),0]});}
+for(let i=1;i<=24;i++)P.push({c:[BEND,LEG*(1-i/24),0],t:[0,-1,0]});
+let s=0;P.forEach((q,i)=>{if(i)s+=Math.hypot(...q.c.map((x,k)=>x-P[i-1].c[k]));q.s=s;});return P;}
+function rings(R){const pos=[],nrm=[],sa=[],tri=[];
+R.forEach(({c,t,r,nc,nt,s})=>{const b=cross(t,UP);for(let j=0;j<=M;j++){const a=2*Math.PI*j/M,ca=Math.cos(a),sn=Math.sin(a);
+for(let k=0;k<3;k++){const rad=UP[k]*ca+b[k]*sn;pos.push(c[k]+r*rad);nrm.push(rad*nc+t[k]*nt);}sa.push(s,a);}});
+for(let i=0;i<R.length-1;i++)for(let j=0;j<M;j++){const v=i*(M+1)+j,w=v+M+1;tri.push(v,w,v+1,v+1,w,w+1);}
+return{pos,nrm,sa,tri};}
+function bentMesh(){const P=bentPath(),A=P[0],Z=P[P.length-1],R=[];
+R.push({...A,r:CORE*rr,nc:0,nt:-1},{...A,r:rr,nc:0,nt:-1});P.forEach(q=>R.push({...q,r:rr,nc:1,nt:0}));R.push({...Z,r:rr,nc:0,nt:1},{...Z,r:CORE*rr,nc:0,nt:1});
+return upload(rings(R));}
+// Its core: discs filling the two end faces inside the sheath.
+function bentCoreMesh(){const P=bentPath(),A=P[0],Z=P[P.length-1];
+return[upload(rings([{...A,r:0,nc:0,nt:-1},{...A,r:CORE*rr,nc:0,nt:-1}])),upload(rings([{...Z,r:CORE*rr,nc:0,nt:1},{...Z,r:0,nc:0,nt:1}]))];}
 function ropeMesh(){const r=[[0,CORE*rr,0,-1],[0,rr,0,-1]];for(let i=0;i<=48;i++)r.push([LEN*i/48,rr,1,0]);r.push([LEN,rr,0,1],[LEN,CORE*rr,0,1]);return upload(tube(r));}
 // Rope core: light grey discs filling the end faces inside the sheath (joined by a tube hidden inside the rope).
 const coreMesh=()=>upload(tube([[0,0,0,-1],[0,CORE*rr,0,-1],[LEN,CORE*rr,0,1],[LEN,0,0,1]]));
@@ -147,7 +169,7 @@ function upload({pos,nrm,sa,tri}){const vao=gl.createVertexArray();gl.bindVertex
 gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(d),gl.STATIC_DRAW);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,k,gl.FLOAT,false,0,0);});
 const ib=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint32Array(tri),gl.STATIC_DRAW);
 gl.bindVertexArray(null);return{vao,ib,count:tri.length};}
-const rope=gl?ropeMesh():null,core=gl?coreMesh():null;
+const rope=gl?ropeMesh():null,core=gl?coreMesh():null,bent=gl?bentMesh():null,bentCore=gl?bentCoreMesh():[];
 const model=x=>new Float32Array([1,0,0,0,0,1,0,0,0,0,1,0,x,0,0,1]); // move to x
 
 // φ swings between -AMP and AMP, sinusoidally with period PERIOD, unless paused. Dragging the slider
@@ -186,10 +208,12 @@ gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,normal);gl.uniform1i(
 gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,occl);gl.uniform1i(U.uAO,2);gl.uniform2fv(U.uMapScale,mapScale);
 const a=theta*DEG,drawObj=(o,m)=>{gl.uniformMatrix4fv(U.uModel,false,m);gl.bindVertexArray(o.vao);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,o.ib);gl.drawElements(gl.TRIANGLES,o.count,gl.UNSIGNED_INT,0);};
 gl.uniform3fv(U.uColor,[0.8,0.79,0.77]); // light grey core
-// Spin turns the whole rope by φ; torsion turns its top end by φ and its bottom end not at all.
-for(const[x,spin]of[[-GAP/2,[a,a]],[GAP/2,[0,a]]]){
-gl.uniform1i(U.uMode,0);gl.uniform2fv(U.uSpin,spin);drawObj(rope,model(x));
-gl.uniform1i(U.uMode,1);drawObj(core,model(x));}
+// Bent rotation turns the whole bent rope by φ; torsion turns the straight rope's top end by φ and its
+// bottom end not at all.
+gl.uniform1i(U.uMode,0);gl.uniform2fv(U.uSpin,[a,a]);drawObj(bent,model(GAP/2));
+gl.uniform1i(U.uMode,1);bentCore.forEach(o=>drawObj(o,model(GAP/2)));
+gl.uniform1i(U.uMode,0);gl.uniform2fv(U.uSpin,[0,a]);drawObj(rope,model(-GAP/2));
+gl.uniform1i(U.uMode,1);drawObj(core,model(-GAP/2));
 gl.bindVertexArray(null);}
 resize();addEventListener('resize',resize);
 </script>

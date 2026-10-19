@@ -42,7 +42,8 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 </div>
 </div>
 <div class="controls">
-<label for="al">Wrap angle (<i>α</i>)</label><input type="range" id="al" min="7" max="60" step="1" value="45"><output id="ao">45°</output>
+<label for="al">Wrap angle (<i>α</i>)</label><input type="range" id="al" min="6.1" max="60" step="0.1" value="45"><output id="ao">45.0°</output>
+<label for="rb">Bar radius (<i>R</i>)</label><input type="range" id="rb" min="0.5" max="2" step="0.1" value="1"><output id="bo">1.0 cm</output>
 <label for="sv">Pull speed</label><input type="range" id="sv" min="-10" max="10" step="1" value="5"><output id="so">5 cm/s</output>
 </div>
 <div class="stats">
@@ -56,9 +57,9 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 // Braid row spacing D equals the arc width of one strand (rr·STEP), so both braid directions run at
 // 45° to the rope axis and at right angles to each other: texture pixels are square on the surface.
 // The 3D scene always uses the light palette on a white canvas; the controls follow the page theme.
-// The rope wraps once around a bar of radius R0; the wrap angle α is measured from a line square across
-// the bar, as in the article: 0° when the rope runs straight across it.
-const R0=1,TURNS=1;
+// The rope wraps once around a bar of radius R0 (set with the bar radius slider); the wrap angle α is
+// measured from a line square across the bar, as in the article: 0° when the rope runs straight across it.
+const TURNS=1;let R0=1;
 const C=Rope.THEMES.light.c,{rr,NS,cross,view}=Rope,DEG=Math.PI/180,STEP=2*Math.PI/NS,D=rr*STEP;
 const cv=document.getElementById('c'),$=id=>document.getElementById(id);
 const gl=cv.getContext('webgl2',{antialias:true,premultipliedAlpha:false});
@@ -200,10 +201,12 @@ function barMesh(R0){const rings=[];for(let z=-40;z<=40;z+=1)rings.push({c:[0,0,
 
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let pulled=0,spin=0,last=performance.now(),geo=null,geoK=null,rope=null,bar=null;
-const al=$('al'),sv=$('sv'),pp=$('pp');
+const al=$('al'),rb=$('rb'),sv=$('sv'),pp=$('pp');
 // Smallest wrap angle before neighbouring coils touch: adjacent turns lie 2π(R0+rr)·sin α apart, measured
-// perpendicular to the rope, which must be at least the rope diameter 2rr.
-al.min=Math.ceil(Math.asin(rr/(Math.PI*(R0+rr)))/DEG);
+// perpendicular to the rope, which must be at least the rope diameter 2rr. A thinner bar needs a larger
+// angle; moving the bar radius slider raises the wrap angle to the new minimum if it is below it.
+function setMinAngle(){al.min=Math.ceil(10*Math.asin(rr/(Math.PI*(+rb.value+rr)))/DEG)/10;if(+al.value<+al.min)al.value=al.min;}
+setMinAngle();rb.addEventListener('input',setMinAngle);
 const ICON_PAUSE='<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg>';
 const ICON_PLAY='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11a.8.8 0 0 0 1.2.7l9-5.5a.8.8 0 0 0 0-1.4l-9-5.5A.8.8 0 0 0 4 2.5z"/></svg>';
 // Play/pause follows the pull speed: the animation is paused exactly when the speed is 0. Pausing
@@ -214,23 +217,23 @@ const playing=()=>+sv.value!==0; // negative speeds pull the rope backwards
 if(reduce)sv.value=0; // start paused
 function setBtn(){pp.innerHTML=playing()?ICON_PAUSE:ICON_PLAY;pp.setAttribute('aria-label',playing()?'Pause':'Play');}
 // Reset: sliders back to their defaults, and play. Shown only while a slider is off its default.
-const rs=$('rs'),sliders=[al,sv],showReset=()=>{rs.hidden=sliders.every(r=>r.value===r.defaultValue);};
+const rs=$('rs'),sliders=[al,rb,sv],showReset=()=>{rs.hidden=sliders.every(r=>r.value===r.defaultValue);};
 pp.onclick=()=>{if(playing()){resume=+sv.value;sv.value=0;}else{sv.value=resume;resume=DEFAULT_SPEED;}setBtn();showReset();};
 sv.addEventListener('input',()=>{if(!playing())resume=DEFAULT_SPEED;setBtn();});
 sliders.forEach(r=>r.addEventListener('input',showReset));
-rs.onclick=()=>{sliders.forEach(r=>r.value=r.defaultValue);resume=DEFAULT_SPEED;setBtn();showReset();pp.focus();};
+rs.onclick=()=>{sliders.forEach(r=>r.value=r.defaultValue);setMinAngle();resume=DEFAULT_SPEED;setBtn();showReset();pp.focus();};
 setBtn();showReset();
 function frame(now){const dt=Math.min(0.05,(now-last)/1000);last=now;
-const adeg=+al.value,a=adeg*DEG,v=+sv.value;
+const adeg=+al.value,a=adeg*DEG,v=+sv.value;R0=+rb.value;
 // buildWrap measures the wrap angle from the bar's cross-sectional plane, as α is.
-if(geoK!==adeg){geo=Rope.buildWrap(a,R0,TURNS);geoK=adeg;
+if(geoK!==adeg+'/'+R0){geo=Rope.buildWrap(a,R0,TURNS);geoK=adeg+'/'+R0;
 // Helix centreline as built by buildWrap (radius, z per radian, start angle π/2, z at start), for the bar's contact shadow.
 const Rh=R0+rr,zpr=Rh*Math.tan(a);geo.alpha=a;geo.helix=[Rh,zpr,Math.PI/2,-zpr*Math.PI*TURNS];if(gl){rope&&rope.free();bar&&bar.free();rope=ropeMesh(geo);bar=barMesh(R0);}}
 // Contact strip locked to bar  =>  whole rope spins at tau per length pulled.
 // pulled wraps every colour-texture period, which is also a whole number of grid rings.
 {const dl=v*dt;pulled=(pulled+dl)%(NS*D);spin=(spin+geo.tw*dl)%(2*Math.PI);}
 const tau=Math.sin(a)*Math.cos(a)/(R0+rr);
-$('ao').textContent=adeg+'°';$('so').textContent=String(v).replace('-','−')+' cm/s';
+$('ao').textContent=adeg.toFixed(1)+'°';$('bo').textContent=R0.toFixed(1)+' cm';$('so').textContent=String(v).replace('-','−')+' cm/s';
 $('ot').textContent=(2*Math.PI/tau).toFixed(1)+' cm';
 $('or').textContent=(v*tau/(2*Math.PI)).toFixed(2).replace('-','−')+' rev/s';
 if(gl)draw(geo);requestAnimationFrame(frame);}
@@ -240,7 +243,8 @@ if(gl)draw(geo);requestAnimationFrame(frame);}
 const VIEW=18;
 function draw(m){gl.viewport(0,0,cv.width,cv.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
 let z0=1e9,z1=-1e9;m.P.forEach(p=>{if(Math.abs(p[0])<R0+rr+0.01&&Math.abs(p[1])<R0+rr+0.01){z0=Math.min(z0,p[2]);z1=Math.max(z1,p[2]);}}); // the helix
-const s=W/Math.max(VIEW,z1-z0+4*(R0+rr)),mx=(z0+z1)/2,my=0;
+// Also tall enough for the bar and the rope around it, with some margin.
+const s=Math.min(W/Math.max(VIEW,z1-z0+4*(R0+rr)),H/(2*(R0+2*rr)+2)),mx=(z0+z1)/2,my=0;
 const R=[view([1,0,0]),view([0,1,0]),view([0,0,1])],kx=2*s/W,ky=2*s/H,kz=1/100; // R[j] = image of world axis j
 const mvp=new Float32Array([...[0,1,2].flatMap(j=>[kx*R[j][0],ky*R[j][1],-kz*R[j][2],0]),-kx*mx,-ky*my,0,1]);
 gl.useProgram(prog);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);

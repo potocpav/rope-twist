@@ -20,8 +20,10 @@ from PIL import Image
 N = 256                  # tile size in pixels (2 x 2 cells)
 CELL = N // 2
 YARNS = 2                # yarns side by side in a carrier
-FIBRES = 7               # fibre grooves across one yarn
+FIBRES = 4               # fibre bundles across one yarn: few and wide, so they still show when the map is
+                         # shrunk to a few screen pixels per yarn (Figure 5's ropes)
 TWIST = 0.6              # fibre groove slant: grooves across per cell length
+GROOVE = 0.3             # depth of the grooves between fibre bundles, as a share of the yarn height
 THICK = 0.16             # carrier height, in cell widths
 DIVE = 0.55              # how far carrier ends sink under the crossing carriers (0..1)
 NORMAL_GAIN = 0.8        # scales slopes when converting height to normals
@@ -34,9 +36,9 @@ def carrier(along, across):
     # Yarns: rounded profiles across the carrier, flattened slightly where they press together.
     y = (across * YARNS) % 1.0
     yarn = np.clip(1 - (2 * y - 1) ** 2, 0, 1) ** 0.7
-    # Fibre grooves, slanted by the yarn twist.
-    fib = 0.5 + 0.5 * np.cos(2 * np.pi * (y * FIBRES + along * TWIST))
-    yarn = yarn * (1 - 0.08 * fib)
+    # Fibre bundles, slanted by the yarn twist: rounded ridges with grooves between them.
+    fib = np.abs(np.sin(np.pi * (y * FIBRES + along * TWIST))) ** 0.6
+    yarn = yarn * (1 - GROOVE * (1 - fib))
     # Arch along the carrier: high in the middle, diving at both ends.
     arch = 1 - DIVE * (2 * along - 1) ** 4
     return THICK * yarn * arch
@@ -68,7 +70,7 @@ def blur(a, sigma):
 def main():
     out = os.path.dirname(os.path.abspath(__file__))
     h = tile()
-    h = blur(h, 1.2)                           # soften pixel-level aliasing of the grooves
+    h = blur(h, 0.7)                           # soften pixel-level aliasing of the grooves
 
     # Normals from central differences (wrapping), with height in cell widths.
     du = (np.roll(h, -1, 1) - np.roll(h, 1, 1)) * CELL / 2
@@ -81,7 +83,9 @@ def main():
     # with cavity (height below the local average) at two scales.
     hn = h / h.max()
     cavity = (h - blur(h, CELL * 0.08)) / THICK + 0.5 * (h - blur(h, CELL * 0.25)) / THICK
-    ao = np.clip(0.3 + 0.7 * hn ** 0.6 + 0.8 * np.minimum(cavity, 0), 0, 1)
+    # Fine cavity: the grooves between fibre bundles, a few pixels wide.
+    fine = (h - blur(h, CELL / (YARNS * FIBRES) * 0.5)) / THICK
+    ao = np.clip(0.3 + 0.7 * hn ** 0.6 + 0.8 * np.minimum(cavity, 0) + 1.5 * np.minimum(fine, 0), 0, 1)
     Image.fromarray(np.round(ao * 255).astype(np.uint8), 'L').save(os.path.join(out, 'rope-ao.png'))
 
 

@@ -21,7 +21,7 @@ N = 256                  # tile size in pixels (2 x 2 cells)
 CELL = N // 2
 YARNS = 2                # yarns side by side in a carrier
 FIBRES = 4               # fibre bundles across one yarn: few and wide, so they still show when the map is
-                         # shrunk to a few screen pixels per yarn (Figure 5's ropes)
+                         # shrunk to a few screen pixels per yarn (Figure 6's ropes)
 TWIST = 0.6              # fibre groove slant: grooves across per cell length
 GROOVE = 0.3             # depth of the grooves between fibre bundles, as a share of the yarn height
 THICK = 0.16             # carrier height, in cell widths

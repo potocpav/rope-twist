@@ -1102,21 +1102,13 @@
           Rope radius is 5&nbsp;mm; the bar radius can be set from 0.5 to 2&nbsp;cm.</figcaption>
       </figure>
 
-      <aside class="callout callout-info">
-        <svg viewBox="0 0 16 16" aria-hidden="true">
-          <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0Zm0 3.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2ZM9 12H7V7h2v5Z" />
-        </svg>
-        <p>The blog post is fairly complete up to this point. Below, it's work in progress.</p>
-      </aside>
-
-
       <h3>Complex configurations</h3>
 
       <p>
         The simple helical model above is sufficient to approximate some simple real-world examples, like a rope running
         through a tube-style device, or over a single carabiner. More complex systems, like the Munter hitch or a
         two-point anchor, can be described by decomposing them into multiple helical sections. To find how such a system
-        behaves as a whole, we need to understand how helical sections placed one after another along the rope interact.
+        behaves as a whole, we need to understand how multiple helical sections along the rope path interact.
       </p>
 
       <p>
@@ -1127,135 +1119,786 @@
       </p>
 
       <p>
-        At first glance, each helical section seems to force its own spin rate on the rope - but that is clearly
-        impossible. Rope running through a system of obstacles can only spin at one rate, because otherwise, over time,
-        torsion between two obstacles would accumulate without limit. The following sections analyze how the elementary
-        helical sections interact with each other to produce the final spin rate.
+        But what if the spin rates are different? Rope running through a system of obstacles can only spin at one rate,
+        because
+        otherwise, torsion between the obstacles would accumulate without limit. The solution is simple: torsion
+        accumulates up to a point,
+        because once it is high enough, it balances any differences in spin rates between the obstacles.
       </p>
 
+      <details class="derivation">
+        <summary>Mathematical derivation</summary>
 
-      <figure id="fig-6">
-        <iframe id="viz-4" src="viz/two-bars.html"
-          title="Interactive animation: a rope bent over two bars in turn, showing torsion building up in the rope between them"></iframe>
-        <figcaption><b>Figure 6.</b> A rope bent 90° over two bars, each of which can be set square to the rope
-          (pointing at the viewer, wrap angle 0°, forcing no spin) or turned 45° either way (lying diagonally, wrap
-          angle ±45°, half a turn). Torsion builds up between the bars until the whole rope spins at the rate of the
-          first bar it runs over, or until it reaches the most torsion the weaker bar can hold back, set by the bend
-          resistance; past that, the weaker bar slips. Rope radius is 5&nbsp;mm, bar radius is 10&nbsp;mm.</figcaption>
-      </figure>
-
-      <p>The same reasoning applies to any number of sections in a row, and gives a simple rule:</p>
-
-      <p>The first helical section the rope runs through sets how fast the rope spins. Every section after it only
-        stores torsion in the rope leading into it.</p>
-
-      <p>For each section after the first, the rope leading into it settles at a torsion equal to the difference between
-        that section's spin rate and the first section's. The rope leaving the last section is free, so it spins at the
-        first section's rate.</p>
-
-      <p>
-        So far, the rope arriving at the bar was untwisted. In general, the rotation <math>
-          <mi>φ</mi>
-        </math> of the rope about its own axis can change in two different ways, which are easy to confuse
-        (<a href="#fig-5">Figure 5</a>). Below, <math>
-          <mi>l</mi>
-        </math> is the length of rope pulled past a fixed place, and <math>
-          <mi>s</mi>
-        </math> is the position along the rope at one moment:
-      </p>
-
-      <table class="defs">
-        <thead>
-          <tr>
-            <th>Quantity</th>
-            <th>Meaning</th>
-            <th>Definition</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Spin rate</td>
-            <td>how fast the rope turns about its own axis at a fixed place, per length of rope pulled past it</td>
-            <td><math>
-                <mi>ω</mi>
-                <mo>=</mo>
-                <mfrac>
-                  <mrow>
-                    <mi>∂</mi>
-                    <mi>φ</mi>
-                  </mrow>
-                  <mrow>
-                    <mi>∂</mi>
-                    <mi>l</mi>
-                  </mrow>
-                </mfrac>
-              </math></td>
-          </tr>
-          <tr>
-            <td>Torsion</td>
-            <td>twist stored in the rope, held by torque: how its rotation changes along its length at one moment</td>
-            <td><math>
-                <mi>θ</mi>
-                <mo>=</mo>
-                <mfrac>
-                  <mrow>
-                    <mi>∂</mi>
-                    <mi>φ</mi>
-                  </mrow>
-                  <mrow>
-                    <mi>∂</mi>
-                    <mi>s</mi>
-                  </mrow>
-                </mfrac>
-              </math></td>
-          </tr>
-          <tr>
-            <td>Twist</td>
-            <td>how much a piece of rope turns as it travels, per length travelled</td>
-            <td><math>
-                <mi>ω</mi>
-                <mo>+</mo>
-                <mi>θ</mi>
-              </math></td>
-          </tr>
-        </tbody>
-      </table>
-
-      <p>A bar gripping the rope fixes the twist:</p>
-
-      <div class="eq" id="eq-9" data-n="9">
-        <math display="block">
-          <mrow>
+        <p>
+          Consider a two-helix configuration. Let <math>
+            <msub>
+              <mi>τ</mi>
+              <mi>a</mi>
+            </msub>
+          </math> and <math>
+            <msub>
+              <mi>τ</mi>
+              <mi>b</mi>
+            </msub>
+          </math> be the geometric torsions of the two helices, and <math>
+            <msub>
+              <mi>ν</mi>
+              <mrow>
+                <mn>3</mn>
+                <mi>a</mi>
+              </mrow>
+            </msub>
+          </math>, <math>
+            <msub>
+              <mi>ν</mi>
+              <mrow>
+                <mn>3</mn>
+                <mi>b</mi>
+              </mrow>
+            </msub>
+          </math> be rope torsions at those helices. Because rope spin <math>
             <mi>ω</mi>
-            <mo>+</mo>
-            <mi>θ</mi>
-            <mo>=</mo>
-            <mi>τ</mi>
-          </mrow>
-        </math>
-      </div>
+          </math> and velocity <math>
+            <mi>v</mi>
+          </math> must be equal for both, in a steady-state configuration, from equation (5), we have:
+        </p>
 
-      <p>
-        with <math>
-          <mi>τ</mi>
-        </math> from the formula above. A rope arriving untwisted (<math>
-          <mi>θ</mi>
-          <mo>=</mo>
-          <mn>0</mn>
-        </math>) spins at the full <math>
-          <mi>τ</mi>
-        </math>, as in <a href="#fig-4">Figure 4</a>; a rope that already carries torsion <math>
-          <mi>τ</mi>
-        </math> runs around the bar without spinning at all.
-      </p>
+        <div class="eq" id="eq-8" data-n="8">
+          <math display="block">
+            <mrow>
+              <mfrac>
+                <mi>ω</mi>
+                <mi>v</mi>
+              </mfrac>
+              <mo>=</mo>
+              <mtext>const.</mtext>
+              <mo>=</mo>
+              <msub>
+                <mi>τ</mi>
+                <mi>a</mi>
+              </msub>
+              <mo>−</mo>
+              <msub>
+                <mi>ν</mi>
+                <mrow>
+                  <mn>3</mn>
+                  <mi>a</mi>
+                </mrow>
+              </msub>
+              <mo>=</mo>
+              <msub>
+                <mi>τ</mi>
+                <mi>b</mi>
+              </msub>
+              <mo>−</mo>
+              <msub>
+                <mi>ν</mi>
+                <mrow>
+                  <mn>3</mn>
+                  <mi>b</mi>
+                </mrow>
+              </msub>
+            </mrow>
+          </math>
+        </div>
+
+        <p>
+          If we assume a free-spinning rope, then torsion before the first helix is zero. Because rope preserves
+          its angle <math>
+            <mi>φ</mi>
+          </math> around bars, as was discussed before equation (2), torsion around the first helix is also zero, <math>
+            <msub>
+              <mi>ν</mi>
+              <mrow>
+                <mn>3</mn>
+                <mi>a</mi>
+              </mrow>
+            </msub>
+            <mo>=</mo>
+            <mn>0</mn>
+          </math>. Therefore,
+        </p>
+
+        <div class="eq" id="eq-9" data-n="9">
+          <math display="block">
+            <mrow>
+              <msub>
+                <mi>ν</mi>
+                <mrow>
+                  <mn>3</mn>
+                  <mi>b</mi>
+                </mrow>
+              </msub>
+              <mo>=</mo>
+              <msub>
+                <mi>τ</mi>
+                <mi>b</mi>
+              </msub>
+              <mo>−</mo>
+              <msub>
+                <mi>τ</mi>
+                <mi>a</mi>
+              </msub>
+            </mrow>
+          </math>
+        </div>
+
+        <p>
+          which is non-zero, whenever the spin rates of the two helices are different. Thus,
+          the second helix accumulates enough rope torsion to counter-act its spin difference to the first helix.
+        </p>
+        <p>
+          The same reasoning applies to any number of sections in a row.
+        </p>
+      </details>
+
+      <p>As a general rule, <b>the first obstacle sets how fast the rope spins</b>. Every other obstacle only stores
+        torsion around and between the obstacles, without affecting the overall spin rate. This effect is illustrated in
+        <a href="#fig-5">Figure 5</a>. This rather surprising result has implications for climbing anchors and belay
+        devices, which are explored in the <a href="#applications">Applications</a> section.</p>
 
       <figure id="fig-5">
-        <iframe id="viz-3" src="viz/spin-torsion.html"
-          title="Interactive figure: a straight rope twisted along its length, and a bent rope turning about its own axis"></iframe>
-        <figcaption><b>Figure 5.</b> Torsion and bent rotation visualization. Climbing ropes resist these deformations,
-          which makes them twist when pulled around obstacles at an oblique angle.
+        <iframe id="viz-3" src="viz/two-bars.html"
+          title="Interactive animation: a rope bent over two bars in turn, showing torsion building up in the rope between them"></iframe>
+        <figcaption><b>Figure 5.</b> A rope bent over two bars. Rope spin depends only on the first bar it runs over.
+          The second bar only stores torsion in the rope leading into it.
         </figcaption>
       </figure>
+
+
+      <aside class="callout callout-info">
+        <svg viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0Zm0 3.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2ZM9 12H7V7h2v5Z" />
+        </svg>
+        <p>The blog post is fairly complete up to this point. Below, it's work in progress.</p>
+      </aside>
+
+      <h3>Rope dynamics</h3>
+
+      <p>
+        The idealized model above has one big limitation. It assumes that the rope never rotates relative to its bend
+        (equation (2)), and everything that follows rests on that. Real climbing ropes resist both torsion and bent
+        rotation (<a href="#fig-6">Figure 6</a>), and the two resistances compete. Bent rotation is resisted by friction
+        inside the rope, which, like static friction, holds completely up to a limit. While the torsion a bar has to
+        hold back stays within that limit, the rope does not rotate relative to its bend at all, and the idealized model
+        holds exactly. Only past the limit does the rope slip: it rotates relative to its bend, and the bar forces less
+        spin than the idealized model predicts.
+      </p>
+
+      <figure id="fig-6">
+        <iframe id="viz-4" src="viz/spin-torsion.html"
+          title="Interactive figure: a straight rope twisted along its length, and a bent rope turning about its own axis"></iframe>
+        <figcaption><b>Figure 6.</b> Torsion and bent rotation. Climbing ropes resist these deformations due to their
+          sheath structure.
+        </figcaption>
+      </figure>
+
+      <details class="derivation">
+        <summary>Mathematical derivation</summary>
+
+        <p>
+          Let <math>
+            <mi>β</mi>
+          </math> be the bent rotation rate: how fast a piece of rope turns relative to its bend as it travels along its
+          path. The idealized model assumes <math>
+            <mi>β</mi>
+            <mo>=</mo>
+            <mn>0</mn>
+          </math>, which gives equation (5). Two torques act on the rope about its own axis. The first is the twisting
+          moment carried along the rope. It is elastic, and proportional to rope torsion:
+        </p>
+
+        <div class="eq" id="eq-10" data-n="10">
+          <math display="block">
+            <mrow>
+              <msub>
+                <mi>M</mi>
+                <mn>3</mn>
+              </msub>
+              <mo>=</mo>
+              <mi>C</mi>
+              <mo>&#x2062;</mo>
+              <msub>
+                <mi>ν</mi>
+                <mn>3</mn>
+              </msub>
+            </mrow>
+          </math>
+        </div>
+
+        <p>
+          where <math>
+            <mi>C</mi>
+          </math> is the rope's torsional stiffness.
+        </p>
+
+        <p>
+          The second torque resists bent rotation. We model it as friction: a torque per unit length of rope, <math>
+            <msub>
+              <mi>m</mi>
+              <mi>b</mi>
+            </msub>
+          </math>, independent of the rotation rate:
+        </p>
+
+        <div class="eq" id="eq-11" data-n="11">
+          <math display="block">
+            <mrow>
+              <msub>
+                <mi>m</mi>
+                <mi>b</mi>
+              </msub>
+              <mo>=</mo>
+              <mo>−</mo>
+              <msub>
+                <mi>m</mi>
+                <mn>0</mn>
+              </msub>
+              <mo>&#x2062;</mo>
+              <mi>sgn</mi>
+              <mo>&#x2061;</mo>
+              <mi>β</mi>
+            </mrow>
+          </math>
+        </div>
+
+        <p>
+          where <math>
+            <msub>
+              <mi>m</mi>
+              <mn>0</mn>
+            </msub>
+          </math> is the largest torque the friction can exert. While the rope rotates relative to its bend, the
+          friction exerts all of it, against the rotation. While the rope does not rotate relative to its bend (<math>
+            <mi>β</mi>
+            <mo>=</mo>
+            <mn>0</mn>
+          </math>), this torque is static friction, and can take any value up to <math>
+            <mo>|</mo>
+            <msub>
+              <mi>m</mi>
+              <mi>b</mi>
+            </msub>
+            <mo>|</mo>
+            <mo>≤</mo>
+            <msub>
+              <mi>m</mi>
+              <mn>0</mn>
+            </msub>
+          </math>.
+        </p>
+
+        <p>
+          Presumably, <math>
+            <msub>
+              <mi>m</mi>
+              <mn>0</mn>
+            </msub>
+          </math> grows with rope bend <math>
+            <mi>κ</mi>
+          </math>, and with rope tension <math>
+            <mi>T</mi>
+          </math>:
+        </p>
+
+        <div class="eq" id="eq-12" data-n="12">
+          <math display="block">
+            <mrow>
+              <msub>
+                <mi>m</mi>
+                <mn>0</mn>
+              </msub>
+              <mo>=</mo>
+              <msub>
+                <mi>m</mi>
+                <mn>0</mn>
+              </msub>
+              <mo>&#x2061;</mo>
+              <mrow>
+                <mo>(</mo>
+                <mi>κ</mi>
+                <mo>,</mo>
+                <mi>T</mi>
+                <mo>)</mo>
+              </mrow>
+            </mrow>
+          </math>
+        </div>
+
+        <p>
+          Without precise measurements, we can only guess at the exact formula. Something like this is plausible:
+        </p>
+
+        <div class="eq" id="eq-13" data-n="13">
+          <math display="block">
+            <mrow>
+              <msub>
+                <mi>m</mi>
+                <mn>0</mn>
+              </msub>
+              <mo>=</mo>
+              <msub>
+                <mi>μ</mi>
+                <mi>b</mi>
+              </msub>
+              <mo>&#x2062;</mo>
+              <msup>
+                <mi>κ</mi>
+                <mn>2</mn>
+              </msup>
+              <mo>+</mo>
+              <msub>
+                <mi>μ</mi>
+                <mi>T</mi>
+              </msub>
+              <mo>&#x2062;</mo>
+              <mi>T</mi>
+              <mo>&#x2062;</mo>
+              <mi>κ</mi>
+            </mrow>
+          </math>
+        </div>
+
+        <p>
+          The first term is friction inside the bent rope: turning a bent rope about its own axis takes each fibre from
+          the outside of the bend to the inside and back, and the strands rub against each other as they do. The second
+          term comes from the load pressing the rope against the bar, <math>
+            <mi>T</mi>
+            <mo>&#x2062;</mo>
+            <mi>κ</mi>
+          </math> per unit length. The load flattens the rope's cross-section, and bent rotation rolls the rope's
+          material through the flattened shape, losing energy. It also tightens the sheath braid around the core,
+          pressing the strands together harder. <math>
+            <msub>
+              <mi>μ</mi>
+              <mi>b</mi>
+            </msub>
+          </math> and <math>
+            <msub>
+              <mi>μ</mi>
+              <mi>T</mi>
+            </msub>
+          </math> are scaling factors.
+        </p>
+
+        <p>
+          On a helix, the curvature <math>
+            <mi>κ</mi>
+          </math> is
+        </p>
+
+        <div class="eq" id="eq-14" data-n="14">
+          <math display="block">
+            <mrow>
+              <mi>κ</mi>
+              <mo>=</mo>
+              <mfrac>
+                <mrow>
+                  <msup>
+                    <mi>cos</mi>
+                    <mn>2</mn>
+                  </msup>
+                  <mo>&#x2061;</mo>
+                  <mi>α</mi>
+                </mrow>
+                <mrow>
+                  <mi>R</mi>
+                  <mo>+</mo>
+                  <mi>r</mi>
+                </mrow>
+              </mfrac>
+            </mrow>
+          </math>
+        </div>
+
+        <p>
+          Neglecting rotational inertia, the torques on every piece of rope balance. For a rope which bends equally
+          easily in every direction, bending moments do not contribute to the balance about the rope's axis, which
+          leaves
+        </p>
+
+        <div class="eq" id="eq-15" data-n="15">
+          <math display="block">
+            <mrow>
+              <mfrac>
+                <mrow>
+                  <mi>∂</mi>
+                  <msub>
+                    <mi>ν</mi>
+                    <mn>3</mn>
+                  </msub>
+                </mrow>
+                <mrow>
+                  <mi>∂</mi>
+                  <mi>s</mi>
+                </mrow>
+              </mfrac>
+              <mo>=</mo>
+              <mo>−</mo>
+              <mfrac>
+                <msub>
+                  <mi>m</mi>
+                  <mi>b</mi>
+                </msub>
+                <mi>C</mi>
+              </mfrac>
+            </mrow>
+          </math>
+        </div>
+
+        <p>
+          So torsion can change along the rope only where the rope is bent. On straight sections, <math>
+            <mi>κ</mi>
+            <mo>=</mo>
+            <mn>0</mn>
+          </math> and torsion is constant, or zero if the end of the rope is free to rotate.
+        </p>
+
+        <p>
+          Around a helix, these equations describe two regimes. Following a piece of rope, as in equation (2), and
+          substituting (1), its bent rotation rate is
+        </p>
+
+        <div class="eq" id="eq-16" data-n="16">
+          <math display="block">
+            <mrow>
+              <mi>β</mi>
+              <mo>=</mo>
+              <mfrac>
+                <mrow>
+                  <mi>∂</mi>
+                  <mi>φ</mi>
+                </mrow>
+                <mrow>
+                  <mi>∂</mi>
+                  <mi>t</mi>
+                </mrow>
+              </mfrac>
+              <mo>+</mo>
+              <mi>v</mi>
+              <mo>&#x2062;</mo>
+              <mfrac>
+                <mrow>
+                  <mi>∂</mi>
+                  <mi>φ</mi>
+                </mrow>
+                <mrow>
+                  <mi>∂</mi>
+                  <mi>s</mi>
+                </mrow>
+              </mfrac>
+              <mo>=</mo>
+              <mfrac>
+                <mrow>
+                  <mi>∂</mi>
+                  <mi>φ</mi>
+                </mrow>
+                <mrow>
+                  <mi>∂</mi>
+                  <mi>t</mi>
+                </mrow>
+              </mfrac>
+              <mo>+</mo>
+              <mi>v</mi>
+              <mo>&#x2062;</mo>
+              <mrow>
+                <mo>(</mo>
+                <msub>
+                  <mi>ν</mi>
+                  <mn>3</mn>
+                </msub>
+                <mo>−</mo>
+                <mi>τ</mi>
+                <mo>)</mo>
+              </mrow>
+            </mrow>
+          </math>
+        </div>
+
+        <p>
+          In steady state, torsion does not change over time, so by (1), <math>
+            <mfrac>
+              <mrow>
+                <mi>∂</mi>
+                <mi>φ</mi>
+              </mrow>
+              <mrow>
+                <mi>∂</mi>
+                <mi>t</mi>
+              </mrow>
+            </mfrac>
+            <mo>=</mo>
+            <mi>ω</mi>
+          </math> is the same everywhere along the rope. Equation (16) then gives the
+          bent rotation rate around the bar:
+        </p>
+
+        <div class="eq" id="eq-17" data-n="17">
+          <math display="block">
+            <mrow>
+              <mi>β</mi>
+              <mo>=</mo>
+              <mi>ω</mi>
+              <mo>−</mo>
+              <mi>v</mi>
+              <mo>&#x2062;</mo>
+              <mrow>
+                <mo>(</mo>
+                <mi>τ</mi>
+                <mo>−</mo>
+                <msub>
+                  <mi>ν</mi>
+                  <mn>3</mn>
+                </msub>
+                <mo>)</mo>
+              </mrow>
+            </mrow>
+          </math>
+        </div>
+
+
+        <aside class="callout callout-info">
+          <svg viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0Zm0 3.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2ZM9 12H7V7h2v5Z" />
+          </svg>
+          <p>The math section is fairly complete up to this point. Below, it's work in progress.</p>
+        </aside>
+
+        <p>
+          Here <math>
+            <mi>v</mi>
+            <mo>&#x2062;</mo>
+            <mrow>
+              <mo>(</mo>
+              <mi>τ</mi>
+              <mo>−</mo>
+              <msub>
+                <mi>ν</mi>
+                <mn>3</mn>
+              </msub>
+              <mo>)</mo>
+            </mrow>
+          </math> is the spin a piece of rope would force if it did not rotate relative to its bend, given its torsion.
+          So <math>
+            <mi>β</mi>
+          </math> is the difference between the rope's actual spin and the spin that piece would force. Where the rope
+          does not rotate relative to its bend (<math>
+            <mi>β</mi>
+            <mo>=</mo>
+            <mn>0</mn>
+          </math>), its torsion is therefore fixed at <math>
+            <msubsup>
+              <mi>ν</mi>
+              <mn>3</mn>
+              <mo>*</mo>
+            </msubsup>
+            <mo>=</mo>
+            <mi>τ</mi>
+            <mo>−</mo>
+            <mfrac>
+              <mi>ω</mi>
+              <mi>v</mi>
+            </mfrac>
+          </math>: each piece of rope keeps its torsion as it travels around the bar. Torsion can only change where the
+          rope rotates relative to its bend. There, friction exerts all of <math>
+            <msub>
+              <mi>m</mi>
+              <mn>0</mn>
+            </msub>
+          </math>, so by (15), torsion changes at exactly the rate <math>
+            <mfrac>
+              <msub>
+                <mi>m</mi>
+                <mn>0</mn>
+              </msub>
+              <mrow>
+                <mi>C</mi>
+              </mrow>
+            </mfrac>
+          </math>, and by (17):
+        </p>
+
+        <div class="eq" id="eq-18" data-n="18">
+          <math display="block">
+            <mrow>
+              <mi>β</mi>
+              <mo>=</mo>
+              <mi>v</mi>
+              <mo>&#x2062;</mo>
+              <mrow>
+                <mo>(</mo>
+                <msub>
+                  <mi>ν</mi>
+                  <mn>3</mn>
+                </msub>
+                <mo>−</mo>
+                <msubsup>
+                  <mi>ν</mi>
+                  <mn>3</mn>
+                  <mo>*</mo>
+                </msubsup>
+                <mo>)</mo>
+              </mrow>
+            </mrow>
+          </math>
+        </div>
+
+        <p>
+          By (11) and (15), torsion changes in the same direction as <math>
+            <mi>β</mi>
+          </math>, so by (18), torsion moves away from <math>
+            <msubsup>
+              <mi>ν</mi>
+              <mn>3</mn>
+              <mo>*</mo>
+            </msubsup>
+          </math> in the direction the rope travels. The rope therefore rotates relative to its bend only over a stretch
+          where it leaves the bar, after a stretch where it does not, much like a belt creeping on a pulley. Over that
+          stretch, torsion changes by <math>
+            <mrow>
+              <mi>Δ</mi>
+              <mo>&#x2062;</mo>
+              <msub>
+                <mi>ν</mi>
+                <mn>3</mn>
+              </msub>
+            </mrow>
+          </math>, and <math>
+            <mi>β</mi>
+          </math> grows linearly from zero to <math>
+            <mi>v</mi>
+            <mo>&#x2062;</mo>
+            <mo>|</mo>
+            <mrow>
+              <mi>Δ</mi>
+              <mo>&#x2062;</mo>
+              <msub>
+                <mi>ν</mi>
+                <mn>3</mn>
+              </msub>
+            </mrow>
+            <mo>|</mo>
+          </math> where the rope leaves the bar. The stretch is <math>
+            <mfrac>
+              <mrow>
+                <mi>C</mi>
+                <mo>&#x2062;</mo>
+                <mo>|</mo>
+                <mrow>
+                  <mi>Δ</mi>
+                  <mo>&#x2062;</mo>
+                  <msub>
+                    <mi>ν</mi>
+                    <mn>3</mn>
+                  </msub>
+                </mrow>
+                <mo>|</mo>
+              </mrow>
+              <msub>
+                <mi>m</mi>
+                <mn>0</mn>
+              </msub>
+            </mfrac>
+          </math> long, and it has to fit on the contact. The contact is <math>
+            <mi>L</mi>
+            <mo>=</mo>
+            <mfrac>
+              <mrow>
+                <mi>ψ</mi>
+                <mo>&#x2062;</mo>
+                <mrow>
+                  <mo>(</mo>
+                  <mi>R</mi>
+                  <mo>+</mo>
+                  <mi>r</mi>
+                  <mo>)</mo>
+                </mrow>
+              </mrow>
+              <mrow>
+                <mi>cos</mi>
+                <mo>&#x2061;</mo>
+                <mi>α</mi>
+              </mrow>
+            </mfrac>
+          </math> long, where <math>
+            <mi>ψ</mi>
+          </math> is the angle the rope turns through around the bar, and its total bend is <math>
+            <mi>κ</mi>
+            <mo>&#x2062;</mo>
+            <mi>L</mi>
+            <mo>=</mo>
+            <mi>ψ</mi>
+            <mo>&#x2062;</mo>
+            <mrow>
+              <mi>cos</mi>
+              <mo>&#x2061;</mo>
+              <mi>α</mi>
+            </mrow>
+          </math>. Taking tension as constant around the bar, a bar can therefore change the rope's torsion by at most
+        </p>
+
+        <div class="eq" id="eq-19" data-n="19">
+          <math display="block">
+            <mrow>
+              <mi>C</mi>
+              <mo>&#x2062;</mo>
+              <mo>|</mo>
+              <mrow>
+                <mi>Δ</mi>
+                <mo>&#x2062;</mo>
+                <msub>
+                  <mi>ν</mi>
+                  <mn>3</mn>
+                </msub>
+              </mrow>
+              <mo>|</mo>
+              <mo>≤</mo>
+              <mi>ψ</mi>
+              <mo>&#x2062;</mo>
+              <mrow>
+                <mi>cos</mi>
+                <mo>&#x2061;</mo>
+                <mi>α</mi>
+              </mrow>
+              <mo>&#x2062;</mo>
+              <mrow>
+                <mo>(</mo>
+                <msub>
+                  <mi>μ</mi>
+                  <mi>b</mi>
+                </msub>
+                <mo>&#x2062;</mo>
+                <mi>κ</mi>
+                <mo>+</mo>
+                <msub>
+                  <mi>μ</mi>
+                  <mi>T</mi>
+                </msub>
+                <mo>&#x2062;</mo>
+                <mi>T</mi>
+                <mo>)</mo>
+              </mrow>
+            </mrow>
+          </math>
+        </div>
+
+        <p>
+          If every bar can hold the torsion of equation (9) within this limit, the rope follows the idealized model,
+          which depends on neither curvature nor tension. Otherwise, the rope "slips": along the whole contact of the
+          weakest bar, it rotates relative to its bend (<math>
+            <mi>β</mi>
+            <mo>≠</mo>
+            <mn>0</mn>
+          </math>), the torsion between the bars stays at that bar's limit, and the bar forces less spin than <math>
+            <mi>v</mi>
+            <mo>&#x2062;</mo>
+            <mi>τ</mi>
+          </math>. Unlike the spin rate, the limit grows with the number of turns around the bar. It is also larger for
+          thinner bars, for higher tension, and for rope running square to the bar (small <math>
+            <mi>α</mi>
+          </math>).
+        </p>
+      </details>
 
       <h3>Limitations</h3>
 
@@ -1308,6 +1951,14 @@
       <h3>Rope coiling</h3>
 
       <p>All these causes are analyzed in detail in the following sections.</p>
+
+      <h2>Misconceptions</h2>
+
+      <ul>
+        <li>Rope twist is caused by friction.</li>
+        <li>Rope twist can be counter-acted by a twist in the opposite direction.</li>
+
+      </ul>
 
       <footer>
         Source and visualization code: <a

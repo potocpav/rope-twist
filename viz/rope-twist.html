@@ -43,8 +43,8 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 </div>
 <div class="controls">
 <label for="al">Wrap angle (<i>α</i>)</label><input type="range" id="al" min="6.1" max="60" step="0.1" value="45"><output id="ao">45.0°</output>
-<label for="rb">Bar radius (<i>R</i>)</label><input type="range" id="rb" min="0.5" max="2" step="0.1" value="1"><output id="bo">1.0 cm</output>
-<label for="sv">Pull speed</label><input type="range" id="sv" min="-10" max="10" step="1" value="5"><output id="so">5 cm/s</output>
+<label for="rb">Bar radius (<i>R</i>)</label><input type="range" id="rb" min="0.5" max="2" step="0.01" value="1"><output id="bo">1.0 cm</output>
+<label for="sv">Pull speed</label><input type="range" id="sv" min="-10" max="10" step="0.1" value="5"><output id="so">5 cm/s</output>
 </div>
 <div class="stats">
 <div class="stat"><div>Rope pulled per one full turn, <math><mfrac><mrow><mn>2</mn><mo>&#x2062;</mo><mi>π</mi><mo>&#x2062;</mo><mi>v</mi></mrow><mi>ω</mi></mfrac></math></div><div id="ot">18.8 cm</div></div>
@@ -233,7 +233,7 @@ const Rh=R0+rr,zpr=Rh*Math.tan(a);geo.alpha=a;geo.helix=[Rh,zpr,Math.PI/2,-zpr*M
 // pulled wraps every colour-texture period, which is also a whole number of grid rings.
 {const dl=v*dt;pulled=(pulled+dl)%(NS*D);spin=(spin+geo.tw*dl)%(2*Math.PI);}
 const tau=Math.sin(a)*Math.cos(a)/(R0+rr);
-$('ao').textContent=adeg.toFixed(1)+'°';$('bo').textContent=R0.toFixed(1)+' cm';$('so').textContent=String(v).replace('-','−')+' cm/s';
+$('ao').textContent=adeg.toFixed(1)+'°';$('bo').textContent=R0.toFixed(1)+' cm';$('so').textContent=String(Math.round(v)||0).replace('-','−')+' cm/s'; // rounded for display; the slider moves in 0.1 cm/s steps
 $('ot').textContent=(2*Math.PI/tau).toFixed(1)+' cm';
 $('or').textContent=(v*tau/(2*Math.PI)).toFixed(2).replace('-','−')+' rev/s';
 if(gl)draw(geo);requestAnimationFrame(frame);}

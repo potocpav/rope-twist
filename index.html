@@ -1120,10 +1120,9 @@
 
       <p>
         But what if the spin rates are different? Rope running through a system of obstacles can only spin at one rate,
-        because
-        otherwise, torsion between the obstacles would accumulate without limit. The solution is simple: torsion
-        accumulates up to a point,
-        because once it is high enough, it balances any differences in spin rates between the obstacles.
+        because otherwise, torsion between the obstacles would accumulate without limit. The solution is simple: torsion
+        accumulates up to a point, because once it is high enough, it balances any differences in spin rates between the
+        obstacles.
       </p>
 
       <details class="derivation">
@@ -1203,8 +1202,8 @@
         </div>
 
         <p>
-          If we assume a free-spinning rope, then torsion before the first helix is zero. Because rope preserves
-          its angle <math>
+          If we assume a free-spinning rope, then torsion before the first helix is zero. Because rope preserves its
+          angle <math>
             <mi>φ</mi>
           </math> around bars, as was discussed before equation (2), torsion around the first helix is also zero, <math>
             <msub>
@@ -1244,8 +1243,8 @@
         </div>
 
         <p>
-          which is non-zero, whenever the spin rates of the two helices are different. Thus,
-          the second helix accumulates enough rope torsion to counter-act its spin difference to the first helix.
+          which is non-zero, whenever the spin rates of the two helices are different. Thus, the second helix
+          accumulates enough rope torsion to counter-act its spin difference to the first helix.
         </p>
         <p>
           The same reasoning applies to any number of sections in a row.
@@ -1629,8 +1628,7 @@
             </mfrac>
             <mo>=</mo>
             <mi>ω</mi>
-          </math> is the same everywhere along the rope. Equation (16) then gives the
-          bent rotation rate around the bar:
+          </math> is the same everywhere along the rope. Equation (16) then gives the bent rotation rate around the bar:
         </p>
 
         <div class="eq" id="eq-17" data-n="17">
@@ -1900,24 +1898,31 @@
         </p>
       </details>
 
-      <h3>Limitations</h3>
+      <h3>Rope buckling</h3>
 
-      <p>As shown above, the model predicts rope to twist quite severly, regardless of how many turns the rope has run
+      <p>
+        The last factor influencing rope twist that I found is rope buckling. So far, we have assumed that the rope runs
+        along a fixed trajectory, which runs straight between obstacles, and tightly wraps around obstacles. However,
+        when enough torsion accumulates, the rope will bend in a way to relieve some of the accumulated torsion. This
+        will, in turn, prevent the rope from twisting further.
+      </p>
+
+      <p>
+        This effect is strongly dependent on rope tension. If tension is very low, the rope is free to find a shape
+        which eliminates torsion accumulation. If tension is very high, the rope is forced to follow the straightest
+        path, and if that path is helical, torsion will start accumulating.
+      </p>
+
+      <p>
+        The practical upshot is that loosely handled ropes will twist much less than tightly held ropes. Belaying over a
+        Munter hitch, for example, should be done by feeding the rope through the hitch, rather than pulling it by
+        force.
+      </p>
+
+      <p>As shown above, the model predicts rope to twist quite severely, regardless of how many turns the rope has run
         around the bar. Even a slight 30-degree bend over an edge should induce significant twist - but that is not what
         we observe. I found two explanations which limit how much rope twist is induced in practice:
       </p>
-
-      <h4>Rope buckling</h4>
-
-      When rope tension is low, rope twist is limited, because the rope is not forced to follow the straightest path
-      around the obstacle. Instead, it will change its shape in ways which limit the intrinsic rotation, and thus limit
-      the induced twist.
-
-      <h4>Rope slipping</h4>
-
-      Normally, the rope follows the zero-strain path around the obstacle. But when the number of turns is low, or when
-      the turn radius is large, the rope may deviate from the zero-strain path, and rotate relative to the bar to
-      relieve some of the accumulated torsion. This, again, limits the induced twist.
 
       <h2>Applications</h2>
 

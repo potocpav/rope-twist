@@ -7,7 +7,10 @@
   <title>How Climbing Ropes Twist</title>
   <script>
     // Apply a theme chosen earlier with the theme switch before the page is first drawn, so it does not flash.
-    try { const t = localStorage.getItem('rope-twist-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) { }
+    try {
+      const t = localStorage.getItem('rope-twist-theme');
+      if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+    } catch (e) { }
   </script>
   <meta name="description" content="Why a climbing rope spins about its own axis when pulled around a bar at an angle.">
   <style>
@@ -24,7 +27,8 @@
       color-scheme: light;
     }
 
-    /* Dark theme: from the system preference until the script sets data-theme (from the system or the menu's theme switch). */
+    /* Dark theme: from the system preference until the script sets data-theme (from the system or the menu's theme
+       switch). */
     @media (prefers-color-scheme: dark) {
       :root:not([data-theme="light"]) {
         --bg: #1e1d1b;
@@ -546,7 +550,13 @@
         <a href="https://github.com/potocpav/rope-twist">
           <svg viewBox="0 0 16 16" aria-hidden="true">
             <path
-              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+                0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01
+                1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95
+                0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2
+                .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65
+                3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16
+                8c0-4.42-3.58-8-8-8z" />
           </svg>
           Source on GitHub
         </a>
@@ -599,7 +609,8 @@
       <figure class="photo" id="fig-2">
         <a href="images/rope-twists.jpg">
           <img src="images/rope-twists-preview.jpg" width="1500" height="1250"
-            alt="Three photos of the same orange braided rope on a white background: straight with no twist, in a gentle S-shaped curve with one twist, and buckled into a pronounced wave with two twists.">
+            alt="Three photos of the same orange braided rope on a white background: straight with no twist, in a gentle
+              S-shaped curve with one twist, and buckled into a pronounced wave with two twists.">
         </a>
         <figcaption><b>Figure 2.</b> Rope with zero, one and two twists along its length. Rope is marked with a black
           line to show the twist. Twisted ropes naturally buckle into loops, which interfere with rope handling.
@@ -959,7 +970,8 @@
 
       <figure class="photo" id="fig-3">
         <img src="images/helix-diagram.png" width="1500" height="701"
-          alt="Diagram of a rope wrapped once around a horizontal bar in a helix, labelled with bar radius R, rope radius r, wrap angle α, and the rope's rotation φ about its own axis as it moves.">
+          alt="Diagram of a rope wrapped once around a horizontal bar in a helix, labelled with bar radius R, rope
+            radius r, wrap angle α, and the rope's rotation φ about its own axis as it moves.">
         <figcaption><b>Figure 3.</b> Rope wrapped around a bar in a helix: bar radius <math>
             <mi>R</mi>
           </math>, rope radius <math>
@@ -1097,7 +1109,8 @@
 
       <figure id="fig-4">
         <iframe id="viz-2" src="viz/rope-twist.html"
-          title="Interactive animation: a braided rope pulled around a bar at an angle, showing how the rope spins as a result"></iframe>
+          title="Interactive animation: a braided rope pulled around a bar at an angle, showing how the rope spins as a
+            result"></iframe>
         <figcaption><b>Figure 4.</b> A rope pulled around a bar at an angle, showing how the rope spins as a result.
           Rope radius is 5&nbsp;mm; the bar radius can be set from 0.5 to 2&nbsp;cm.</figcaption>
       </figure>
@@ -1258,7 +1271,8 @@
 
       <figure id="fig-5">
         <iframe id="viz-3" src="viz/two-bars.html"
-          title="Interactive animation: a rope bent over two bars in turn, showing torsion building up in the rope between them"></iframe>
+          title="Interactive animation: a rope bent over two bars in turn, showing torsion building up in the rope
+            between them"></iframe>
         <figcaption><b>Figure 5.</b> A rope bent over two bars. Rope spin depends only on the first bar it runs over.
           The second bar only stores torsion in the rope leading into it.
         </figcaption>
@@ -1286,7 +1300,8 @@
 
       <figure id="fig-6">
         <iframe id="viz-4" src="viz/spin-torsion.html"
-          title="Interactive figure: a straight rope twisted along its length, and a bent rope turning about its own axis"></iframe>
+          title="Interactive figure: a straight rope twisted along its length, and a bent rope turning about its own
+            axis"></iframe>
         <figcaption><b>Figure 6.</b> Torsion and bent rotation. Climbing ropes resist these deformations due to their
           sheath structure.
         </figcaption>
@@ -2034,7 +2049,9 @@
       };
       btn.addEventListener('click', () => setOpen(!toc.classList.contains('open')));
       toc.addEventListener('click', e => { if (e.target.closest('a')) setOpen(false); });
-      document.addEventListener('click', e => { if (!toc.contains(e.target) && !btn.contains(e.target)) setOpen(false); });
+      document.addEventListener('click', e => {
+        if (!toc.contains(e.target) && !btn.contains(e.target)) setOpen(false);
+      });
       document.addEventListener('keydown', e => {
         if (e.key === 'Escape' && toc.classList.contains('open')) {
           setOpen(false);
@@ -2063,7 +2080,9 @@
       const KEY = 'rope-twist-theme';
       let theme, chosen = null;
       try { const t = localStorage.getItem(KEY); if (t === 'light' || t === 'dark') chosen = t; } catch (e) { }
-      const send = f => { try { f.contentWindow.postMessage({ type: 'rope-twist-theme', theme }, '*'); } catch (e) { } };
+      const send = f => {
+        try { f.contentWindow.postMessage({ type: 'rope-twist-theme', theme }, '*'); } catch (e) { }
+      };
       const setTheme = t => {
         theme = t;
         document.documentElement.dataset.theme = t;

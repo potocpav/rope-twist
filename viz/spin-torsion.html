@@ -41,7 +41,7 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 <div><b>Bent rotation</b><span>bent rope spins about its axis</span></div>
 </div>
 <div class="controls">
-<label for="th">Rotation (<i>φ</i>)</label><input type="range" id="th" min="-360" max="360" step="1" value="0"><output id="to">0°</output>
+<label for="th">Rotation (<i>φ</i>)</label><input type="range" id="th" min="-180" max="180" step="1" value="0"><output id="to">0°</output>
 </div>
 <p class="note" id="lg" hidden>This figure needs WebGL 2, which this browser does not provide.</p>
 </div>
@@ -53,13 +53,13 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 // into an upside-down U (two vertical legs joined by a half circle) turns about its own axis by φ all
 // along, keeping its shape.
 // The 3D scene always uses the light palette on a white canvas; the controls follow the page theme.
-const LEN=5,GAP=5; // rope length, distance between the ropes (cm)
+const LEN=2.5,GAP=5; // rope length, distance between the ropes (cm)
 const C=Rope.THEMES.light.c,{rr,NS,cross}=Rope,DEG=Math.PI/180,STEP=2*Math.PI/NS,D=rr*STEP;
 const cv=document.getElementById('c'),$=id=>document.getElementById(id);
 const gl=cv.getContext('webgl2',{antialias:true,premultipliedAlpha:false});
 if(!gl)$('lg').hidden=false;
 let W,H,dpr=window.devicePixelRatio||1;
-function resize(){W=cv.clientWidth;H=Math.round(W*0.6);cv.width=W*dpr;cv.height=H*dpr;cv.style.height=H+cv.offsetWidth-W+'px';draw();} // plus the border, so the drawing area stays H tall
+function resize(){W=cv.clientWidth;H=Math.round(W*0.3);cv.width=W*dpr;cv.height=H*dpr;cv.style.height=H+cv.offsetWidth-W+'px';draw();} // plus the border, so the drawing area stays H tall
 
 // Shaders, as in Figure 4, without the bar. Rope vertices carry (s, a): arc length along the rope from
 // its bottom end and angle around it. The material angle is a - spin(s), with spin(s) running linearly
@@ -144,7 +144,7 @@ const CORE=0.8;
 // The path is planar, so its zero-twist frame is simply the plane's normal, +z, all along. Rings: centre c,
 // tangent t, radius r, normal mix (nc radial, nt along t), arc length s; angle a around the rope runs from +z
 // toward t × z, as in tube() for a rope running up.
-const LEG=3,BEND=1.25,UP=[0,0,1];
+const LEG=0.5,BEND=1.25,UP=[0,0,1];
 function bentPath(){const P=[];
 for(let i=0;i<=24;i++)P.push({c:[-BEND,LEG*i/24,0],t:[0,1,0]});
 for(let i=1;i<=48;i++){const f=Math.PI*(1-i/48);P.push({c:[BEND*Math.cos(f),LEG+BEND*Math.sin(f),0],t:[Math.sin(f),-Math.cos(f),0]});}
@@ -174,7 +174,7 @@ const model=x=>new Float32Array([1,0,0,0,0,1,0,0,0,0,1,0,x,0,0,1]); // move to x
 
 // φ swings between -AMP and AMP, sinusoidally with period PERIOD, unless paused. Dragging the slider
 // pauses at the chosen angle; playing continues the swing from there.
-const AMP=180,PERIOD=8,th=$('th'),pp=$('pp');
+const AMP=90,PERIOD=8,th=$('th'),pp=$('pp');
 const ICON_PAUSE='<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg>';
 const ICON_PLAY='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11a.8.8 0 0 0 1.2.7l9-5.5a.8.8 0 0 0 0-1.4l-9-5.5A.8.8 0 0 0 4 2.5z"/></svg>';
 let theta=0,phase=0,playing=!matchMedia('(prefers-reduced-motion: reduce)').matches,last=performance.now();

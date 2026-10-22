@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Static and slip regimes</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;}
+.wrap{padding:16px 0;} /* full width of the iframe, which spans the article's text column */
+canvas{width:100%;display:block;background:#fff;border:1px solid var(--outline);border-radius:8px;}
+.stage{position:relative;}
+/* Pause button, overlaid on the canvas's lower left corner; the canvas is always white, so fixed light colours. */
+.overlay{position:absolute;left:12px;bottom:12px;display:flex;gap:8px;}
+.overlay button{width:40px;height:36px;border:1px solid #d6d4cc;border-radius:8px;background:rgba(255,255,255,.85);color:#1f1e1c;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.overlay button:hover{background:#f3f2ee;}
+button svg{width:16px;height:16px;fill:currentColor;}
+.legend{display:flex;gap:20px;justify-content:center;margin-top:8px;font-size:13px;color:var(--muted);}
+.legend span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:var(--c);}
+.controls{display:grid;grid-template-columns:150px minmax(0,1fr) 110px;align-items:center;gap:8px 12px;margin:14px 0;}
+.controls label{font-size:14px;color:var(--muted);}
+.controls output{font-size:14px;font-weight:500;text-align:right;font-variant-numeric:tabular-nums;}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:20px;background:transparent;margin:0;}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:var(--line);}
+input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:var(--line);}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);margin-top:-7px;border:none;}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent);border:none;}
+input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
+.stat{background:var(--panel);border-radius:8px;padding:12px 14px;}
+.stat div:first-child{font-size:13px;color:var(--muted);}
+.stat div:last-child{font-size:22px;font-weight:500;font-variant-numeric:tabular-nums;}
+.note{font-size:12px;line-height:1.5;color:var(--muted);margin:10px 0 0;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="stage">
+<canvas id="c" aria-label="Animated 3D rendering of a rope running up, half a turn over a bar seen end-on, and back down. A coloured band on the bar marks where the rope holds against its bend and where it slips; a white grid painted on the rope shows its torsion and spin."></canvas>
+<div class="overlay"><button id="pp" aria-label="Pause"></button></div>
+</div>
+<div class="legend"><span style="--c:#3b7fc4">static regime</span><span style="--c:#d1495b">slip regime</span></div>
+<div class="controls">
+<label for="sv">Pull speed</label><input type="range" id="sv" min="0" max="10" step="0.1" value="3"><output id="so">3 cm/s</output>
+<label for="nu">Outgoing twist</label><input type="range" id="nu" min="0" max="20" step="0.1" value="7"><output id="nuo">7.0 rev/m</output>
+<label for="gr">Torsion gradient</label><input type="range" id="gr" min="0" max="3" step="0.1" value="2"><output id="gro">2.0 rev/m/cm</output>
+</div>
+<div class="stats">
+<div class="stat"><div>Static share of the wrap</div><div id="os">52%</div></div>
+<div class="stat"><div>Twist held</div><div id="oh">100%</div></div>
+</div>
+<p class="note" id="lg" hidden>This figure needs WebGL 2, which this browser does not provide.</p>
+</div>
+<script src="rope.js"></script>
+<script>
+// A rope runs up from below, half a turn over a bar seen end-on (square to the rope, so the bar forces no
+// spin), and back down, at speed v (slider). The incoming rope carries no
+// torsion; the outgoing rope demands twist NU (spin plus torsion per length). Bent over the bar, the rope resists turning against its bend by internal
+// friction, which lets torsion change along the rope at most at the rate G = m0/C. Steady state, as in the
+// article's derivation: the rope sits still against its bend (static regime) over the first part of the
+// wrap, then slips over the last |NU|/G, where its torsion rises linearly to NU. The contact is L = π(R0+rr)
+// long, so the bar holds a torsion difference of at most G·L; if NU demands more, the rope slips all round,
+// only G·L of torsion gets across, and the rest comes out as spin of the whole rope, ω = |v|·(NU - G·L).
+// The 3D scene always uses the light palette on a white canvas; the controls follow the page theme.
+const R0=1.5,LIN=20; // bar radius, length of each straight leg (cm)
+const C=Rope.THEMES.light.c,{rr,NS,cross}=Rope,STEP=2*Math.PI/NS,D=rr*STEP,Rh=R0+rr,LC=Math.PI*Rh;
+const TPM=2*Math.PI/100; // radians per cm in one rev per metre
+const STATIC=[0x3b,0x7f,0xc4],SLIP=[0xd1,0x49,0x5b]; // regime colours (as in the legend)
+const cv=document.getElementById('c'),$=id=>document.getElementById(id);
+const gl=cv.getContext('webgl2',{antialias:true,premultipliedAlpha:false});
+if(!gl)$('lg').hidden=false;
+let W,H,dpr=window.devicePixelRatio||1;
+function resize(){W=cv.clientWidth;H=Math.round(W*0.55);cv.width=W*dpr;cv.height=H*dpr;cv.style.height=H+cv.offsetWidth-W+'px';}
+resize();addEventListener('resize',resize);
+
+// Shaders, as in Figure 4, plus the regime colours. Rope vertices carry (s, a): arc length along the rope and
+// angle around it in the zero-twist frame (the path is planar, so that frame is simply +z). The material angle
+// is a - spin(s): uSpin0 everywhere, plus the torsion accumulated over the slip stretch, which rises linearly
+// from 0 at uK.x to uK.z at uK.y and stays uK.z beyond it. Mode 1: plain shaded bar; mode 2: flat colour.
+const VS=`#version 300 es
+in vec3 aPos;in vec3 aNrm;in vec2 aSA;
+uniform mat4 uMVP;
+out vec3 vN,vV;out vec2 vSA;
+void main(){gl_Position=uMVP*vec4(aPos,1.);vN=aNrm;vV=aPos;vSA=aSA;}`;
+const FS=`#version 300 es
+precision highp float;
+in vec3 vN,vV;in vec2 vSA;
+uniform int uMode;
+uniform vec3 uColor,uLight,uFill;uniform sampler2D uTex,uNormal,uAO;uniform vec2 uTexScale,uMapScale;
+uniform float uPulled,uD,uStep,uRr,uGridL,uSpin0;
+uniform vec3 uK;
+const float PI=3.14159265359,GRID_N=6.,GRID_W=.02;
+out vec4 o;
+float gridLine(float x,float period){
+  float d=abs(fract(x/period+.5)-.5)*period,aa=fwidth(x)*.75;
+  return 1.-smoothstep(GRID_W-aa,GRID_W+aa,d);
+}
+vec3 lin(vec3 c){return pow(c,vec3(2.2));}
+vec3 perturb(vec3 N,vec3 m,vec2 st){
+  vec3 dp1=dFdx(vV),dp2=dFdy(vV);vec2 d1=dFdx(st),d2=dFdy(st);
+  vec3 p2=cross(dp2,N),p1=cross(N,dp1),T=p2*d1.x+p1*d2.x,B=p2*d1.y+p1*d2.y;
+  float k=inversesqrt(max(max(dot(T,T),dot(B,B)),1e-20));
+  return normalize(T*k*m.x+B*k*m.y+N*m.z);
+}
+float spinAt(float s){
+  float l=max(uK.y-uK.x,1e-4),x=clamp(s-uK.x,0.,l);
+  return uSpin0+.5*uK.z*x*x/l+uK.z*max(s-uK.y,0.);
+}
+void main(){
+  if(uMode==2){o=vec4(uColor,1.);return;}
+  vec3 N=normalize(vN),n=N,alb;
+  float ao=1.,spec=.25,shine=40.,grid=0.;
+  if(uMode==0){
+    float phi=vSA.y-spinAt(vSA.x),q=phi/uStep,p=(vSA.x-uPulled)/uD;
+    vec2 uv=uTexScale*vec2(q-p,q+p),st=uv*uMapScale;
+    alb=lin(texture(uTex,uv).rgb);n=perturb(N,texture(uNormal,st).xyz*2.-1.,st);
+    ao=texture(uAO,st).r;spec=.06;shine=12.;
+    grid=max(gridLine(phi*uRr,2.*PI*uRr/GRID_N),gridLine(vSA.x-uPulled,uGridL));
+  }else alb=lin(uColor);
+  vec3 V=vec3(0,0,1),Hk=normalize(uLight+V);
+  float key=max(dot(n,uLight),0.),fill=max(dot(n,uFill),0.);
+  vec3 amb=mix(vec3(.16,.15,.14),vec3(.34,.35,.37),.5+.5*n.y);
+  vec3 c=alb*(amb*ao+(.95*key+.18*fill)*mix(1.,ao,.6));
+  c+=spec*pow(max(dot(n,Hk),0.),shine)*ao*key*vec3(1);
+  c=mix(c,vec3(.95)*(.5+.5*max(dot(N,uLight),0.))*mix(1.,ao,.5),.9*grid);
+  c+=alb*.12*pow(1.-max(dot(n,V),0.),3.)*ao;
+  o=vec4(pow(clamp(c,0.,1.),vec3(1./2.2)),1.);
+}`;
+function shader(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(s));return s;}
+let prog,U={};
+if(gl){prog=gl.createProgram();gl.attachShader(prog,shader(gl.VERTEX_SHADER,VS));gl.attachShader(prog,shader(gl.FRAGMENT_SHADER,FS));gl.linkProgram(prog);
+if(!gl.getProgramParameter(prog,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(prog));
+for(const n of['uMVP','uMode','uColor','uLight','uFill','uTex','uTexScale','uNormal','uAO','uMapScale','uPulled','uD','uStep','uRr','uGridL','uSpin0','uK'])U[n]=gl.getUniformLocation(prog,n);}
+
+// Rope textures, as in Figure 4 (see rope-twist.html).
+const STRUCT=4,GRID_L=NS*D/3;
+const hex=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+let tex=null,texScale=[1/NS,1/NS],normal=null,occl=null,mapScale=[1,1];
+function loadTexture(url,smooth,fallback,onload){const t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);
+gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array(fallback));
+const set=min=>{for(const[p,v]of[[gl.TEXTURE_MIN_FILTER,min],[gl.TEXTURE_MAG_FILTER,smooth?gl.LINEAR:gl.NEAREST],[gl.TEXTURE_WRAP_S,gl.REPEAT],[gl.TEXTURE_WRAP_T,gl.REPEAT]])gl.texParameteri(gl.TEXTURE_2D,p,v);};
+set(smooth?gl.LINEAR:gl.NEAREST);
+const img=new Image();img.onload=()=>{gl.bindTexture(gl.TEXTURE_2D,t);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);
+if(smooth){gl.generateMipmap(gl.TEXTURE_2D);set(gl.LINEAR_MIPMAP_LINEAR);}onload(img);};img.src=url;return t;}
+if(gl){
+gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL,gl.NONE);
+tex=loadTexture('rope-texture.png',false,[...hex(C.ro),255],img=>{const w=img.naturalWidth,h=img.naturalHeight;texScale=[h/(NS*w),1/NS];mapScale=[w/STRUCT,h/STRUCT];});
+normal=loadTexture('rope-normal.png',true,[128,128,255,255],()=>{});
+occl=loadTexture('rope-ao.png',true,[255,255,255,255],()=>{});}
+
+// Meshes from rings: centre c, unit tangent t, frame u (b = t × u), radius r, normal mix (nc radial, nt
+// along t), arc length s. M segments around.
+const M=24;
+function mesh(rings){const pos=[],nrm=[],sa=[],tri=[];
+rings.forEach(({c,t,u,r,nc,nt,s})=>{const b=cross(t,u);for(let j=0;j<=M;j++){const a=2*Math.PI*j/M,ca=Math.cos(a),sn=Math.sin(a);
+for(let k=0;k<3;k++){const rad=u[k]*ca+b[k]*sn;pos.push(c[k]+r*rad);nrm.push(rad*nc+t[k]*nt);}sa.push(s,a);}});
+for(let i=0;i<rings.length-1;i++)for(let j=0;j<M;j++){const v=i*(M+1)+j,w=v+M+1;tri.push(v,w,v+1,v+1,w,w+1);}
+return upload(pos,nrm,sa,tri);}
+function upload(pos,nrm,sa,tri){const vao=gl.createVertexArray();gl.bindVertexArray(vao);
+[[pos,3,'aPos'],[nrm,3,'aNrm'],[sa,2,'aSA']].forEach(([d,k,name])=>{const buf=gl.createBuffer(),loc=gl.getAttribLocation(prog,name);
+gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(d),gl.STATIC_DRAW);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,k,gl.FLOAT,false,0,0);});
+const ib=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint32Array(tri),gl.STATIC_DRAW);
+gl.bindVertexArray(null);return{vao,ib,count:tri.length};}
+// Rope path in the plane z = 0: up along x = -Rh, over the top of the bar (centred at the origin) and down
+// along x = Rh. Arc length s from the bottom of the incoming leg; the contact runs from s = LIN to LIN + LC.
+const Z=[0,0,1];
+function ropeMesh(){const P=[];
+for(let i=0;i<=40;i++)P.push({c:[-Rh,-LIN+LIN*i/40,0],t:[0,1,0]});
+for(let i=1;i<=96;i++){const f=Math.PI*(1-i/96);P.push({c:[Rh*Math.cos(f),Rh*Math.sin(f),0],t:[Math.sin(f),-Math.cos(f),0]});}
+for(let i=1;i<=40;i++)P.push({c:[Rh,-LIN*i/40,0],t:[0,-1,0]});
+let s=0;P.forEach((q,i)=>{if(i)s+=Math.hypot(...q.c.map((x,k)=>x-P[i-1].c[k]));q.s=s;});
+const A=P[0],E=P[P.length-1],R=[{...A,u:Z,r:0,nc:0,nt:-1},{...A,u:Z,r:rr,nc:0,nt:-1}];
+P.forEach(q=>R.push({...q,u:Z,r:rr,nc:1,nt:0}));R.push({...E,u:Z,r:rr,nc:0,nt:1},{...E,u:Z,r:0,nc:0,nt:1});
+return mesh(R);}
+// Bar: cylinder along z (towards the viewer) with its front face just in front of the rope, bevelled edge.
+const FRONT=rr+0.3,BEV=0.12,c45=Math.SQRT1_2,b45=BEV*(1-c45);
+function barMesh(){const ring=(z,r,nc,nt)=>({c:[0,0,z],t:[0,0,1],u:[1,0,0],r,nc,nt,s:0}),R=[];
+for(let z=-3;z<FRONT-BEV;z+=0.5)R.push(ring(z,R0,1,0));
+R.push(ring(FRONT-BEV,R0,1,0),ring(FRONT-b45,R0-b45,c45,c45),ring(FRONT,R0-BEV,0,1),ring(FRONT,0,0,1));
+return mesh(R);}
+// Regime band on the bar's front face: an annulus sector from angle f0 to f1 (from +x, anticlockwise), just
+// in front of the face, rebuilt when the regimes change.
+const BAND_IN=R0-0.42,BAND_OUT=R0-0.18,BZ=FRONT+0.002;
+function bandMesh(f0,f1){const pos=[],nrm=[],sa=[],tri=[],n=Math.max(2,Math.ceil(Math.abs(f1-f0)/0.05));
+for(let i=0;i<=n;i++){const f=f0+(f1-f0)*i/n,c=Math.cos(f),s=Math.sin(f);
+pos.push(BAND_IN*c,BAND_IN*s,BZ,BAND_OUT*c,BAND_OUT*s,BZ);nrm.push(0,0,1,0,0,1);sa.push(0,0,0,0);}
+for(let i=0;i<n;i++){const v=2*i;tri.push(v,v+1,v+2,v+1,v+3,v+2);}
+return upload(pos,nrm,sa,tri);}
+const rope=gl?ropeMesh():null,bar=gl?barMesh():null;
+let bands=null,bandKey=null;
+
+// Steady state for outgoing torsion nu and gradient g (both rad/cm per cm, signed nu): torsion difference
+// carried across the bar, length of the slip stretch, and spin rate per length pulled.
+function steady(nu,g){const cap=g*LC,dn=Math.sign(nu)*Math.min(Math.abs(nu),cap);
+const slipLen=g>0?Math.min(LC,Math.abs(nu)/g):LC;
+return{dn,slipLen,spin:Math.sign(nu)*Math.max(0,Math.abs(nu)-cap)};}
+
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const nuS=$('nu'),grS=$('gr'),sv=$('sv'),pp=$('pp');
+const ICON_PAUSE='<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg>';
+const ICON_PLAY='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11a.8.8 0 0 0 1.2.7l9-5.5a.8.8 0 0 0 0-1.4l-9-5.5A.8.8 0 0 0 4 2.5z"/></svg>';
+let pulled=0,spin0=0,last=performance.now();
+// Play/pause follows the pull speed, as in Figure 4: paused exactly when the speed is 0. Pausing remembers the
+// speed and sets it to 0; playing restores it.
+const DEFAULT_SPEED=+sv.defaultValue;let resume=DEFAULT_SPEED;
+const playing=()=>+sv.value!==0;
+if(reduce)sv.value=0;
+function setBtn(){pp.innerHTML=playing()?ICON_PAUSE:ICON_PLAY;pp.setAttribute('aria-label',playing()?'Pause':'Play');}
+pp.onclick=()=>{if(playing()){resume=+sv.value;sv.value=0;}else{sv.value=resume;resume=DEFAULT_SPEED;}setBtn();};
+sv.addEventListener('input',()=>{if(!playing())resume=DEFAULT_SPEED;setBtn();});setBtn();
+const fmt=(x,d)=>(Math.abs(x)<0.5*10**-d?0:x).toFixed(d).replace('-','−');
+let st=null;
+function frame(now){const dt=Math.min(0.05,(now-last)/1000);last=now;
+const nuT=+nuS.value,gT=+grS.value,v=+sv.value;st=steady(nuT*TPM,gT*TPM);
+// The spin is the excess twist turning the whole rope, per length pulled.
+pulled=(pulled+v*dt)%(NS*D);spin0=(spin0+v*st.spin*dt)%(2*Math.PI);
+$('nuo').textContent=fmt(nuT,1)+' rev/m';$('gro').textContent=gT.toFixed(1)+' rev/m/cm';$('so').textContent=Math.round(v)+' cm/s';
+$('os').textContent=Math.round(100*(1-st.slipLen/LC))+'%';
+// Twist held: the share of the outgoing twist the bar holds back as torsion (the rest comes out as spin).
+$('oh').textContent=(nuT>0?Math.round(100*st.dn/(nuT*TPM)):100)+'%';
+if(gl)draw();requestAnimationFrame(frame);}
+
+// Orthographic front view, VIEW cm wide, centred on the bar, with the legs running off the bottom.
+const VIEW=12;
+function draw(){gl.viewport(0,0,cv.width,cv.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+const s=W/VIEW,kx=2*s/W,ky=2*s/H,kz=1/100,my=0;
+gl.useProgram(prog);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);
+gl.uniformMatrix4fv(U.uMVP,false,new Float32Array([kx,0,0,0,0,ky,0,0,0,0,-kz,0,0,-ky*my,0,1]));
+const unit=v=>{const l=Math.hypot(...v);return v.map(x=>x/l);};
+gl.uniform3fv(U.uLight,unit([-0.35,0.55,1]));gl.uniform3fv(U.uFill,unit([0.6,-0.3,0.5]));
+gl.uniform1f(U.uPulled,pulled);gl.uniform1f(U.uD,D);gl.uniform1f(U.uStep,STEP);gl.uniform1f(U.uRr,rr);gl.uniform1f(U.uGridL,GRID_L);
+// Slip stretch: the last slipLen of the contact, over which the torsion rises to dn.
+gl.uniform1f(U.uSpin0,spin0);gl.uniform3fv(U.uK,[LIN+LC-st.slipLen,LIN+LC,st.dn]);
+gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tex);gl.uniform1i(U.uTex,0);gl.uniform2fv(U.uTexScale,texScale);
+gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,normal);gl.uniform1i(U.uNormal,1);
+gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,occl);gl.uniform1i(U.uAO,2);gl.uniform2fv(U.uMapScale,mapScale);
+const drawObj=o=>{gl.bindVertexArray(o.vao);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,o.ib);gl.drawElements(gl.TRIANGLES,o.count,gl.UNSIGNED_INT,0);};
+gl.uniform1i(U.uMode,0);drawObj(rope);
+gl.uniform1i(U.uMode,1);gl.uniform3fv(U.uColor,hex(C.cs).map(v=>(v+255)/2/255));drawObj(bar);
+// Regime bands: the rope meets the bar at angle π (left) and leaves at 0 (right); static first, slip last.
+const fs=Math.PI*st.slipLen/LC,key=fs.toFixed(4);
+if(key!==bandKey){bandKey=key;bands=[fs<Math.PI-1e-4?bandMesh(Math.PI,fs):null,fs>1e-4?bandMesh(fs,0):null];}
+gl.uniform1i(U.uMode,2);
+if(bands[0]){gl.uniform3fv(U.uColor,STATIC.map(v=>v/255));drawObj(bands[0]);}
+if(bands[1]){gl.uniform3fv(U.uColor,SLIP.map(v=>v/255));drawObj(bands[1]);}
+gl.bindVertexArray(null);}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

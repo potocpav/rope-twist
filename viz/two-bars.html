@@ -10,8 +10,8 @@ html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,
 .wrap{padding:16px 0;} /* full width of the iframe, which spans the article's text column */
 canvas{width:100%;display:block;background:#fff;border:1px solid var(--outline);border-radius:8px;}
 .stage{position:relative;}
-.controls{display:grid;grid-template-columns:130px minmax(0,1fr) 80px;align-items:center;gap:8px 12px;margin:14px 0;}
-.controls label{grid-column:1;font-size:14px;color:var(--muted);} /* each label starts a row */
+.controls{display:grid;grid-template-columns:auto minmax(0,1fr) 72px;align-items:center;gap:6px 10px;margin:14px 0;}
+.controls label{white-space:nowrap;grid-column:1;font-size:14px;color:var(--muted);} /* each label starts a row */
 .seg{display:flex;grid-column:2 / -1;} /* across the output column too: bar rows have no output */
 .seg button{flex:1;min-width:0;height:30px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:inherit;font-size:14px;font-variant-numeric:tabular-nums;cursor:pointer;}
 .seg button+button{border-left:0;}

@@ -301,15 +301,6 @@
       font-style: italic;
     }
 
-    footer {
-      margin-top: 64px;
-      padding-top: 20px;
-      border-top: 1px solid var(--line);
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      font-size: 14px;
-      color: var(--muted);
-    }
-
     @media (prefers-reduced-motion: no-preference) {
       html {
         scroll-behavior: smooth;
@@ -617,7 +608,8 @@
 
       <p>
         Because climbing rope sheath is diagonally braided, ropes bend easily, but are very resistant to <i>torsion</i>
-        - a technical term for twisting along a rope's length. Given this property, when running around obstacles, ropes
+        - a technical term for twisting along a rope's length (see <a href="#fig-6">Figure 6</a>). Given this property,
+        when running around obstacles, ropes
         will bend, but will remain mostly untwisted. It turns out, rather surprisingly, that this tendency to remain
         untwisted when following curved paths is what makes the rope spin, and as a result, become twisted and tangled.
       </p>
@@ -1282,16 +1274,18 @@
         rotation (<a href="#fig-6">Figure 6</a>), and the two resistances compete. Bent rotation is resisted by friction
         inside the rope, which, like static friction, holds completely up to a limit. While the torsion a bar has to
         hold back stays within that limit, the rope does not rotate relative to its bend at all, and the idealized model
-        from <a href="#complex-configurations">Complex configurations</a> holds exactly. Only past the limit does the rope slip: it rotates relative to its bend, and the bar forces less
+        from <a href="#complex-configurations">Complex configurations</a> holds exactly. Only past the limit does the
+        rope slip: it rotates relative to its bend, and the bar forces less
         spin than the idealized model predicts. </p>
 
-        <p>In practice, both of these cases seem to be quite common.
+      <p>In practice, both of these cases seem to be quite common.
       </p>
 
       <figure id="fig-6">
         <iframe id="viz-4" src="viz/spin-torsion.html" title="Interactive figure: a straight rope twisted along its length, and a bent rope turning about its own
             axis"></iframe>
-        <figcaption><b>Figure 6.</b> Torsion and bent rotation. Climbing ropes resist these deformations, mainly due to their
+        <figcaption><b>Figure 6.</b> Torsion and bent rotation. Climbing ropes resist these deformations, mainly due to
+          their
           sheath structure.
         </figcaption>
       </figure>
@@ -1783,13 +1777,14 @@
           Let's say incoming torsion into the helical section is smaller than the outgoing torsion. Rope maintains
           its ingoing torsion as it travels over the helix at first, being in the static regime. At some point, the
           twisting moment overcomes rotational
-          friction, rope starts rotating (slip regime), and torsion starts increasing linearly. As the rope leaves the helix,
+          friction, rope starts rotating (slip regime), and torsion starts increasing linearly. As the rope leaves the
+          helix,
           the torsion is equal to the outgoing torsion - much like a belt creeping over a pulley.
         </p>
         <p>
-          In case the difference between torsions is very big, the rope may be in the slip regime along the whole path, 
-          which would  lead to some of the torsion being relieved by "escaping" over the helix to the other side. 
-          This effectively limits the torsion difference a helix is able to hold to a maximum value, 
+          In case the difference between torsions is very big, the rope may be in the slip regime along the whole path,
+          which would lead to some of the torsion being relieved by "escaping" over the helix to the other side.
+          This effectively limits the torsion difference a helix is able to hold to a maximum value,
           which is determined by the properties of the rope and the bar.
         </p>
 
@@ -1826,8 +1821,10 @@
               <mi>ν</mi>
               <mn>3</mn>
             </msub>
-          </math>, 
-          assuming for simplicity that tension <math><mi>T</mi></math> is constant:
+          </math>,
+          assuming for simplicity that tension <math>
+            <mi>T</mi>
+          </math> is constant:
         </p>
 
         <div class="eq" id="eq-19" data-n="19">
@@ -1835,12 +1832,22 @@
             <mrow>
               <mi>Δ</mi>
               <mo>&#x2062;</mo>
-              <msub><mi>ν</mi><mn>3</mn></msub>
+              <msub>
+                <mi>ν</mi>
+                <mn>3</mn>
+              </msub>
               <mo>=</mo>
-              <msubsup><mo>∫</mo><mn>0</mn><mi>L</mi></msubsup>
+              <msubsup>
+                <mo>∫</mo>
+                <mn>0</mn>
+                <mi>L</mi>
+              </msubsup>
               <mfrac>
                 <mrow>
-                  <msub><mi>m</mi><mn>0</mn></msub>
+                  <msub>
+                    <mi>m</mi>
+                    <mn>0</mn>
+                  </msub>
                 </mrow>
                 <mrow>
                   <mi>C</mi>
@@ -1852,7 +1859,10 @@
               <mo>=</mo>
               <mfrac>
                 <mrow>
-                  <msub><mi>m</mi><mn>0</mn></msub>
+                  <msub>
+                    <mi>m</mi>
+                    <mn>0</mn>
+                  </msub>
                   <mo>&#x2062;</mo>
                   <mi>L</mi>
                 </mrow>
@@ -1865,7 +1875,11 @@
         </div>
 
         <p>
-          Substituting <math><mi>L</mi></math> from the equation for the wrap angle <math><mi>ψ</mi></math>:
+          Substituting <math>
+            <mi>L</mi>
+          </math> from the equation for the wrap angle <math>
+            <mi>ψ</mi>
+          </math>:
         </p>
 
         <div class="eq" id="eq-20" data-n="20">
@@ -1898,13 +1912,19 @@
             <mrow>
               <mi>Δ</mi>
               <mo>&#x2062;</mo>
-              <msub><mi>ν</mi><mn>3</mn></msub>
+              <msub>
+                <mi>ν</mi>
+                <mn>3</mn>
+              </msub>
               <mo>=</mo>
               <mi>ψ</mi>
               <mo>⋅</mo>
               <mfrac>
                 <mrow>
-                  <msub><mi>m</mi><mn>0</mn></msub>
+                  <msub>
+                    <mi>m</mi>
+                    <mn>0</mn>
+                  </msub>
                 </mrow>
                 <mrow>
                   <mi>C</mi>
@@ -1928,15 +1948,23 @@
         </div>
 
         <p>
-          Substituting the <math><msub><mi>m</mi><mn>0</mn></msub></math> guess from (13) and simplifying using (14):
+          Substituting the <math>
+            <msub>
+              <mi>m</mi>
+              <mn>0</mn>
+            </msub>
+          </math> guess from (13) and simplifying using (14):
         </p>
 
-                <div class="eq" id="eq-22" data-n="22">
+        <div class="eq" id="eq-22" data-n="22">
           <math display="block">
             <mrow>
               <mi>Δ</mi>
               <mo>&#x2062;</mo>
-              <msub><mi>ν</mi><mn>3</mn></msub>
+              <msub>
+                <mi>ν</mi>
+                <mn>3</mn>
+              </msub>
               <mo>≈</mo>
               <mi>ψ</mi>
               <mo>⋅</mo>
@@ -1946,11 +1974,17 @@
               <mo>⋅</mo>
               <mfrac>
                 <mrow>
-                  <msub><mi>μ</mi><mi>b</mi></msub>
+                  <msub>
+                    <mi>μ</mi>
+                    <mi>b</mi>
+                  </msub>
                   <mo>&#x2062;</mo>
                   <mi>κ</mi>
                   <mo>+</mo>
-                  <msub><mi>μ</mi><mi>T</mi></msub>
+                  <msub>
+                    <mi>μ</mi>
+                    <mi>T</mi>
+                  </msub>
                   <mo>&#x2062;</mo>
                   <mi>T</mi>
                 </mrow>
@@ -1963,20 +1997,22 @@
         </div>
 
         <p>
-          If every bar has torsion difference within the <math><mi>Δ</mi>&#x2062;<msub><mi>ν</mi><mn>3</mn></msub></math>, 
-          limit, the rope follows the idealized model from the <a href="#complex-configurations">Complex configurations</a> section.
+          If every bar has torsion difference within the <math>
+            <mi>Δ</mi>&#x2062;<msub>
+              <mi>ν</mi>
+              <mn>3</mn>
+            </msub>
+          </math>,
+          limit, the rope follows the idealized model from the <a href="#complex-configurations">Complex
+            configurations</a> section.
           Otherwise, the rope "slips", its twisting action is limited, and torsion difference is
-          kept at the maximum value <math><mi>Δ</mi>&#x2062;<msub><mi>ν</mi><mn>3</mn></msub></math>.
+          kept at the maximum value <math>
+            <mi>Δ</mi>&#x2062;<msub>
+              <mi>ν</mi>
+              <mn>3</mn>
+            </msub>
+          </math>.
       </details>
-
-
-      <aside class="callout callout-info">
-        <svg viewBox="0 0 16 16" aria-hidden="true">
-          <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0Zm0 3.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2ZM9 12H7V7h2v5Z" />
-        </svg>
-        <p>The blog post is fairly complete up to this point. Below, it's work in progress.</p>
-      </aside>
-
 
       <figure id="fig-7">
         <iframe id="viz-5" src="viz/slip.html"
@@ -2014,51 +2050,71 @@
         we observe. I found two explanations which limit how much rope twist is induced in practice:
       </p>
 
-      <h2>Applications</h2>
+      <h3>Summary</h3>
 
-      <p>Rope can become twisted in several ways:</p>
-      <ul>
-        <li>Improper coiling and un-coiling,</li>
-        <li>Running the rope through some configurations of fixed points,</li>
-        <li>Belaying or rappelling with a device that causes the rope to twist.</li>
-      </ul>
-
-      <h3>Anchor configuration</h3>
-
-      <p>TODO: Describe how anchor configuration induce rope twist.</p>
-
-      <h3>Belaying and rappelling</h3>
-
-      <p>TODO: Describe how belay devices induce rope twist.</p>
-
-      <h4>Figure-8 belay device</h4>
-
-      <p>TODO: Describe how the Figure-8 belay device induce rope twist.</p>
-
-      <h4>Munter hitch</h4>
-
-      <p>TODO: Describe how the Munter hitch induce rope twist.</p>
-
-      <h4>Gri-Gri</h4>
-
-      <p>TODO: Describe how the Gri-Gri induce rope twist.</p>
-
-      <h3>Rope coiling</h3>
-
-      <p>All these causes are analyzed in detail in the following sections.</p>
-
-      <h2>Misconceptions</h2>
+      <p>Summarizing theory in practical terms:</p>
 
       <ul>
-        <li>Rope twist is caused by friction.</li>
-        <li>Rope twist can be counter-acted by a twist in the opposite direction.</li>
-
+        <li>Climbing ropes naturally spin when running around obstacles at an oblique angle. This spin is what causes ropes 
+          to twist and tangle.</li>
+        <li>Most amount of spin is induced by obstacles placed at an angle of 45° to the rope.</li>
+        <li>The amount of spin depends primarily on rope trajectory, and secondarily on rope tension. With more tension,
+          ropes will tend to spin more.</li>
+        <li>When the rope runs around multiple obstacles, the first obstacle (i.e., where the rope goes in) will determine the amount of spin, 
+          other obstacles don't have much effect.</li>
+        <li>In belaying and rappelling, shape of the first bend will determine the amount of spin. Hand positioning is thus very important.</li>
       </ul>
 
-      <footer>
-        Source and visualization code: <a
-          href="https://github.com/potocpav/rope-twist">github.com/potocpav/rope-twist</a>
-      </footer>
+
+      <aside class="callout callout-info">
+        <svg viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0Zm0 3.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2ZM9 12H7V7h2v5Z" />
+        </svg>
+        <p>The blog post is fairly complete up to this point. Below, it's work in progress.</p>
+      </aside>
+      
+        <h2>Applications</h2>
+
+        <p>Rope can become twisted in several main ways:</p>
+        <ul>
+          <li>Lowering through anchors,</li>
+          <li>Belaying and rappelling,</li>
+          <li>Improper coiling and un-coiling.</li>
+        </ul>
+
+        Each of these is discussed in detail in the following sections.
+
+        <h3>Lowering through anchors</h3>
+
+        <p>TODO: Describe how anchor configuration induce rope twist.</p>
+
+        <h3>Belaying and rappelling</h3>
+
+        <p>TODO: Describe how belay devices induce rope twist.</p>
+
+        <h4>Figure-8 belay device</h4>
+
+        <p>TODO: Describe how the Figure-8 belay device induce rope twist.</p>
+
+        <h4>Munter hitch</h4>
+
+        <p>TODO: Describe how the Munter hitch induce rope twist.</p>
+
+        <h4>Gri-Gri</h4>
+
+        <p>TODO: Describe how the Gri-Gri induce rope twist.</p>
+
+        <h3>Rope coiling</h3>
+
+        <p>TODO: Describe how improper coiling and un-coiling induce rope twist.</p>
+
+        <h2>Misconceptions</h2>
+
+        <ul>
+          <li>Rope twist is caused by friction.</li>
+          <li>Rope twist can be counter-acted by a twist in the opposite direction.</li>
+
+        </ul>
     </main>
   </div>
   <script>

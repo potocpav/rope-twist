@@ -10,7 +10,7 @@ html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,
 .wrap{padding:16px 0;} /* full width of the iframe, which spans the article's text column */
 canvas{width:100%;display:block;background:#fff;border:1px solid var(--outline);border-radius:8px;}
 .stage{position:relative;}
-/* Pause button, overlaid on the canvas's lower left corner; the canvas is always white, so fixed light colours. */
+/* Pause and reset buttons, overlaid on the canvas's lower left corner; the canvas is always white, so fixed light colours. */
 .overlay{position:absolute;left:12px;bottom:12px;display:flex;gap:8px;}
 .overlay button{width:40px;height:36px;border:1px solid #d6d4cc;border-radius:8px;background:rgba(255,255,255,.85);color:#1f1e1c;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .overlay button:hover{background:#f3f2ee;}
@@ -37,17 +37,17 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 <div class="wrap">
 <div class="stage">
 <canvas id="c" aria-label="Animated 3D rendering of a rope running up, half a turn over a bar seen end-on, and back down. A coloured band on the bar marks where the rope holds against its bend and where it slips; a white grid painted on the rope shows its torsion and spin."></canvas>
-<div class="overlay"><button id="pp" aria-label="Pause"></button></div>
+<div class="overlay"><button id="pp" aria-label="Pause"></button><button id="rs" aria-label="Reset" title="Reset"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5a5.5 5.5 0 1 1-5.2 3.7.75.75 0 1 1 1.4.5A4 4 0 1 0 8 4h-.6l1.1 1.1a.75.75 0 0 1-1 1L5.2 3.8a.75.75 0 0 1 0-1.1L7.5.5a.75.75 0 0 1 1 1L7.4 2.5z"/></svg></button></div>
 </div>
 <div class="legend"><span style="--c:#3b7fc4">static regime</span><span style="--c:#d1495b">slip regime</span></div>
 <div class="controls">
 <label for="sv">Pull speed</label><input type="range" id="sv" min="0" max="10" step="0.1" value="3"><output id="so">3 cm/s</output>
-<label for="nu">Outgoing twist</label><input type="range" id="nu" min="0" max="20" step="0.1" value="7"><output id="nuo">7.0 rev/m</output>
+<label for="nu">Outgoing twist</label><input type="range" id="nu" min="0" max="20" step="0.1" value="10"><output id="nuo">10.0 rev/m</output>
 <label for="gr">Torsion gradient</label><input type="range" id="gr" min="0" max="3" step="0.01" value="2"><output id="gro">2.0 rev/m/cm</output>
 </div>
 <div class="stats">
 <div class="stat"><div>Static share of the wrap</div><div id="os">52%</div></div>
-<div class="stat"><div>Twist held</div><div id="oh">100%</div></div>
+<div class="stat"><div>Twist slipped</div><div id="oh">0%</div></div>
 </div>
 <p class="note" id="lg" hidden>This figure needs WebGL 2, which this browser does not provide.</p>
 </div>
@@ -208,6 +208,8 @@ if(reduce)sv.value=0;
 function setBtn(){pp.innerHTML=playing()?ICON_PAUSE:ICON_PLAY;pp.setAttribute('aria-label',playing()?'Pause':'Play');}
 pp.onclick=()=>{if(playing()){resume=+sv.value;sv.value=0;}else{sv.value=resume;resume=DEFAULT_SPEED;}setBtn();};
 sv.addEventListener('input',()=>{if(!playing())resume=DEFAULT_SPEED;setBtn();});setBtn();
+// Reset: the sliders back to their defaults, the rope back to its starting position, and play.
+$('rs').onclick=()=>{for(const e of[sv,nuS,grS])e.value=e.defaultValue;resume=DEFAULT_SPEED;pulled=spin0=0;setBtn();pp.focus();};
 const fmt=(x,d)=>(Math.abs(x)<0.5*10**-d?0:x).toFixed(d).replace('-','−');
 let st=null;
 function frame(now){const dt=Math.min(0.05,(now-last)/1000);last=now;
@@ -216,8 +218,8 @@ const nuT=+nuS.value,gT=+grS.value,v=+sv.value;st=steady(nuT*TPM,gT*TPM);
 pulled=(pulled+v*dt)%(NS*D);spin0=(spin0+v*st.spin*dt)%(2*Math.PI);
 $('nuo').textContent=fmt(nuT,1)+' rev/m';$('gro').textContent=gT.toFixed(1)+' rev/m/cm';$('so').textContent=Math.round(v)+' cm/s';
 $('os').textContent=Math.round(100*(1-st.slipLen/LC))+'%';
-// Twist held: the share of the outgoing twist the bar holds back as torsion (the rest comes out as spin).
-$('oh').textContent=(nuT>0?Math.round(100*st.dn/(nuT*TPM)):100)+'%';
+// Twist slipped: the share of the outgoing twist the bar can't hold back as torsion, which comes out as spin.
+$('oh').textContent=(nuT>0?Math.round(100*(1-st.dn/(nuT*TPM))):0)+'%';
 if(gl)draw();requestAnimationFrame(frame);}
 
 // Orthographic front view, VIEW cm wide, centred on the bar, with the legs running off the bottom.

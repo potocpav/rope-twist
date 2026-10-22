@@ -150,8 +150,8 @@ occl=loadTexture('rope-ao.png',true,[255,255,255,255],()=>{});}
 
 // Meshes from rings: centre c, unit tangent t, frame u (b = t × u), radius r, normal mix (nc radial, nt
 // along t), arc length s. M segments around.
-const M=24;
-function mesh(rings){const pos=[],nrm=[],sa=[],tri=[];
+const M_ROPE=24,M_BAR=120; // segments around the rope and around a bar
+function mesh(rings,M=M_ROPE){const pos=[],nrm=[],sa=[],tri=[];
 rings.forEach(({c,t,u,r,nc,nt,s})=>{const b=cross(t,u);for(let j=0;j<=M;j++){const a=2*Math.PI*j/M,ca=Math.cos(a),sn=Math.sin(a);
 for(let k=0;k<3;k++){const rad=u[k]*ca+b[k]*sn;pos.push(c[k]+r*rad);nrm.push(rad*nc+t[k]*nt);}sa.push(s,a);}});
 for(let i=0;i<rings.length-1;i++)for(let j=0;j<M;j++){const v=i*(M+1)+j,w=v+M+1;tri.push(v,w,v+1,v+1,w,w+1);}
@@ -177,7 +177,7 @@ const FRONT=rr+0.3,BEV=0.12,c45=Math.SQRT1_2,b45=BEV*(1-c45);
 function barMesh(){const ring=(z,r,nc,nt)=>({c:[0,0,z],t:[0,0,1],u:[1,0,0],r,nc,nt,s:0}),R=[];
 for(let z=-3;z<FRONT-BEV;z+=0.5)R.push(ring(z,R0,1,0));
 R.push(ring(FRONT-BEV,R0,1,0),ring(FRONT-b45,R0-b45,c45,c45),ring(FRONT,R0-BEV,0,1),ring(FRONT,0,0,1));
-return mesh(R);}
+return mesh(R,M_BAR);}
 // Regime band on the bar's front face: an annulus sector from angle f0 to f1 (from +x, anticlockwise), just
 // in front of the face, rebuilt when the regimes change.
 const BAND_IN=R0-0.42,BAND_OUT=R0-0.18,BZ=FRONT+0.002;

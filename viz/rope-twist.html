@@ -175,8 +175,8 @@ occl=loadTexture('rope-ao.png',true,[255,255,255,255],()=>{});}
 
 // Mesh from rings of vertices. Ring: centre c, unit tangent t, frame u (b = t x u), radius r,
 // normal mix (nc radial, nt along t; caps tilt the normal), arc length s. M segments around.
-const M=24;
-function mesh(rings){const n=rings.length,pos=[],nrm=[],sa=[],tri=[];
+const M_ROPE=24,M_BAR=120; // segments around the rope and around a bar
+function mesh(rings,M=M_ROPE){const n=rings.length,pos=[],nrm=[],sa=[],tri=[];
 rings.forEach(({c,t,u,r,nc,nt,s})=>{const b=cross(t,u);for(let j=0;j<=M;j++){const a=2*Math.PI*j/M,ca=Math.cos(a),sn=Math.sin(a);
 for(let k=0;k<3;k++){const rad=u[k]*ca+b[k]*sn;pos.push(c[k]+r*rad);nrm.push(rad*nc+t[k]*nt);}sa.push(s,a);}});
 for(let i=0;i<n-1;i++)for(let j=0;j<M;j++){const v=i*(M+1)+j,w=v+M+1;tri.push(v,w,v+1,v+1,w,w+1);}
@@ -197,7 +197,7 @@ for(const i of idx)rings.push({c:m.P[i],t:m.Tg[i],u:m.U[i],r:rr,nc:1,nt:0,s:m.S[
 rings.push(cap(N-1,1,rr),cap(N-1,1,0));
 return mesh(rings);}
 // Bar: cylinder of radius R0 along z, long enough to leave the view.
-function barMesh(R0){const rings=[];for(let z=-40;z<=40;z+=1)rings.push({c:[0,0,z],t:[0,0,1],u:[1,0,0],r:R0,nc:1,nt:0,s:0});return mesh(rings);}
+function barMesh(R0){const rings=[];for(let z=-40;z<=40;z+=1)rings.push({c:[0,0,z],t:[0,0,1],u:[1,0,0],r:R0,nc:1,nt:0,s:0});return mesh(rings,M_BAR);}
 
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let pulled=0,spin=0,last=performance.now(),geo=null,geoK=null,rope=null,bar=null;

@@ -26,7 +26,7 @@
       --info-bg: #e8f0f7;
       --mark-green: #1e7b1e;
       --mark-red: #d81b1b;
-      --mark-grey: #6e6e78;
+      --mark-gray: #6e6e78;
       color-scheme: light;
     }
 
@@ -45,7 +45,7 @@
         --info-bg: #1f2a33;
         --mark-green: #5cc45c;
         --mark-red: #f05a5a;
-        --mark-grey: #a0a0aa;
+        --mark-gray: #a0a0aa;
         color-scheme: dark;
       }
     }
@@ -62,7 +62,7 @@
       --info-bg: #1f2a33;
       --mark-green: #5cc45c;
       --mark-red: #f05a5a;
-      --mark-grey: #a0a0aa;
+      --mark-gray: #a0a0aa;
       color-scheme: dark;
     }
 
@@ -341,8 +341,8 @@
       color: var(--mark-red);
     }
 
-    figcaption b.c-grey {
-      color: var(--mark-grey);
+    figcaption b.c-gray {
+      color: var(--mark-gray);
     }
 
     .photo .subcap {
@@ -618,7 +618,7 @@
           Source on GitHub
         </a>
       </p>
-      <div class="theme-switch" role="group" aria-label="Colour theme">
+      <div class="theme-switch" role="group" aria-label="Color theme">
         <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
         <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
       </div>
@@ -653,6 +653,12 @@
         <figcaption><b>Figure 1.</b> Tangled rope with 30 twists.</figcaption>
       </figure>
 
+      <p>
+        The theory behind rope twist is quite technical. Feel free to skip sections if you are not interested in some of
+        the nitty-gritty details. You can even skip <a href="#theory">Section 1</a> (Theory) entirely, and jump straight
+        to <a href="#applications">Section 2</a> (Applications) to learn how the rope twists in various real-world
+        scenarios.
+      </p>
 
       <h2 id="theory"><span class="secnum">1</span> Theory</h2>
 
@@ -665,7 +671,8 @@
 
       <figure class="photo" id="fig-2">
         <a href="images/rope-twists.jpg">
-          <img src="images/preview/rope-twists.jpg" width="1500" height="1250" alt="Three photos of the same orange braided rope on a white background: straight with no twist, in a gentle
+          <img src="images/preview/rope-twists.jpg" width="1500" height="1250"
+            alt="Three photos of the same orange braided rope on a white background: straight with no twist, in a gentle
               S-shaped curve with one twist, and buckled into a pronounced wave with two twists.">
         </a>
         <figcaption><b>Figure 2.</b> Rope with zero, one and two twists along its length. Rope is marked with a black
@@ -676,9 +683,9 @@
       <p>
         Because climbing rope sheath is diagonally braided, ropes bend easily, but are very resistant to <i>torsion</i>
         - a technical term for twisting along a rope's length (see <a href="#fig-6">Figure 6</a>). Given this property,
-        when running around obstacles, ropes
-        will bend, but will remain mostly untwisted. It turns out, rather surprisingly, that this tendency to remain
-        untwisted when following curved paths is what makes the rope spin, and as a result, become twisted and tangled.
+        when running around obstacles, ropes will bend, but will remain mostly untwisted. It turns out, rather
+        surprisingly, that this tendency to remain untwisted when following curved paths is what makes the rope spin,
+        and as a result, become twisted and tangled.
       </p>
       <p>
         In order to quantify this effect, we need to understand the details of how ropes behave when running around
@@ -749,7 +756,7 @@
             </math> is rope torsion,</li>
           <li><math>
               <mi>τ</mi>
-            </math> is the geometric torsion of the helix formed by rope's centreline.
+            </math> is the geometric torsion of the helix formed by rope's centerline.
           </li>
         </ul>
 
@@ -933,7 +940,7 @@
             </msub>
             <mo>=</mo>
             <mn>0</mn>
-          </math>). After labelling the rotation rate <math>
+          </math>). After labeling the rotation rate <math>
             <mi>ω</mi>
             <mo>=</mo>
             <mfrac>
@@ -1026,8 +1033,9 @@
       </ul>
 
       <figure class="photo" id="fig-3">
-        <img src="images/helix-diagram.png" width="1500" height="701" alt="Diagram of a rope wrapped once around a horizontal bar in a helix, labelled with bar radius R, rope
-            radius r, wrap angle α, and the rope's rotation φ about its own axis as it moves.">
+        <img src="images/helix-diagram.png" width="1500" height="701"
+          alt="Diagram of a rope wrapped once around a horizontal bar in a helix, labeled with bar radius R, rope radius
+            r, wrap angle α, and the rope's rotation φ about its own axis as it moves.">
         <figcaption><b>Figure 3.</b> Rope wrapped around a bar in a helix: bar radius <math>
             <mi>R</mi>
           </math>, rope radius <math>
@@ -1137,7 +1145,7 @@
 
         <p>
           So the rope turns once about its own axis for every 12.6&nbsp;cm pulled over the carabiner: about 8 turns per
-          metre. In practice, much less twist builds up than this, if the rope can't spin freely, because rope strongly
+          meter. In practice, much less twist builds up than this, if the rope can't spin freely, because rope strongly
           resists such a large torsion.
         </p>
       </details>
@@ -1152,18 +1160,19 @@
         there are factors which may limit the spin rate in such cases - more on that later.
       </p>
 
-      <p>Some additional notes on this result.</p>
+      <p>Some additional notes on this result:</p>
       <ul>
         <li>Spin rate is zero when the rope is wrapped around the bar at a right angle.</li>
         <li>Spin rate is highest for a rope running at 45° to the bar.</li>
-        <li>Spin rate is higher for smaller bend radii,</li>
+        <li>Spin rate is higher for smaller bend radii.</li>
         <li>Rope tension and velocity do not play a role.</li>
       </ul>
 
       <p>You can play with some of the parameters affecting spin rate in <a href="#fig-4">Figure 4</a>.</p>
 
       <figure id="fig-4">
-        <iframe id="viz-2" src="viz/rope-twist.html" title="Interactive animation: a braided rope pulled around a bar at an angle, showing how the rope spins as a
+        <iframe id="viz-2" src="viz/rope-twist.html"
+          title="Interactive animation: a braided rope pulled around a bar at an angle, showing how the rope spins as a
             result"></iframe>
         <figcaption><b>Figure 4.</b> A rope pulled around a bar at an angle, showing how the rope spins as a result.
           Rope radius is 5&nbsp;mm; the bar radius can be set from 0.5 to 2&nbsp;cm.</figcaption>
@@ -1171,14 +1180,13 @@
 
       <h5 id="spin-direction">Spin direction</h5>
 
-      <p>Rope spins around its axis in the same direction it wraps around the bar. We can introduce a hand rule
-        as a mnemonic for the spin direction. If you grab the bar, and point your thumb in the direction of the rope,
-        your fingers will curl in the direction of the rope's spin.
+      <p>Rope spins around its axis in the same direction it wraps around the bar. We can introduce a hand rule as a
+        mnemonic for the spin direction. If you grab the bar, and point your thumb in the direction of the rope, your
+        fingers will curl in the direction of the rope's spin.
       </p>
 
-      <p>If left hand fits the rule, we will call it a left-handed spin. If right hand fits the rule, we will call it a
-        right-handed spin.
-        <a href="#fig-4">Figure 4</a> above shows left-handed spin.
+      <p>If the left hand fits the rule, we will call it a left-handed spin. If the right hand fits the rule, we will
+        call it a right-handed spin. <a href="#fig-4">Figure 4</a> above shows left-handed spin.
       </p>
 
       <h3 id="complex-configurations"><span class="secnum">1.2</span> Complex configurations</h3>
@@ -1323,7 +1331,7 @@
 
         <p>
           which is non-zero, whenever the spin rates of the two helices are different. Thus, the second helix
-          accumulates enough rope torsion to counter-act its spin difference to the first helix.
+          accumulates enough rope torsion to counteract its spin difference to the first helix.
         </p>
         <p>
           The same reasoning applies to any number of sections in a row.
@@ -1337,7 +1345,8 @@
       </p>
 
       <figure id="fig-5">
-        <iframe id="viz-3" src="viz/two-bars.html" title="Interactive animation: a rope bent over two bars in turn, showing torsion building up in the rope
+        <iframe id="viz-3" src="viz/two-bars.html"
+          title="Interactive animation: a rope bent over two bars in turn, showing torsion building up in the rope
             between them"></iframe>
         <figcaption><b>Figure 5.</b> A rope bent over two bars. Rope spin depends only on the first bar it runs over.
           The second bar only stores torsion in the rope leading into it.
@@ -1352,19 +1361,18 @@
         rotation (<a href="#fig-6">Figure 6</a>), and the two resistances compete. Bent rotation is resisted by friction
         inside the rope, which, like static friction, holds completely up to a limit. While the torsion a bar has to
         hold back stays within that limit, the rope does not rotate relative to its bend at all, and the idealized model
-        from <a href="#complex-configurations">Section 1.2</a> holds exactly. Only past the limit does the
-        rope slip: it rotates relative to its bend, and the bar forces less
-        spin than the idealized model predicts. </p>
+        from <a href="#complex-configurations">Section 1.2</a> holds exactly. Only past the limit does the rope slip: it
+        rotates relative to its bend, and the bar forces less spin than the idealized model predicts. </p>
 
       <p>In practice, both of these cases seem to be quite common.
       </p>
 
       <figure id="fig-6">
-        <iframe id="viz-4" src="viz/spin-torsion.html" title="Interactive figure: a straight rope twisted along its length, and a bent rope turning about its own
+        <iframe id="viz-4" src="viz/spin-torsion.html"
+          title="Interactive figure: a straight rope twisted along its length, and a bent rope turning about its own
             axis"></iframe>
         <figcaption><b>Figure 6.</b> Torsion and bent rotation. Climbing ropes resist these deformations, mainly due to
-          their
-          sheath structure.
+          their sheath structure.
         </figcaption>
       </figure>
 
@@ -1477,8 +1485,8 @@
               <mi>m</mi>
               <mn>0</mn>
             </msub>
-          </math> is the largest torque the friction can exert. First row is dynamic friction,
-          second row is static friction.
+          </math> is the largest torque the friction can exert. First row is dynamic friction, second row is static
+          friction.
         </p>
 
         <p>
@@ -1553,7 +1561,7 @@
         </div>
 
         <p>
-          The first term is friction inside the bent rope: turning a bent rope about its own axis takes each fibre from
+          The first term is friction inside the bent rope: turning a bent rope about its own axis takes each fiber from
           the outside of the bend to the inside and back, and the strands rub against each other as they do. The second
           term comes from the load pressing the rope against the bar, <math>
             <mi>T</mi>
@@ -1648,8 +1656,8 @@
         </p>
 
         <p>
-          Around a helix, following a piece of rope,as in equation (2), and
-          substituting (1), its bent rotation rate <math>
+          Around a helix, following a piece of rope, as in equation (2), and substituting (1), its bent rotation rate
+          <math>
             <mi>β</mi>
           </math> is
         </p>
@@ -1758,9 +1766,7 @@
             <mi>β</mi>
             <mo>=</mo>
             <mn>0</mn>
-          </math>). No rotational slip occurs, and
-          torsion
-          <math>
+          </math>). No rotational slip occurs, and torsion <math>
             <msub>
               <mi>ν</mi>
               <mn>3</mn>
@@ -1851,19 +1857,17 @@
         <p>
           Putting this all together, knowing that <math>
             <mi>β</mi>
-          </math> is continuous, the overall picture is this.
-          Let's say incoming torsion into the helical section is smaller than the outgoing torsion. Rope maintains
-          its ingoing torsion as it travels over the helix at first, being in the static regime. At some point, the
-          twisting moment overcomes rotational
-          friction, rope starts rotating (slip regime), and torsion starts increasing linearly. As the rope leaves the
-          helix,
-          the torsion is equal to the outgoing torsion - much like a belt creeping over a pulley.
+          </math> is continuous, the overall picture is this. Let's say incoming torsion into the helical section is
+          smaller than the outgoing torsion. Rope maintains its incoming torsion as it travels over the helix at first,
+          being in the static regime. At some point, the twisting moment overcomes rotational friction, rope starts
+          rotating (slip regime), and torsion starts increasing linearly. As the rope leaves the helix, the torsion is
+          equal to the outgoing torsion - much like a belt creeping over a pulley.
         </p>
         <p>
           In case the difference between torsions is very big, the rope may be in the slip regime along the whole path,
-          which would lead to some of the torsion being relieved by "escaping" over the helix to the other side.
-          This effectively limits the torsion difference a helix is able to hold to a maximum value,
-          which is determined by the properties of the rope and the bar.
+          which would lead to some of the torsion being relieved by "escaping" over the helix to the other side. This
+          effectively limits the torsion difference a helix is able to hold to a maximum value, which is determined by
+          the properties of the rope and the bar.
         </p>
 
 
@@ -1899,8 +1903,7 @@
               <mi>ν</mi>
               <mn>3</mn>
             </msub>
-          </math>,
-          assuming for simplicity that tension <math>
+          </math>, assuming for simplicity that tension <math>
             <mi>T</mi>
           </math> is constant:
         </p>
@@ -2080,25 +2083,25 @@
               <mi>ν</mi>
               <mn>3</mn>
             </msub>
-          </math>,
-          limit, the rope follows the idealized model from <a href="#complex-configurations">Section
-            1.2</a>.
-          Otherwise, the rope "slips", its twisting action is limited, and torsion difference is
-          kept at the maximum value <math>
+          </math>, limit, the rope follows the idealized model from <a href="#complex-configurations">Section 1.2</a>.
+          Otherwise, the rope "slips", its twisting action is limited, and torsion difference is kept at the maximum
+          value <math>
             <mi>Δ</mi>&#x2062;<msub>
               <mi>ν</mi>
               <mn>3</mn>
             </msub>
           </math>.
+        </p>
       </details>
 
       <figure id="fig-7">
         <iframe id="viz-5" src="viz/slip.html"
-          title="Interactive animation: a rope running half a turn over a bar seen end-on, showing where it holds against its bend and where it slips"></iframe>
+          title="Interactive animation: a rope running half a turn over a bar seen end-on, showing where it holds
+            against its bend and where it slips"></iframe>
         <figcaption><b>Figure 7.</b> Static and slip regimes on a bar square to the rope. The incoming rope has no
           torsion; the outgoing rope demands the set twist. The rope holds against its bend (blue) until internal
           friction can no longer keep the torsion from changing, and slips (red) over the rest of the wrap. If the bar
-          cannot hold the whole twist as torsion, the rope slips all round, and the rest of the twist comes out as
+          cannot hold the whole twist as torsion, the rope slips all around, and the rest of the twist comes out as
           spin.</figcaption>
       </figure>
 
@@ -2123,138 +2126,129 @@
         force.
       </p>
 
-      <p>As shown above, the model predicts rope to twist quite severely, regardless of how many turns the rope has run
-        around the bar. Even a slight 30-degree bend over an edge should induce significant twist - but that is not what
-        we observe. I found two explanations which limit how much rope twist is induced in practice:
-      </p>
-
       <h2 id="applications"><span class="secnum">2</span> Applications</h2>
 
-      <p>For readers who skipped <a href="#theory">Section 1</a>, here is a summary of the main points, as they apply
-        to the practical applications below:</p>
+      <p>For readers who skipped <a href="#theory">Section 1</a>, here is a summary of the main points, as they apply to
+        the practical applications below:</p>
 
       <ul>
         <li>Climbing ropes naturally spin when running around obstacles at an oblique angle. This spin is what causes
-          ropes
-          to twist and tangle.</li>
-        <li>The simplest case is rope running around a bar along a spiral path. Real rope paths can be decomposed into
-          a series of such spiral segments.</li>
+          ropes to twist and tangle.</li>
+        <li>The simplest case is rope running around a bar along a spiral path. Real rope paths can be decomposed into a
+          series of such spiral segments.</li>
         <li>Obstacles placed at an angle of 45° to the rope cause the maximum amount of rope twist.</li>
         <li>The amount of twist depends on rope tension. With more tension, ropes will tend to spin more.
         </li>
         <li>When the rope runs around multiple obstacles, the first obstacle (i.e., where the rope goes in) will
-          determine the amount of spin,
-          other obstacles don't have much effect.</li>
-        <li>Likewise, in belaying and rappelling, shape of the first bend will determine the amount of spin. Hand
+          determine the amount of spin, other obstacles don't have much effect.</li>
+        <li>Likewise, in belaying and rappelling, the shape of the first bend will determine the amount of spin. Hand
           positioning is thus very important.</li>
       </ul>
 
       <p>Based on this understanding, we can analyze how the rope gets twisted in practice, and learn how to minimize or
-        eliminate it.
-        The following sections discuss the main causes of rope twist.
+        eliminate it. The following sections discuss the main causes of rope twist.
+      </p>
 
       <h3 id="belaying-and-rappelling"><span class="secnum">2.1</span> Belaying and rappelling</h3>
 
       <h4 id="tube-style-devices"><span class="secnum">2.1.1</span> Tube-style devices</h4>
 
       <p>
-        Tube-style devices don't twist ropes, because all bends inside the device are in one plane, <math>
+        In tube-style devices, all bends inside the device are in one plane. Therefore, <math>
           <mi>α</mi>
           <mo>=</mo>
           <mn>0</mn>
-        </math>
-        in equation (6).
+        </math> in equation (6), and the rope does not twist.
       </p>
 
       <figure class="photo" id="fig-8">
         <a href="images/tube.jpg">
-          <img src="images/preview/tube.jpg" width="1000" height="1000" alt="A blue rope threaded through a yellow tube-style belay device clipped to a carabiner. Two black lines
+          <img src="images/preview/tube.jpg" width="1000" height="1000"
+            alt="A blue rope threaded through a yellow tube-style belay device clipped to a carabiner. Two gray lines
               trace the rope's bends: one around the carabiner inside the device, and one over the device's edge.">
         </a>
-        <figcaption><b>Figure 8.</b> Tubular devices bend the rope twice (<b class="c-grey">grey lines</b>). Neither of
-          these bends
-          forms a spiral, so the rope does not twist.</figcaption>
+        <figcaption><b>Figure 8.</b> Tubular devices bend the rope twice (<b class="c-gray">gray lines</b>). Neither of
+          these bends forms a spiral, so the rope does not twist.</figcaption>
       </figure>
 
       <h4 id="figure-8-belay-device"><span class="secnum">2.1.2</span> Figure-8 belay device</h4>
 
-      <p>Figure-8 can be held in two ways. One way (<a href="#fig-9">Figure 9, A</a>) contains two helices -
-        one clockwise, and the other counter-clockwise. But, as we saw before, they don't cancel each other out:
-        the first twist is the only one that matters. Thus, the proper way of holding the break side is down
-        (<a href="#fig-9">Figure 9. B</a>).
-        This basically eliminates the incoming spiral, and replaces it with an <math>
+      <p>Figure-8 can be held in two ways. One way (<a href="#fig-9">Figure 9, A</a>) contains two helices - one
+        left-handed, and the other one right-handed. But, as we saw before, they don't cancel each other out: the first
+        twist is the only one that matters. Thus, the proper way of holding the brake side is down
+        (<a href="#fig-9">Figure 9, B</a>). This basically eliminates the incoming spiral, and replaces it with an
+        <math>
           <mi>α</mi>
           <mo>=</mo>
           <mn>0</mn>
-        </math> wrap
-        which minimizes rope twist.
+        </math> wrap which minimizes rope twist.
       </p>
 
       <figure class="photo" id="fig-9">
         <div class="photo-row">
           <div>
             <a href="images/figure-eight-incorrect.jpg">
-              <img src="images/figure-eight-incorrect.jpg" width="473" height="754" alt="A green rope threaded through a figure-8 belay device, with the break strand leaving to the side.
-                  A red line marks the bend where the rope enters the device and a green line the outgoing strand.">
+              <img src="images/figure-eight-incorrect.jpg" width="473" height="754"
+                alt="A green rope threaded through a figure-8 belay device, with the brake strand leaving to the side. A
+                  red line marks the bend where the rope enters the device and a green line the outgoing strand.">
             </a>
             <p class="subcap"><b>A.</b> Twists rope.</p>
           </div>
           <div>
             <a href="images/figure-eight-correct.jpg">
-              <img src="images/figure-eight-correct.jpg" width="473" height="754" alt="The same figure-8 belay device with the break strand held straight down. A grey line marks the
-                  bend where the rope enters the device and a green line the outgoing strand.">
+              <img src="images/figure-eight-correct.jpg" width="473" height="754"
+                alt="The same figure-8 belay device with the brake strand held straight down. A gray line marks the bend
+                  where the rope enters the device and a green line the outgoing strand.">
             </a>
             <p class="subcap"><b>B.</b> Doesn't twist rope.</p>
           </div>
         </div>
-        <figcaption><b>Figure 9.</b> Two ways of holding the break strand of figure-8. <b class="c-green">Green
-            sections</b> twist rope clockwise, <b class="c-red">red section</b> twists rope counter-clockwise.
-          <b class="c-grey">Grey section</b> does not appreciably twist the rope, since <math>
+        <figcaption><b>Figure 9.</b> Two ways of holding the brake strand of a figure-8. <b class="c-green">Green
+          sections</b> twist rope clockwise, <b class="c-red">red section</b> twists rope counterclockwise.
+          <b class="c-gray">Gray section</b> does not appreciably twist the rope, since <math>
             <mi>α</mi>
             <mo>≈</mo>
             <mn>0</mn>
           </math>. <i>Source: <a href="https://www.youtube.com/watch?v=4AaX0wGrDxg&t=232s">EDELRID Knowledge Base
-              YouTube</a></i>
+          YouTube</a></i>
         </figcaption>
       </figure>
 
       <h4 id="grigri"><span class="secnum">2.1.3</span> Grigri</h4>
       <p>
         Grigri can twist a rope, because the rope runs over the lip at an angle, but the effect is typically limited,
-        and
-        dependent on how the rope is handled. Normally, the break side of the rope is held very loose with Grigri, but
-        people used to tube-style devices may hold more tension, which will cause some rope twist.
+        and dependent on how the rope is handled. Normally, the brake side of the rope is held very loose with Grigri,
+        but people used to tube-style devices may hold more tension, which will cause some rope twist.
       </p>
       <figure class="photo" id="fig-10">
         <div class="photo-row">
           <div>
             <a href="images/grigri-a.jpg">
-              <img src="images/preview/grigri-a.jpg" width="1000" height="1000" alt="A blue rope running through a Grigri belay device. A grey line traces the bend inside the device
+              <img src="images/preview/grigri-a.jpg" width="1000" height="1000"
+                alt="A blue rope running through a Grigri belay device. A gray line traces the bend inside the device
                   and a red line the bend over the lip, which here spins the rope left-handed.">
             </a>
             <p class="subcap"><b>A.</b> Left-handed spin.</p>
           </div>
           <div>
             <a href="images/grigri-b.jpg">
-              <img src="images/preview/grigri-b.jpg" width="1000" height="1000" alt="The same Grigri with the bend over the lip shifted the other way, marked with a green line, which
+              <img src="images/preview/grigri-b.jpg" width="1000" height="1000"
+                alt="The same Grigri with the bend over the lip shifted the other way, marked with a green line, which
                   spins the rope right-handed.">
             </a>
             <p class="subcap"><b>B.</b> Right-handed spin.</p>
           </div>
         </div>
         <figcaption><b>Figure 10.</b> Grigri contains two bends. The bend over the lip can spontaneously move left and
-          right to twist
-          the rope in either direction. This limits how much overall twist is induced.</figcaption>
+          right to twist the rope in either direction. This limits how much overall twist is induced.</figcaption>
       </figure>
 
       <h4 id="munter-hitch"><span class="secnum">2.1.4</span> Munter hitch</h4>
 
-      <p>Munter hitch is notorious for twisting the rope, but it is in fact, avoidable. From theory, we know that the
-        last
-        bend causes most, if not all, of the twist. So everything depends on how the break side of the rope is handled.
-        If
-        the rope is held in a way which forms a pronounced helix, the rope will twist. Otherwise, it
-        will not. <a href="#fig-11">Figure 11</a> shows the results of my experiments.
+      <p>The Munter hitch is notorious for twisting the rope, but it is, in fact, avoidable. From theory, we know that
+        the last bend causes most, if not all, of the twist. So everything depends on how the brake side of the rope is
+        handled. If the rope is held in a way which forms a pronounced helix, the rope will twist. Otherwise, it will
+        not. <a href="#fig-11">Figure 11</a> shows the results of my experiments.
       </p>
 
 
@@ -2262,78 +2256,80 @@
         <div class="photo-row photo-grid">
           <div>
             <a href="images/munter-a.jpg">
-              <img src="images/preview/munter-a.jpg" width="1000" height="1000" alt="The Munter hitch on a carabiner with the break strand leaving to the side. A red line traces a
+              <img src="images/preview/munter-a.jpg" width="1000" height="1000"
+                alt="The Munter hitch on a carabiner with the brake strand leaving to the side. A red line traces a
                   pronounced S-shaped helical bend over the carabiner.">
             </a>
             <p class="subcap"><b>A. Lots of twist</b>, avoid.</p>
           </div>
           <div>
             <a href="images/munter-b.jpg">
-              <img src="images/preview/munter-b.jpg" width="1000" height="1000" alt="The Munter hitch with the break strand leaving downwards across the carabiner. A short red line marks a
-                  smaller helical bend at the top of the knot.">
+              <img src="images/preview/munter-b.jpg" width="1000" height="1000"
+                alt="The Munter hitch with the brake strand leaving downwards across the carabiner. A short red line
+                  marks a smaller helical bend at the top of the knot.">
             </a>
             <p class="subcap"><b>B. Some twist</b>, good for belaying.</p>
           </div>
           <div>
             <a href="images/munter-c.jpg">
-              <img src="images/preview/munter-c.jpg" width="1000" height="1000" alt="The Munter hitch with the break strand held straight up alongside the loaded strand. A grey line marks a
-                  flat bend.">
+              <img src="images/preview/munter-c.jpg" width="1000" height="1000"
+                alt="The Munter hitch with the brake strand held straight up alongside the loaded strand. A gray line
+                  marks a flat bend.">
             </a>
             <p class="subcap"><b>C. No twist</b>, but impractical.</p>
           </div>
           <div>
             <a href="images/munter-d.jpg">
-              <img src="images/preview/munter-d.jpg" width="1000" height="1000" alt="The Munter hitch with the break strand led over the top of the knot and down the other side. A long grey
-                  line traces a wide, gentle bend.">
+              <img src="images/preview/munter-d.jpg" width="1000" height="1000"
+                alt="The Munter hitch with the brake strand led over the top of the knot and down the other side. A long
+                  gray line traces a wide, gentle bend.">
             </a>
             <p class="subcap"><b>D. No twist</b>, good for rappelling and lowering.</p>
           </div>
         </div>
-        <figcaption><b>Figure 11.</b> Four ways of holding the break strand of Munter hitch. <B>Case A</b> has a
-          pronounced helix, and it twists the rope badly.
-          <b>Case B</b> has a shorter helix, it twists the rope less. <b>Case C</b> has <math>
+        <figcaption><b>Figure 11.</b> Four ways of holding the brake strand of a Munter hitch. <b>Case A</b> has a
+          pronounced helix, and it twists the rope badly. <b>Case B</b> has a shorter helix, and it twists the rope
+          less. <b>Case C</b> has <math>
             <mi>α</mi>
             <mo>≈</mo>
             <mn>0</mn>
-          </math>, therefore produces no twist. <b>Case D</b> is the result of passing the break strand over your head.
-          Its
-          <math>
+          </math>, and therefore produces no twist. <b>Case D</b> is the result of passing the brake strand over your
+          head. Its <math>
             <mi>α</mi>
           </math> value is a bit unclear, but the bend radius <math>
             <mi>R</mi>
-          </math> is very large, and the break strand is loose, so the resulting twist is minimal.
+          </math> is very large, and the brake strand is loose, so the resulting twist is minimal.
         </figcaption>
       </figure>
 
 
       <p>When belaying with a Munter hitch, we can further limit the twist by handling the rope very loosely - feeding
-        the rope
-        into the knot before pulling it out. That way, the whole knot is bigger, and the bends inside the knot have a
-        larger radius <math>
+        the rope into the knot before pulling it out. That way, the whole knot is bigger, and the bends inside the knot
+        have a larger radius <math>
           <mi>R</mi>
-        </math>. Also, the rope can move around to further minimize the twist, as discussed in <a
-          href="#rope-buckling">Section 1.4</a>.
+        </math>. Also, the rope can move around to further minimize the twist, as discussed in
+        <a href="#rope-buckling">Section 1.4</a>.
       </p>
 
       <p>When lowering with a Munter, the tension in the rope is much higher than when belaying, and it is no longer
-        possible to handle the
-        break strand loosely. For these cases, it is necessary to use one of the no-twist methods (<a
-          href="#fig-11">Figure 11, C or D</a>).
-        Alternatively, use the Super Munter hitch, which avoids rope twist in the same way as the D method.
+        possible to handle the brake strand loosely. For these cases, it is necessary to use one of the no-twist methods
+        (<a href="#fig-11">Figure 11, C or D</a>). Alternatively, use the Super Munter hitch, which avoids rope twist in
+        the same way as the D method.
       </p>
 
-      <p>Rappelling with a Munter works in much the same way as lowering, the only difference is the doubled ropes (<a
-          href="#fig-12">Figure 12</a>).
+      <p>Rappelling with a Munter works in much the same way as lowering; the only difference is the doubled ropes
+        (<a href="#fig-12">Figure 12</a>).
       </p>
 
 
 
       <figure class="photo" id="fig-12">
         <a href="images/munter-rappel.jpg">
-          <img src="images/preview/munter-rappel.jpg" width="1000" height="1000" alt="Two strands of a blue rope tied in a bulky Munter hitch on a carabiner, with the break strands wrapped
+          <img src="images/preview/munter-rappel.jpg" width="1000" height="1000"
+            alt="Two strands of a blue rope tied in a bulky Munter hitch on a carabiner, with the brake strands wrapped
               over the top of the knot.">
         </a>
-        <figcaption><b>Figure 12.</b> Rappeling with Munter. The break strands were passed above the head to increase
+        <figcaption><b>Figure 12.</b> Rappelling with a Munter. The brake strands were passed above the head to increase
           braking factor and eliminate rope twist. Equivalent to <a href="#fig-11">Figure 11, D</a>.</figcaption>
       </figure>
 
@@ -2346,40 +2342,31 @@
         <p>This section is unfinished.</p>
       </aside>
 
-      <p>Lowering through two rings placed side-by-side is known to sometimes twist ropes. The main problem with this
-        setup
-        is not the doubled anchor itself, but the fact that it tends to force the rope to run through the rings at an
-        oblique angle.
-        This does not really happen with one ring, or two rings which are touching each other, as the rope will
-        naturally align
-        to be perpendicular to the ring(s) in this case.
+      <p>Lowering through two rings placed side by side is known to sometimes twist ropes. The main problem with this
+        setup is not the doubled anchor itself, but the fact that it tends to force the rope to run through the rings at
+        an oblique angle. This does not really happen with one ring, or two rings which are touching each other, as the
+        rope will naturally align to be perpendicular to the ring(s) in this case.
       </p>
 
       <p>
         Experience shows that it's better to place the rings mirrored (Figure TODO), rather than facing the same side
-        (Figure TODO).
-        But as we discussed in Theory, neither of these configurations will completely eliminate rope twist. The two
-        twists
-        do not cancel each other out, even if they are opposite. Instead, the first ring along the rope path will apply
-        its twist,
-        and the second ring will have no influence, or only a limited influence.
+        (Figure TODO). But as we discussed in <a href="#complex-configurations">Section 1.2</a>, neither of these
+        configurations will completely eliminate rope twist. The two twists do not cancel each other out, even if they
+        are opposite. Instead, the first ring along the rope path will apply its twist, and the second ring will have no
+        influence, or only a limited influence.
       </p>
-      <p>To eliminate rope twist,
-        both rings should be aligned perpendicular to the rope (Figure TODO), or be free to move and align themselves
-        (Figure TODO).
+      <p>To eliminate rope twist, both rings should be aligned perpendicular to the rope (Figure TODO), or be free to
+        move and align themselves (Figure TODO).
       </p>
 
       <h3 id="rope-coiling"><span class="secnum">2.3</span> Rope coiling</h3>
 
-      <p>Contrary to popular belief, coiling and un-coiling rope in a circular coil (also known as Alpine coil) does not
-        twist the
-        rope.
-        Or, more precisely, coiling it <i>correctly</i> does not. If you coil the rope circularly, you need to ensure
-        that
-        each coil contains a single rope twist. That happens naturally when coiling, and it can be identified by the
-        rope forming a figure-8-like loops, not a circular loops (<a href="#fig-13">Figure 13</a>). If this is ensured,
-        the rope does not need to be flaked, and it doesn't tangle, because every twist is undone when pulling the rope
-        out of the coil.
+      <p>Contrary to popular belief, coiling and uncoiling rope in a circular coil (also known as Alpine coil) does not
+        twist the rope. Or, more precisely, coiling it <i>correctly</i> does not. If you coil the rope circularly, you
+        need to ensure that each coil contains a single rope twist. That happens naturally when coiling, and it can be
+        identified by the rope forming figure-8-like loops, not circular loops (<a href="#fig-13">Figure 13</a>). If
+        this is ensured, the rope does not need to be flaked, and it doesn't tangle, because every twist is undone when
+        pulling the rope out of the coil.
       </p>
 
       <figure class="photo" id="fig-13">
@@ -2400,34 +2387,31 @@
       </figure>
 
       <p>
-        If you try to make the coil circular, like a coiled garden hose (<a href="#fig-13">Figure 13,A</a>), you will
-        see that you
-        need to twist the rope manually as you go. If you then don't undo those twists in the same way, the rope will
-        get tangled as it is pulled out. This is sometimes a problem with brand new ropes, which may be packaged in
-        this kind of circular coil.
+        If you try to make the coil circular, like a coiled garden hose (<a href="#fig-13">Figure 13, A</a>), you will
+        see that you need to twist the rope manually as you go. If you then don't undo those twists in the same way, the
+        rope will get tangled as it is pulled out. This is sometimes a problem with brand new ropes, which may be
+        packaged in this kind of circular coil.
       </p>
 
-      <h2>Untwisting a rope</h2>
+      <h2 id="untwisting-a-rope"><span class="secnum">3</span> Untwisting a rope</h2>
 
-      I have not tested these extensively. But according to the theory, I can make the following guesses
-      as to what will untwist a rope:
+      <p>I have not tested these extensively. But according to the theory, I can make the following guesses as to what
+        will untwist a rope:</p>
 
       <ol>
         <li><b>Flake the rope</b>, watch how it twists (<i>i.e.</i>, watch its torsion), and manually undo it so that
-          the sheath is straight again.
-          This is the obvious option, and the one I used to untwist my ropes after all the experiments for the article.
-          It works well.</li>
+          the sheath is straight again. This is the obvious option, and the one I used to untwist my ropes after all the
+          experiments for the article. It works well.</li>
         <li><b>Hang the rope freely</b>, whole or in segments. This should remove most torsion, because ropes resist
-          torsion.
-          People report that this works, but you need to have a cliff.
+          torsion. People report that this works, but you need to have a cliff.
         </li>
-        <li><b>Run the rope through a tube-style device</b>, or a Grigri. Keep the break side loose, so the rope can
-          find the path minimizing torsion.
-          People report that this works to an extent, but it may need to be repeated several times.
+        <li><b>Run the rope through a tube-style device</b>, or a Grigri. Keep the brake side loose, so the rope can
+          find the path minimizing torsion. People report that this works to an extent, but it may need to be repeated
+          several times.
         </li>
       </ol>
 
-      <h2 id="prior-art"><span class="secnum">3</span> Prior Art</h2>
+      <h2 id="prior-art"><span class="secnum">4</span> Prior Art</h2>
 
       <aside class="callout callout-info">
         <svg viewBox="0 0 16 16" aria-hidden="true">
@@ -2444,17 +2428,20 @@
       </p>
       <p>
         https://www.alpinesavvy.com/blog/anchor-induced-rope-twisting
+        
+      </p>
+      <p>
+        https://www.ukclimbing.com/gear/climbing/ropes/qc_lab_twisty_ropes__-_the_how_why_and_risks-11897
       </p>
       <p>
         https://www.youtube.com/watch?v=4AaX0wGrDxg
       </p>
       <p>
-        Hard Is Easy
-        https://www.youtube.com/watch?v=1ytFcTHETUQ&t=963s
+        Hard Is Easy https://www.youtube.com/watch?v=1ytFcTHETUQ&t=963s
       </p>
 
 
-      <h2>Conclusion</h2>
+      <h2 id="conclusion"><span class="secnum">5</span> Conclusion</h2>
 
       <aside class="callout callout-info">
         <svg viewBox="0 0 16 16" aria-hidden="true">
@@ -2548,7 +2535,7 @@
       });
     });
 
-    // Colour theme: set with the menu's theme switch, which is remembered in this browser (where storage is
+    // Color theme: set with the menu's theme switch, which is remembered in this browser (where storage is
     // allowed), or else from the system preference (and again whenever it changes). Embedded figures are kept
     // in sync with the page theme and sized to their content.
     (function () {

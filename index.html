@@ -293,7 +293,7 @@
       padding-left: 1.5em;
     }
 
-    .photo a {
+    .photo a:has(> img) {
       display: block;
     }
 
@@ -308,6 +308,12 @@
     .photo-row {
       display: flex;
       gap: 16px;
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 16px;
     }
 
     .photo-row > div {
@@ -1144,7 +1150,6 @@
 
       <p>You can play with some of the parameters affecting spin rate in <a href="#fig-4">Figure 4</a>.</p>
 
-
       <figure id="fig-4">
         <iframe id="viz-2" src="viz/rope-twist.html" title="Interactive animation: a braided rope pulled around a bar at an angle, showing how the rope spins as a
             result"></iframe>
@@ -1154,7 +1159,14 @@
 
       <h4 id="spin-direction"><span class="secnum">1.1.1</span> Spin direction</h4>
 
-      <p class="placeholder">TODO</p>
+      <p>Rope spins around its axis in the same direction it wraps around the bar. We can introduce a hand rule
+        as a mnemonic for the spin direction. If you grab the bar, and point your thumb in the direction of the rope,
+        your fingers will curl in the direction of the rope's spin.
+      </p>
+
+      <p>If left hand fits the rule, we will call it a left-handed spin. If right hand fits the rule, we will call it a right-handed spin.
+        <a href="#fig-4">Figure 4</a> above shows left-handed spin.
+      </p>
 
       <h3 id="complex-configurations"><span class="secnum">1.2</span> Complex configurations</h3>
 
@@ -2148,9 +2160,9 @@
 
       <p>Lowering through two rings placed side-by-side is known to sometimes twist ropes. The main problem with this
         setup
-        is not the doubled anchor itself, but the fact that it sometimes forces the rope to run through the rings at an
+        is not the doubled anchor itself, but the fact that it tends to force the rope to run through the rings at an
         oblique angle.
-        This is nearly impossible with one ring, or two rings which are touching each other, as the rope will align
+        This does not really happen with one ring, or two rings which are touching each other, as the rope will naturally align
         to be perpendicular to the ring(s) in this case.
       </p>
 
@@ -2230,7 +2242,7 @@
             <mi>α</mi>
             <mo>≈</mo>
             <mn>0</mn>
-          </math>.
+          </math>. <i>Source: <a href="https://www.youtube.com/watch?v=4AaX0wGrDxg&t=232s">EDELRID Knowledge Base YouTube</a></i>
         </figcaption>
       </figure>
 
@@ -2268,39 +2280,87 @@
 
       <p>Munter hitch is notorious for twisting the rope, but it is in fact, avoidable. From theory, we know that the
         last
-        bend causes most, or all, of the twist. So everything depends on how the break side of the rope is handled. If
-        the rope is held in a way which constitutes a helix, the rope will twist. But if the last bend is planar, it
-        will not.
+        bend causes most, if not all, of the twist. So everything depends on how the break side of the rope is handled. If
+        the rope is held in a way which forms a pronounced helix, the rope will twist. Otherwise, it
+        will not. <a href="#fig-11">Figure 11</a> shows the results of my experiments.
       </p>
 
-      <p>When belaying with a Munter hitch, we can limit the twist by handling the rope very loosely - feeding the rope
-        into the knot before pulling it out. That way, the bends inside the knot have a large radius <math>
+
+      <figure class="photo" id="fig-11">
+        <div class="photo-row photo-grid">
+          <div>
+            <a href="images/munter-a.jpg">
+              <img src="images/preview/munter-a.jpg" width="1000" height="1000"
+                alt="The Munter hitch on a carabiner with the break strand leaving to the side. A red line traces a
+                  pronounced S-shaped helical bend over the carabiner.">
+            </a>
+            <p class="subcap"><b>A. Lots of twist</b>, avoid.</p>
+          </div>
+          <div>
+            <a href="images/munter-b.jpg">
+              <img src="images/preview/munter-b.jpg" width="1000" height="1000"
+                alt="The Munter hitch with the break strand leaving downwards across the carabiner. A short red line marks a
+                  smaller helical bend at the top of the knot.">
+            </a>
+            <p class="subcap"><b>B. Some twist</b>, good for belaying.</p>
+          </div>
+          <div>
+            <a href="images/munter-c.jpg">
+              <img src="images/preview/munter-c.jpg" width="1000" height="1000"
+                alt="The Munter hitch with the break strand held straight up alongside the loaded strand. A grey line marks a
+                  flat bend.">
+            </a>
+            <p class="subcap"><b>C. No twist</b>, but impractical.</p>
+          </div>
+          <div>
+            <a href="images/munter-d.jpg">
+              <img src="images/preview/munter-d.jpg" width="1000" height="1000"
+                alt="The Munter hitch with the break strand led over the top of the knot and down the other side. A long grey
+                  line traces a wide, gentle bend.">
+            </a>
+            <p class="subcap"><b>D. No twist</b>, good for rappelling and lowering.</p>
+          </div>
+        </div>
+        <figcaption><b>Figure 11.</b> Four ways of holding the break strand of Munter hitch. <B>Case A</b> has a pronounced helix, and it twists the rope badly.
+          <b>Case B</b> has a shorter helix, it twists the rope less. <b>Case C</b> has <math>
+            <mi>α</mi>
+            <mo>≈</mo>
+            <mn>0</mn>
+          </math>, therefore produces no twist. <b>Case D</b> is the result of passing the break strand over your head. Its
+          <math>
+            <mi>α</mi>
+          </math> value is a bit unclear, but the bend radius <math>
+            <mi>R</mi>
+          </math> is very large, and the break strand is loose, so the resulting twist is minimal.
+        </figcaption>
+      </figure>
+
+
+      <p>When belaying with a Munter hitch, we can further limit the twist by handling the rope very loosely - feeding the rope
+        into the knot before pulling it out. That way, the whole knot is bigger, and the bends inside the knot have a larger radius <math>
           <mi>R</mi>
-        </math>,
-        and the rope can move around to minimize the twist, as discussed in <a href="#rope-buckling">Section 1.4</a>.
-        We should also prevent a spiral from forming over the carabiner (Figure TODO), or better yet, place the breaking
-        stand
-        next to the outgoing strand - but that is generally not necessary.
+        </math>. Also, the rope can move around to further minimize the twist, as discussed in <a href="#rope-buckling">Section 1.4</a>.
       </p>
 
-      <p>When lowering or rappelling, the tension in the rope is considerable, and it is not possible to handle the
-        break strand loosely.
-        Thus, the last bend in the Munter will twist the rope considerably. The way to prevent it is to hold the break
-        side up,
-        which creates a new zero-twist bend, but that is very awkward. A better alternative is to pass the break side of
-        the rope over your head,
-        and make an unfinished super-Munter hitch, which I find works very nicely. Full super munter can also be used,
-        but it breaks too much.
+      <p>When lowering with a Munter, the tension in the rope is much higher than when belaying, and it is no longer possible to handle the
+        break strand loosely. For these cases, it is necessary to use one of the no-twist methods (<a href="#fig-11">Figure 11, C or D</a>).
+        Alternatively, use the Super Munter hitch, which avoids rope twist in the same way as the D method.
       </p>
 
-      <p>
-        The super Munter does not twist the rope for the same reasons we saw before - the bend radius <math>
-          <mi>R</mi>
-        </math> is large, the
-        break side of the rope is loose, and the angle <math>
-          <mi>α</mi>
-          <mo> is small.
+      <p>Rappelling with a Munter works in much the same way as lowering, the only difference is the doubled ropes (<a href="#fig-12">Figure 12</a>).
       </p>
+
+      
+
+      <figure class="photo" id="fig-12">
+        <a href="images/munter-rappel.jpg">
+          <img src="images/preview/munter-rappel.jpg" width="1000" height="1000"
+            alt="Two strands of a blue rope tied in a bulky Munter hitch on a carabiner, with the break strands wrapped
+              over the top of the knot.">
+        </a>
+        <figcaption><b>Figure 12.</b> Rappeling with Munter. The break strands were passed above the head to increase
+          braking factor and eliminate rope twist. Equivalent to <a href="#fig-11">Figure 11, D</a>.</figcaption>
+      </figure>
 
       <h3 id="rope-coiling"><span class="secnum">2.3</span> Rope coiling</h3>
 
@@ -2308,11 +2368,11 @@
         rope.
         Or, more precisely, coiling it <i>correctly</i> does not. If you coil the rope circularly, you need to ensure that
         each coil contains a single rope twist. That happens naturally when coiling, and it can be identified by the
-        rope forming a figure-8-like loops, not a circular loops (<a href="#fig-11">Figure 11</a>). If this is ensured, 
+        rope forming a figure-8-like loops, not a circular loops (<a href="#fig-13">Figure 13</a>). If this is ensured, 
         the rope does not need to be flaked, and it doesn't tangle, because every twist is undone when pulling the rope out of the coil.
       </p>
 
-      <figure class="photo" id="fig-11">
+      <figure class="photo" id="fig-13">
         <a href="images/coils-incorrect.jpg">
           <img src="images/preview/coils-incorrect.jpg" width="1000" height="500"
             alt="A blue climbing rope coiled into a neat oval of parallel circular loops on a wooden floor.">
@@ -2323,13 +2383,13 @@
             alt="The same blue rope coiled with its loops crossing over in a figure-eight pattern.">
         </a>
         <p class="subcap"><b>B.</b> Correctly coiled rope.</p>
-        <figcaption><b>Figure 11.</b> Rope coiled in two different ways. Do not try to "fix" the figure-eight pattern
+        <figcaption><b>Figure 13.</b> Rope coiled in two different ways. Do not try to "fix" the figure-eight pattern
           which naturally happens when coiling the rope (<b>B</b>). With it, rope can be pulled from the coil without twisting.
         </figcaption>
       </figure>
 
       <p>
-        If you try to make the coil circular, like a coiled garden hose (<a href="#fig-11">Figure 11,A</a>), you will see that you 
+        If you try to make the coil circular, like a coiled garden hose (<a href="#fig-13">Figure 13,A</a>), you will see that you 
         need to twist the rope as you go. If you then don't undo those twists in the same way, the rope will 
         get tangled as it is pulled out. This is sometimes a problem with brand new ropes, which may be packaged in 
         this kind of circular coil.
@@ -2362,7 +2422,7 @@
       </p><p>
       https://www.alpinesavvy.com/blog/anchor-induced-rope-twisting
       </p><p>
-      https://www.youtube.com/watch?v=4AaX0wGrDxg&t=304s
+      https://www.youtube.com/watch?v=4AaX0wGrDxg
       </p><p>
       Hard Is Easy
       https://www.youtube.com/watch?v=1ytFcTHETUQ&t=963s
@@ -2492,6 +2552,7 @@
       });
     })();
   </script>
+  <script data-goatcounter="https://potocpav.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 
 </html>

@@ -9,6 +9,9 @@
    viewBox="0 0 2992 2992"
    sodipodi:docname="grigri-a.svg"
    inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
+   inkscape:export-filename="grigri-a.jpg"
+   inkscape:export-xdpi="64.17112"
+   inkscape:export-ydpi="64.17112"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -55,13 +58,13 @@
        id="path4"
        sodipodi:nodetypes="cc" />
     <path
-       style="fill:none;stroke:#f9f9f9;stroke-width:50;stroke-linecap:round;stroke-dasharray:none;stroke-dashoffset:0"
-       d="m 1808.0602,1222.5198 c 8.617,724.4014 -424.7145,749.7688 -428.4281,-103.7172"
+       style="fill:none;stroke:#ffffff;stroke-width:50;stroke-linecap:round;stroke-dasharray:none;stroke-dashoffset:0"
+       d="m 1798.2016,1123.9338 c 34.9066,859.1356 -421.4283,845.0686 -425.1419,-8.4174"
        id="path3"
        sodipodi:nodetypes="cc" />
     <path
        style="fill:none;stroke:#666666;stroke-width:30;stroke-linecap:round;stroke-dasharray:none;stroke-dashoffset:0"
-       d="m 1808.0602,1222.5198 c 8.617,724.4014 -424.7145,749.7688 -428.4281,-103.7172"
+       d="m 1798.2016,1123.9338 c 34.9066,859.1356 -421.4283,845.0686 -425.1419,-8.4174"
        id="path1"
        sodipodi:nodetypes="cc" />
   </g>

@@ -1,2 +1,1 @@
-# Blender backup files
-*.blend[0-9]*
+/untracked-images

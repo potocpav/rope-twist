@@ -24,6 +24,9 @@
       --accent: #b8501f;
       --info: #2f6690;
       --info-bg: #e8f0f7;
+      --mark-green: #1e7b1e;
+      --mark-red: #d81b1b;
+      --mark-grey: #6e6e78;
       color-scheme: light;
     }
 
@@ -40,6 +43,9 @@
         --accent: #e8875a;
         --info: #7fb3dc;
         --info-bg: #1f2a33;
+        --mark-green: #5cc45c;
+        --mark-red: #f05a5a;
+        --mark-grey: #a0a0aa;
         color-scheme: dark;
       }
     }
@@ -54,6 +60,9 @@
       --accent: #e8875a;
       --info: #7fb3dc;
       --info-bg: #1f2a33;
+      --mark-green: #5cc45c;
+      --mark-red: #f05a5a;
+      --mark-grey: #a0a0aa;
       color-scheme: dark;
     }
 
@@ -294,6 +303,41 @@
       height: auto;
       border: 1px solid var(--outline);
       border-radius: 8px;
+    }
+
+    .photo-row {
+      display: flex;
+      gap: 16px;
+    }
+
+    .photo-row > div {
+      flex: 1;
+      min-width: 0;
+    }
+
+    figcaption b.c-green {
+      color: var(--mark-green);
+    }
+
+    figcaption b.c-red {
+      color: var(--mark-red);
+    }
+
+    figcaption b.c-grey {
+      color: var(--mark-grey);
+    }
+
+    .photo .subcap {
+      margin: 8px 0 20px;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      font-size: 15px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .photo .subcap b {
+      color: var(--text);
+      font-weight: 600;
     }
 
     .placeholder {
@@ -585,7 +629,7 @@
 
       <figure class="photo" id="fig-1">
         <a href="images/tangled-rope.jpg">
-          <img src="images/tangled-rope-preview.jpg" width="1828" height="891"
+          <img src="images/preview/tangled-rope.jpg" width="1828" height="891"
             alt="An orange climbing rope twisted into a tangle of loops on a white background.">
         </a>
         <figcaption><b>Figure 1.</b> Tangled rope with 30 twists.</figcaption>
@@ -603,7 +647,7 @@
 
       <figure class="photo" id="fig-2">
         <a href="images/rope-twists.jpg">
-          <img src="images/rope-twists-preview.jpg" width="1500" height="1250" alt="Three photos of the same orange braided rope on a white background: straight with no twist, in a gentle
+          <img src="images/preview/rope-twists.jpg" width="1500" height="1250" alt="Three photos of the same orange braided rope on a white background: straight with no twist, in a gentle
               S-shaped curve with one twist, and buckled into a pronounced wave with two twists.">
         </a>
         <figcaption><b>Figure 2.</b> Rope with zero, one and two twists along its length. Rope is marked with a black
@@ -2132,6 +2176,17 @@
         </math>
         in equation (6).
       </p>
+
+      <figure class="photo" id="fig-8">
+        <a href="images/tube.jpg">
+          <img src="images/preview/tube.jpg" width="1000" height="1000"
+            alt="A blue rope threaded through a yellow tube-style belay device clipped to a carabiner. Two black lines
+              trace the rope's bends: one around the carabiner inside the device, and one over the device's edge.">
+        </a>
+        <figcaption><b>Figure 8.</b> Tubular devices bend the rope twice (<b class="c-grey">grey lines</b>). Neither of these bends
+          form a spiral, so rope is not twisted.</figcaption>
+      </figure>
+
       <h4 id="gri-gri"><span class="secnum">2.2.2</span> Gri-Gri</h4>
       <p>
         Gri-Gri can twist a rope, because the rope runs over the lip at an angle, but the effect is typically limited,
@@ -2179,57 +2234,117 @@
 
       <h4 id="figure-8-belay-device"><span class="secnum">2.2.4</span> Figure-8 belay device</h4>
 
-      <p>Figure-8 can be held in two ways. One way (Figure TODO a) contains two helices -
-        one clockwise, and the other counter-clockwise. But, as we saw before, they don't cancel each other out,
-        and the incoming helix twists the rope quite terribly. A better way is holding the break side down (Figure TODO
-        b).
-        This basically eliminates the incoming helix, and the simple <math>
+      <p>Figure-8 can be held in two ways. One way (<a href="#fig-9">Figure 9, A</a>) contains two helices -
+        one clockwise, and the other counter-clockwise. But, as we saw before, they don't cancel each other out:
+        the first twist is the only one that matters. Thus, the proper way of holding the break side is down
+        (<a href="#fig-9">Figure 9. B</a>).
+        This basically eliminates the incoming spiral, and replaces it with an <math>
           <mi>α</mi>
           <mo>=</mo>
           <mn>0</mn>
         </math> wrap
-        prevents basically all rope twist.
+        which minimizes rope twist.
       </p>
+
+      <figure class="photo" id="fig-9">
+        <div class="photo-row">
+          <div>
+            <a href="images/figure-eight-incorrect.jpg">
+              <img src="images/figure-eight-incorrect.jpg" width="473" height="754"
+                alt="A green rope threaded through a figure-8 belay device, with the break strand leaving to the side.
+                  A red line marks the bend where the rope enters the device and a green line the outgoing strand.">
+            </a>
+            <p class="subcap"><b>A.</b> Twists rope.</p>
+          </div>
+          <div>
+            <a href="images/figure-eight-correct.jpg">
+              <img src="images/figure-eight-correct.jpg" width="473" height="754"
+                alt="The same figure-8 belay device with the break strand held straight down. A grey line marks the
+                  bend where the rope enters the device and a green line the outgoing strand.">
+            </a>
+            <p class="subcap"><b>B.</b> Doesn't twist rope.</p>
+          </div>
+        </div>
+        <figcaption><b>Figure 9.</b> Two ways of holding the break strand of figure-8. <b class="c-green">Green
+            sections</b> twist rope clockwise, <b class="c-red">red section</b> twists rope counter-clockwise.
+          <b class="c-grey">Grey section</b> does not appreciably twist the rope, since <math>
+            <mi>α</mi>
+            <mo>≈</mo>
+            <mn>0</mn>
+          </math>.
+        </figcaption>
+      </figure>
 
       <h3 id="rope-coiling"><span class="secnum">2.3</span> Rope coiling</h3>
 
-      <p>Contrary to popular belief, coiling and un-coiling rope in a circular Alpine-style coil does not twist the
+      <p>Contrary to popular belief, coiling and un-coiling rope in a circular coil (also known as Alpine coil) does not twist the
         rope.
-        Or, more precisely, coiling it <i>well</i> does not. If you coil the rope in this way, you need to ensure that
+        Or, more precisely, coiling it <i>correctly</i> does not. If you coil the rope circularly, you need to ensure that
         each coil contains a single rope twist. That happens naturally when coiling, and it can be identified by the
-        rope forming a figure-8-like loop, not a circular loop on its own (Figure TODO). If this is the case, then
-        uncoiling by throwing the rope on the ground and pulling it out is OK, because every twist is undone naturally.
+        rope forming a figure-8-like loops, not a circular loops (<a href="#fig-10">Figure 10</a>). If this is ensured, 
+        the rope does not need to be flaked, and it doesn't tangle, because every twist is undone when pulling the rope out of the coil.
       </p>
 
+      <figure class="photo" id="fig-10">
+        <a href="images/coils-incorrect.jpg">
+          <img src="images/preview/coils-incorrect.jpg" width="1000" height="500"
+            alt="A blue climbing rope coiled into a neat oval of parallel circular loops on a wooden floor.">
+        </a>
+        <p class="subcap"><b>A.</b> Incorrectly coiled rope.</p>
+        <a href="images/coils-correct.jpg">
+          <img src="images/preview/coils-correct.jpg" width="1000" height="500"
+            alt="The same blue rope coiled with its loops crossing over in a figure-eight pattern.">
+        </a>
+        <p class="subcap"><b>B.</b> Correctly coiled rope.</p>
+        <figcaption><b>Figure 10.</b> Rope coiled in two different ways. Do not try to "fix" the figure-eight pattern
+          which naturally happens when coiling the rope (<b>B</b>). With it, rope can be pulled from the coil without twisting.
+        </figcaption>
+      </figure>
+
       <p>
-        However, if you try to make the coil circular, like a coiled garden hose, you will need to awkwardly twist the
-        rope in place,
-        and if you then don't undo those twists, the rope will need to be uncoiled just as laboriously again. This is
-        the same problem
-        as with new ropes - sometimes, they are circularly coiled, and then they need to be uncoiled in the same way.
+        If you try to make the coil circular, like a coiled garden hose (<a href="#fig-10">Figure 10,A</a>), you will see that you 
+        need to twist the rope as you go. If you then don't undo those twists in the same way, the rope will 
+        get tangled as it is pulled out. This is sometimes a problem with brand new ropes, which may be packaged in 
+        this kind of circular coil.
       </p>
+
+      <h2>Untwisting a rope</h2>
+      
+      I have not tested these extensively. But according to the theory, I can make the following guesses
+      as to what will untwist a rope:
+
+      <ol>
+        <li><b>Flake the rope</b>, watch how it twists (<i>i.e.</i>, watch its torsion), and manually undo it so that the sheath is straight again.
+        This is the obvious option, and the one I used to untwist my ropes after all the experiments for the article. It works well.</li>
+        <li><b>Hang the rope freely</b>, whole or in segments. This should remove most torsion, because ropes resist torsion.
+          People report that this works, but you need to have a cliff.
+        </li>
+        <li><b>Run the rope through a tube-style device</b>, or a Gri-Gri. Keep the break side loose, so the rope can find the path minimizing torsion.
+          People report that this works to an extent, but it may need to be repeated several times.
+        </li>
+      </ol>
 
       <h2 id="prior-art"><span class="secnum">3</span> Prior Art</h2>
 
       <h3 id="todo"><span class="secnum">3.1</span> TODO</h3>
+
+      <p>
       https://edelrid.com/de-en/knowledge/knowledge-base/how-do-twists-form-in-ropes
-
+      </p><p>
       https://blackdiamondequipment.com/blogs/stories/qc-lab-twisty-ropes
-
+      </p><p>
       https://www.alpinesavvy.com/blog/anchor-induced-rope-twisting
-
+      </p><p>
       https://www.youtube.com/watch?v=4AaX0wGrDxg&t=304s
-
+      </p><p>
       Hard Is Easy
       https://www.youtube.com/watch?v=1ytFcTHETUQ&t=963s
+      </p>
 
 
+      <h2>Conclusion</h2>
 
-      <ul>
-        <li>Rope twist is caused by friction.</li>
-        <li>Rope twist can be counter-acted by a twist in the opposite direction.</li>
-
-      </ul>
+      TODO: conclusion
     </main>
   </div>
   <script>

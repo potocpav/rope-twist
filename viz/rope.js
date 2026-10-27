@@ -4,7 +4,7 @@
 const THEMES={
 light:{css:{bg:'#ffffff',panel:'#f3f2ee',text:'#1f1e1c',muted:'#5f5e5a',line:'#d6d4cc',outline:'#444444',accent:'#b8501f'},
 c:{cf:'#F1EFE8',cs:'#888780',rf:'#FAECE7',ro:'#D85A30',st:'#F0997B',sb:'#993C1D',mk:'#26215C'}},
-dark:{css:{bg:'#1e1d1b',panel:'#2a2927',text:'#ecebe6',muted:'#a9a8a2',line:'#45443f',outline:'#444444',accent:'#e8875a'},
+dark:{css:{bg:'#141412',panel:'#2a2927',text:'#ecebe6',muted:'#a9a8a2',line:'#45443f',outline:'#444444',accent:'#e8875a'},
 c:{cf:'#2C2C2A',cs:'#888780',rf:'#4A1B0C',ro:'#D85A30',st:'#993C1D',sb:'#F0997B',mk:'#CECBF6'}}};
 const C={},themeListeners=[];
 function applyTheme(name){const t=THEMES[name]||THEMES.light;Object.assign(C,t.c);for(const k in t.css)document.documentElement.style.setProperty('--'+k,t.css[k]);document.documentElement.style.colorScheme=name;themeListeners.forEach(f=>f());}

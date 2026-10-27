@@ -4,17 +4,17 @@ Text and analysis by me, code by Claude.
 
 A blog post on why a climbing rope twists.
 
-TODO:
+**Read it:** https://potocpav.github.io/rope-twist/
+
+Main page is `index.html` — plain static HTML, no build step.
+
+## TODO
 
 - [x] Write the article
 - [ ] Proof read
 - [ ] Review by AI
 - [ ] Review by friends
 - [ ] Publish
-
-**Read it:** https://potocpav.github.io/rope-twist/
-
-Main page is `index.html` — plain static HTML, no build step.
 
 ## Local preview
 

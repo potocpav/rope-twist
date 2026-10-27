@@ -13,6 +13,8 @@ Main page is `index.html` — plain static HTML, no build step.
 - [x] Write the article
 - [ ] Proof read
 - [ ] Review by AI
+  - [x] Large-scale structure
+  - [ ] Language and formulation improvements
 - [ ] Review by friends
 - [ ] Publish
 

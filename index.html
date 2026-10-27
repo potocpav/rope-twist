@@ -434,7 +434,6 @@
     .toc-github {
       margin: 24px 0 0;
       padding-top: 16px;
-      border-top: 1px solid var(--line);
     }
 
     .toc .toc-github a {
@@ -532,12 +531,15 @@
         flex-direction: column;
         position: fixed;
         top: 0;
-        bottom: 0;
         left: 0;
         z-index: 20;
+        /* Dynamic viewport height, so the end of the drawer is not hidden behind mobile browser toolbars. */
+        height: 100vh;
+        height: 100dvh;
         width: min(300px, calc(100vw - 48px));
         overflow-y: auto;
-        padding: 76px 20px 20px;
+        overscroll-behavior: contain;
+        padding: 76px 20px calc(20px + env(safe-area-inset-bottom));
         border-right: 1px solid var(--line);
         background: var(--bg);
         /* Dim the page behind the open drawer. */
@@ -546,6 +548,12 @@
 
       .toc.open {
         display: flex;
+      }
+
+      /* Scroll instead of squashing the items when the screen is short (the theme switch, which clips its
+         overflow, would otherwise shrink to nothing). */
+      .toc>* {
+        flex-shrink: 0;
       }
 
       /* Keep the GitHub link at the bottom of the drawer. */

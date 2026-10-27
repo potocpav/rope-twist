@@ -351,7 +351,8 @@
 
     h2,
     h3,
-    h4 {
+    h4,
+    .eq {
       scroll-margin-top: 24px;
     }
 
@@ -675,7 +676,7 @@
             <mi>φ</mi>
           </math> changes over its arc-length <math>
             <mi>s</mi>
-          </math> as follows (equation (54.1)):
+          </math> as follows (Equation (54.1)):
         </p>
 
         <div class="eq" id="eq-1" data-n="1">
@@ -862,7 +863,7 @@
           </math>
         </div>
 
-        <p>Substituting (1), we get the rotation rate:</p>
+        <p>Substituting <a href="#eq-1">(1)</a>, we get the rotation rate:</p>
 
         <div class="eq" id="eq-5" data-n="5">
           <math display="block">
@@ -917,7 +918,7 @@
             </mfrac>
           </math> and expanding <math>
             <mi>τ</mi>
-          </math> (equation (31) from the article):
+          </math> (Equation (31) from the article):
         </p>
 
         <div class="eq" id="eq-6" data-n="6">
@@ -1028,7 +1029,7 @@
         </p>
 
         <p>
-          Dividing equation (7) by the rope's velocity <math>
+          Dividing <a href="#eq-7">Equation (7)</a> by the rope's velocity <math>
             <mi>v</mi>
           </math> gives how much the rope turns per length of rope pulled over the bar:
         </p>
@@ -1206,7 +1207,7 @@
             <mi>ω</mi>
           </math> and velocity <math>
             <mi>v</mi>
-          </math> must be equal for both, in a steady-state configuration, from equation (5), we have:
+          </math> must be equal for both, in a steady-state configuration, from <a href="#eq-5">Equation (5)</a>, we have:
         </p>
 
         <div class="eq" id="eq-8" data-n="8">
@@ -1252,7 +1253,7 @@
           If we assume a free-spinning rope, then torsion before the first helix is zero. Because rope preserves its
           angle <math>
             <mi>φ</mi>
-          </math> around bars, as was discussed before equation (2), torsion around the first helix is also zero, <math>
+          </math> around bars, as was discussed before <a href="#eq-2">Equation (2)</a>, torsion around the first helix is also zero, <math>
             <msub>
               <mi>ν</mi>
               <mrow>
@@ -1316,7 +1317,7 @@
 
       <p>
         The idealized model above has one big limitation. It assumes that the rope never rotates relative to its bend
-        (equation (2)), and everything that follows rests on that. Real climbing ropes resist both torsion and bent
+        (<a href="#eq-2">Equation (2)</a>), and everything that follows rests on that. Real climbing ropes resist both torsion and bent
         rotation (<a href="#fig-6">Figure 6</a>), and the two resistances compete. Bent rotation is resisted by friction
         inside the rope, which, like static friction, holds completely up to a limit. If the torsion difference over
         a helix stays within that limit, the rope does not rotate relative to its bend at all, and the idealized model
@@ -1342,7 +1343,7 @@
             <mi>β</mi>
             <mo>=</mo>
             <mn>0</mn>
-          </math>, which gives equation (5). Two torques act on the rope about its own axis. The first is the twisting
+          </math>, which gives <a href="#eq-5">Equation (5)</a>. Two torques act on the rope about its own axis. The first is the twisting
           moment carried along the rope. It is elastic, and proportional to rope torsion:
         </p>
 
@@ -1611,7 +1612,7 @@
         </p>
 
         <p>
-          Around a helix, following a piece of rope, as in equation (2), and substituting (1), its bent rotation rate
+          Around a helix, following a piece of rope, as in <a href="#eq-2">Equation (2)</a>, and substituting <a href="#eq-1">(1)</a>, its bent rotation rate
           <math>
             <mi>β</mi>
           </math> is
@@ -1714,7 +1715,7 @@
         </div>
 
         <p>
-          As per equation (11), this equation can be split into two regimes:
+          As per <a href="#eq-11">Equation (11)</a>, this equation can be split into two regimes:
         </p>
 
         <p><b>1. Static regime</b>, internal rope friction holds (<math>
@@ -1738,7 +1739,7 @@
               <mi>m</mi>
               <mn>0</mn>
             </msub>
-          </math>, so by (15), torsion changes at exactly the rate <math>
+          </math>, so by <a href="#eq-15">(15)</a>, torsion changes at exactly the rate <math>
             <mfrac>
               <msub>
                 <mi>m</mi>
@@ -1748,7 +1749,7 @@
                 <mi>C</mi>
               </mrow>
             </mfrac>
-          </math>, and by differentiating (17) and substituting:
+          </math>, and by differentiating <a href="#eq-17">(17)</a> and substituting:
         </p>
 
         <div class="eq" id="eq-18" data-n="18">
@@ -1851,7 +1852,7 @@
         </aside>
 
         <p>
-          From equation (18), we can calculate the maximum torsion difference a helix is able to hold, <math>
+          From <a href="#eq-18">Equation (18)</a>, we can calculate the maximum torsion difference a helix is able to hold, <math>
             <mi>Δ</mi>
             <mo>&#x2062;</mo>
             <msub>
@@ -1989,7 +1990,7 @@
               <mi>m</mi>
               <mn>0</mn>
             </msub>
-          </math> guess from (13) and simplifying using (14):
+          </math> guess from <a href="#eq-13">(13)</a> and simplifying using <a href="#eq-14">(14)</a>:
         </p>
 
         <div class="eq" id="eq-22" data-n="22">
@@ -2128,7 +2129,7 @@
           <mi>α</mi>
           <mo>=</mo>
           <mn>0</mn>
-        </math> in equation (6), and the rope does not twist.
+        </math> in <a href="#eq-6">Equation (6)</a>, and the rope does not twist.
       </p>
 
       <figure class="photo" id="fig-8">
@@ -2579,6 +2580,21 @@
         try { localStorage.setItem(key, d.open ? 'open' : 'closed'); } catch (e) { }
       });
     });
+
+    // Links to an equation inside a collapsed derivation open the derivation first, so there is something to
+    // scroll to. Also on load, for a link from elsewhere.
+    const revealTarget = hash => {
+      const t = hash.length > 1 && document.getElementById(decodeURIComponent(hash.slice(1)));
+      const d = t && t.closest('details:not([open])');
+      if (d) d.open = true;
+      return d && t;
+    };
+    document.addEventListener('click', e => {
+      const a = e.target.closest('a[href^="#"]');
+      if (a) revealTarget(a.getAttribute('href'));
+    });
+    const revealed = revealTarget(location.hash);
+    if (revealed) revealed.scrollIntoView();
 
     // Color theme: set with the menu's theme switch, which is remembered in this browser (where storage is
     // allowed), or else from the system preference (and again whenever it changes). Embedded figures are kept

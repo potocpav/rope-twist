@@ -15,7 +15,7 @@ Main page is `index.html` — plain static HTML, no build step.
 - [x] Review by AI
   - [x] Large-scale structure
   - [x] Language and formulation improvements
-- [ ] Proof read
+- [x] Proof read
 - [ ] Review by friends
 - [ ] Publish
 

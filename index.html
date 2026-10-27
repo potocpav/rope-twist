@@ -12,7 +12,7 @@
       if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
     } catch (e) { }
   </script>
-  <meta name="description" content="Why a climbing rope spins about its own axis when pulled around a bar at an angle.">
+  <meta name="description" content="Climbing rope twist - theory and applications.">
   <style>
     :root {
       --bg: #ffffff;
@@ -110,12 +110,12 @@
 
     h2 {
       font-size: 26px;
-      margin: 56px 0 12px;
+      margin: 50px 0 20px;
     }
 
     h3 {
       font-size: 20px;
-      margin: 32px 0 8px;
+      margin: 30px 0 15px;
     }
 
     h4 {
@@ -181,7 +181,7 @@
     }
 
     figure {
-      margin: 32px 0 40px;
+      margin: 30px 0 20px;
     }
 
     figure iframe {
@@ -620,12 +620,12 @@
           <img src="images/preview/tangled-rope.jpg" width="1828" height="891"
             alt="An orange climbing rope twisted into a tangle of loops on a white background.">
         </a>
-        <figcaption><b>Figure 1.</b> Tangled rope with 30 twists.</figcaption>
+        <figcaption><b>Figure 1.</b> Heavily tangled rope.</figcaption>
       </figure>
 
       <p>
         The theory behind rope twist is quite technical. Feel free to skip sections if you are not interested in some of
-        the nitty-gritty details. You can skip <a href="#theory">Section 1</a> (Theory) entirely and jump straight to
+        the nitty-gritty details. You can even skip <a href="#theory">Section 1</a> (Theory) entirely and jump straight to
         <a href="#applications">Section 2</a> (Applications) to learn how the rope twists in various real-world
         scenarios.
       </p>
@@ -636,7 +636,7 @@
         whole, like an axle. Or it can be twisted along its length, like a wrung towel; the technical term for this is
         <i>torsion</i>. Torsion accumulates when one end of the rope is held still and the other end spins.</p>
 
-      <p>And that is exactly what twisted ropes are – ropes with some accumulated torsion along their length.
+      <p>Twisted ropes are, simply put, ropes with some accumulated torsion along their length.
         When the torsion gets high enough, the rope buckles into loops and eventually tangles (see <a href="#fig-2">Figure 2</a>).
       </p>
 
@@ -651,7 +651,7 @@
       </figure>
 
       <p>
-        Climbing rope sheath is diagonally braided, so ropes bend easily, but are very resistant to torsion. 
+        Due to the structure of the climbing rope sheath, ropes bend easily, but are very resistant to torsion. 
         Because of this, when running around obstacles, ropes will bend, but will remain mostly untwisted – torsion
         will be close to zero. It turns out, rather
         surprisingly, that this tendency to remain untwisted when following curved paths is what makes the rope spin,
@@ -668,7 +668,7 @@
       </p>
 
       <p>
-        The simplest case that <i>does</i> induce twist is a rope wrapped around a bar at an angle
+        The simplest case that <i>does</i> induce twist is a rope wrapped around a bar at an angle, forming a helix
         (<a href="#fig-3">Figure 3</a>). Running the rope along such a path forces the rope to spin about its own axis
         at the rate of <math>
           <mi>ω</mi>
@@ -1018,110 +1018,9 @@
         </figcaption>
       </figure>
 
-      <details class="derivation">
-        <summary>Example calculation</summary>
-
-        <p>
-          Take a 10&nbsp;mm rope running over a carabiner whose bar is 10&nbsp;mm thick, at an angle of 45°, where the
-          spin is greatest. The radii are half the diameters: <math>
-            <mi>r</mi>
-            <mo>=</mo>
-            <mn>5</mn>
-            <mtext>&nbsp;mm</mtext>
-          </math> and <math>
-            <mi>R</mi>
-            <mo>=</mo>
-            <mn>5</mn>
-            <mtext>&nbsp;mm</mtext>
-          </math>. We want to calculate how much rope needs to be pulled over the carabiner to make the rope spin once.
-        </p>
-
-        <p>
-          Dividing <a href="#eq-7">Equation (7)</a> by the rope's velocity <math>
-            <mi>v</mi>
-          </math> gives how much the rope turns per length of rope pulled over the bar:
-        </p>
-
-        <math display="block">
-          <mrow>
-            <mfrac>
-              <mi>ω</mi>
-              <mi>v</mi>
-            </mfrac>
-            <mo>=</mo>
-            <mfrac>
-              <mrow>
-                <mi>sin</mi>
-                <mo>&#x2061;</mo>
-                <mn>45</mn>
-                <mo>°</mo>
-                <mo>⋅</mo>
-                <mi>cos</mi>
-                <mo>&#x2061;</mo>
-                <mn>45</mn>
-                <mo>°</mo>
-              </mrow>
-              <mrow>
-                <mn>5</mn>
-                <mtext>&nbsp;mm</mtext>
-                <mo>+</mo>
-                <mn>5</mn>
-                <mtext>&nbsp;mm</mtext>
-              </mrow>
-            </mfrac>
-            <mo>=</mo>
-            <mfrac>
-              <mn>0.5</mn>
-              <mrow>
-                <mn>10</mn>
-                <mtext>&nbsp;mm</mtext>
-              </mrow>
-            </mfrac>
-            <mo>=</mo>
-            <mn>0.05</mn>
-            <mtext>&nbsp;rad/mm</mtext>
-          </mrow>
-        </math>
-
-        <p>
-          One full turn is <math>
-            <mn>2</mn>
-            <mo>&#x2062;</mo>
-            <mi>π</mi>
-          </math> radians, so the length of rope pulled per turn is
-        </p>
-
-        <math display="block">
-          <mrow>
-            <mfrac>
-              <mrow>
-                <mn>2</mn>
-                <mo>&#x2062;</mo>
-                <mi>π</mi>
-              </mrow>
-              <mrow>
-                <mn>0.05</mn>
-                <mtext>&nbsp;rad/mm</mtext>
-              </mrow>
-            </mfrac>
-            <mo>≈</mo>
-            <mn>126</mn>
-            <mtext>&nbsp;mm</mtext>
-            <mo>≈</mo>
-            <mn>12.6</mn>
-            <mtext>&nbsp;cm</mtext>
-          </mrow>
-        </math>
-
-        <p>
-          So the rope turns once about its own axis for every 12.6&nbsp;cm pulled over the carabiner: about 8 turns per
-          meter. In practice, if the rope can't spin freely, much less twist builds up than this, because the rope strongly resists that much torsion.
-        </p>
-      </details>
-
       <p>
-        This result shows that rope naturally spins when it travels along a helical path. Note that this is not caused
-        by friction, but by the rope's trajectory and material properties. Even with zero friction, rope would still spin.
+        This result implies that a rope naturally spins when it travels along a helical path. Note that the spin is not caused
+        by friction, but simply by the rope's trajectory. Even with zero friction, rope would still spin.
       </p>
 
       <p>Some additional notes on this result:</p>
@@ -1149,7 +1048,7 @@
       <h5 id="spin-direction">Spin direction</h5>
 
       <p>The rope spins around its axis in the same direction it wraps around the bar. We can introduce a hand rule as a
-        mnemonic for the spin direction. If you grab the bar and point your thumb in the direction of the rope, your
+        mnemonic for the spin direction. If you grab the bar and point your index finger in the direction of the rope, your
         fingers will curl in the direction of the rope's spin.
       </p>
 
@@ -1161,8 +1060,8 @@
 
       <p>
         The simple helical model above is sufficient to approximate some simple real-world examples, like a rope running
-        through a tube-style device, or over a single carabiner. More complex systems, like the Munter hitch or a
-        two-point anchor, can be described by decomposing them into multiple helical sections. To find out how such a system
+        over a single carabiner at an angle. More complex systems, like the Munter hitch or a
+        two-point anchor, can be described by decomposing theses systems into multiple helical sections. To find out how such a system
         behaves as a whole, we need to understand how multiple helical sections along the rope path interact.
       </p>
 
@@ -1174,9 +1073,8 @@
 
       <p>
         But what if the spin rates are different? A rope running through a system of obstacles can only spin at one rate,
-        because otherwise, torsion between the obstacles would accumulate without limit. The solution is simple: torsion
-        accumulates up to a point, because once it is high enough, it balances any differences in spin rates between the
-        obstacles.
+        because otherwise, torsion between the obstacles would accumulate without limit. This is the key: torsion counter-acts spin.
+        If spin rates for two obstacles are different, torsion will accumulate between them up to the level which makes the obstacles' spin rates equal.
       </p>
 
       <details class="derivation">
@@ -1306,7 +1204,7 @@
       </details>
 
       <p>As a general rule, <b>the first obstacle sets how fast the rope spins</b>. Every other obstacle only stores
-        torsion around and between the obstacles, without affecting the overall spin rate. This effect is illustrated in
+        torsion between the obstacles, without affecting the overall spin rate. This effect is illustrated in
         <a href="#fig-5">Figure 5</a>. This rather surprising result has implications for climbing anchors and belay
         devices, which are explored in <a href="#applications">Section 2</a>.
       </p>
@@ -1323,7 +1221,7 @@
 
       <p>
         The idealized model above has one big limitation. It assumes that the rope never rotates relative to its bend
-        (<a href="#eq-2">Equation (2)</a>), and everything that follows rests on that. Real climbing ropes resist both torsion and bent
+        (<a href="#eq-2">Equation (2)</a>), and everything that follows rests on this assumption. Real climbing ropes resist both torsion and bent
         rotation (<a href="#fig-6">Figure 6</a>), and the two resistances compete. Bent rotation is resisted by friction
         inside the rope, which, like static friction, holds completely up to a limit. If the torsion difference over
         a helix stays within that limit, the rope does not rotate relative to its bend at all, and the idealized model

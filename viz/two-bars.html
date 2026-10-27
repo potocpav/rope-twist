@@ -7,7 +7,6 @@
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;}
-.wrap{padding:16px 0;} /* full width of the iframe, which spans the article's text column */
 canvas{width:100%;display:block;background:#fff;border:1px solid var(--outline);border-radius:8px;}
 .stage{position:relative;}
 .controls{display:grid;grid-template-columns:auto minmax(0,1fr) 72px;align-items:center;gap:6px 10px;margin:14px 0;}
@@ -40,7 +39,6 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 </style>
 </head>
 <body>
-<div class="wrap">
 <div class="stage">
 <canvas id="c" aria-label="Animated 3D rendering: a textured rope runs up from below, bends 90° over a first bar, runs across to a second bar, bends 90° over it and runs back down. Each bar can be set square to the rope, pointing at the viewer, or turned 45° either way. A white grid painted on the rope shows torsion building up between the bars."></canvas>
 <div class="overlay">
@@ -60,7 +58,6 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 </div>
 <p class="slip" id="slip" role="alert" hidden></p>
 <p class="note" id="lg" hidden>This figure needs WebGL 2, which this browser does not provide.</p>
-</div>
 <script src="rope.js"></script>
 <script>
 // Two bars of radius R (set with the bar radius slider, from 0.5 to 2 cm, for both bars) side by side (x right, y up, z toward the viewer). The rope runs up from below,

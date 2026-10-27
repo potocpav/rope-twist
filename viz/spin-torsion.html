@@ -7,7 +7,6 @@
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;}
-.wrap{padding:16px 0;} /* full width of the iframe, which spans the article's text column */
 canvas{width:100%;display:block;background:#fff;border:1px solid var(--outline);border-radius:8px;}
 .stage{position:relative;}
 /* Pause button, overlaid on the canvas's lower left corner; the canvas is always white, so fixed light colours. */
@@ -31,7 +30,6 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 </style>
 </head>
 <body>
-<div class="wrap">
 <div class="stage">
 <canvas id="c" aria-label="Animated 3D rendering of two short ropes side by side, seen slightly from above, turning back and forth. On the left, a straight rope is twisted along its length; on the right, a rope bent into an upside-down U turns about its own axis all along while keeping its shape. A white grid painted on each rope shows how it is turned."></canvas>
 <div class="overlay"><button id="pp" aria-label="Pause"></button></div>
@@ -44,7 +42,6 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 <label for="th">Rotation (<i>φ</i>)</label><input type="range" id="th" min="-180" max="180" step="1" value="0"><output id="to">0°</output>
 </div>
 <p class="note" id="lg" hidden>This figure needs WebGL 2, which this browser does not provide.</p>
-</div>
 <script src="rope.js"></script>
 <script>
 // Two short ropes side by side, seen slightly from above, with the same rope textures and white grid as

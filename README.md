@@ -11,10 +11,11 @@ Main page is `index.html` — plain static HTML, no build step.
 ## TODO
 
 - [x] Write the article
-- [ ] Proof read
-- [ ] Review by AI
+- [x] Add figures
+- [x] Review by AI
   - [x] Large-scale structure
-  - [ ] Language and formulation improvements
+  - [x] Language and formulation improvements
+- [ ] Proof read
 - [ ] Review by friends
 - [ ] Publish
 

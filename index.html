@@ -290,7 +290,8 @@
     .photo-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      column-gap: 16px;
+      /* Rows are already spaced by the captions' bottom margin. */
+      gap: 0 16px;
     }
 
     .photo-row>div {
@@ -311,7 +312,7 @@
     }
 
     .photo .subcap {
-      margin: 8px 0 20px;
+      margin: 4px 0 8px;
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
       font-size: 15px;
       color: var(--muted);
@@ -615,8 +616,8 @@
 
       <p>
         The theory behind rope twist is quite technical. Feel free to skip sections if you are not interested in some of
-        the nitty-gritty details. You can even skip <a href="#theory">Section 1</a> (Theory) entirely, and jump straight
-        to <a href="#applications">Section 2</a> (Applications) to learn how the rope twists in various real-world
+        the nitty-gritty details. You can skip <a href="#theory">Section 1</a> (Theory) entirely, and jump straight to
+        <a href="#applications">Section 2</a> (Applications) to learn how the rope twists in various real-world
         scenarios.
       </p>
 
@@ -2096,7 +2097,14 @@
           ropes to twist and tangle.</li>
         <li>The simplest case is rope running around a bar along a spiral path. Real rope paths can be decomposed into a
           series of such spiral segments.</li>
-        <li>Obstacles placed at an angle of 45° to the rope cause the maximum amount of rope twist.</li>
+        <li>Obstacles placed at an angle of <math>
+            <mi>α</mi>
+            <mo>=</mo>
+            <mn>45</mn>
+            <mo>°</mo>
+          </math> to the rope cause the maximum amount of rope twist. Twist is larger for smaller bend radii <math>
+            <mi>R</mi>
+          </math>.</li>
         <li>The amount of twist depends on rope tension. With more tension, ropes will tend to spin more.
         </li>
         <li>When the rope runs around multiple obstacles, the first obstacle (i.e., where the rope goes in) will
@@ -2169,7 +2177,7 @@
             <mi>α</mi>
             <mo>≈</mo>
             <mn>0</mn>
-          </math>. <i>Source: <a href="https://www.youtube.com/watch?v=4AaX0wGrDxg&t=232s">EDELRID Knowledge Base
+          </math>. <i>Images: <a href="https://www.youtube.com/watch?v=4AaX0wGrDxg&t=232s">EDELRID Knowledge Base
           YouTube</a></i>
         </figcaption>
       </figure>
@@ -2309,14 +2317,60 @@
       </p>
 
       <p>
-        Experience shows that it's better to place the rings mirrored (Figure TODO), rather than facing the same side
-        (Figure TODO). But as we discussed in <a href="#complex-configurations">Section 1.2</a>, neither of these
-        configurations will completely eliminate rope twist. The two twists do not cancel each other out, even if they
-        are opposite. Instead, the first ring along the rope path will apply its twist, and the second ring will have no
-        influence, or only a limited influence.
+        Experience shows that it's better to place the rings mirrored, rather than facing the same side
+        (<a href="#fig-13">Figure 13, A</a>). But as we discussed in <a href="#complex-configurations">Section 1.2</a>,
+        neither of these configurations will completely eliminate rope twist. The two twists do not cancel each other
+        out, even if they are opposite. Instead, the first ring along the rope path will deposit its twist, and the
+        second ring will have only a limited influence.
       </p>
-      <p>To eliminate rope twist, both rings should be aligned perpendicular to the rope (Figure TODO), or be free to
-        move and align themselves (Figure TODO).
+      <p>To eliminate rope twist, both rings should be free to move and align themselves (<a href="#fig-13">Figure 13, B
+        and C</a>), or be fixed and aligned perpendicular to the rope (<a href="#fig-13">Figure 13, D</a>).
+      </p>
+
+      <figure class="photo" id="fig-13">
+        <div class="photo-row photo-grid">
+          <div>
+            <a href="images/anchor-a.jpg">
+              <img src="images/preview/anchor-a.jpg" width="512" height="512"
+                alt="Two bolts on a wall, each with a quick link hanging from its hanger. The rope runs through both
+                  quick links, which sit at an angle to the rope.">
+            </a>
+            <p class="subcap"><b>A.</b> Rope twists.</p>
+          </div>
+          <div>
+            <a href="images/anchor-b.jpg">
+              <img src="images/preview/anchor-b.jpg" width="512" height="512"
+                alt="Two bolts, each with a quick link and a ring. The rope runs through both rings, which hang free to
+                  align with the rope.">
+            </a>
+            <p class="subcap"><b>B.</b> No twist.</p>
+          </div>
+          <div>
+            <a href="images/anchor-c.jpg">
+              <img src="images/preview/anchor-c.jpg" width="512" height="512"
+                alt="Two bolts with chains joined at the bottom by a single quick link, through which the rope runs.">
+            </a>
+            <p class="subcap"><b>C.</b> No twist.</p>
+          </div>
+          <div>
+            <a href="images/anchor-d.jpg">
+              <img src="images/preview/anchor-d.jpg" width="512" height="512"
+                alt="Two large steel rings fixed in a rock face, one above the other, free to swivel in their eyes.">
+            </a>
+            <p class="subcap"><b>D.</b> No twist.</p>
+          </div>
+        </div>
+        <figcaption><b>Figure 13.</b> Anchor configurations. The first anchor (<b>A</b>) twists the rope, because the
+          quick links can't align themselves to be perpendicular to the rope. All other configurations prevent rope
+          twist. <i>Images: <a href="https://www.alpinesavvy.com/blog/anchor-induced-rope-twisting">Alpine Savvy</a>,
+          <a href="https://upskillclimbing.blogspot.com/2013/11/climbing-anchors-ideal-sport-route.html">Upskill
+          Climbing</a></i>.
+        </figcaption>
+      </figure>
+
+      <p>Some online sources claim different twisting results from mine, including the sources for the images above. My
+        claims are consistent with the theory, but I haven't yet done the necessary testing to verify them. There may be
+        some gaps in my understanding, and I welcome feedback.
       </p>
 
       <h3 id="rope-coiling"><span class="secnum">2.3</span> Rope coiling</h3>
@@ -2324,12 +2378,12 @@
       <p>Contrary to popular belief, coiling and uncoiling rope in a circular coil (also known as Alpine coil) does not
         twist the rope. Or, more precisely, coiling it <i>correctly</i> does not. If you coil the rope circularly, you
         need to ensure that each coil contains a single rope twist. That happens naturally when coiling, and it can be
-        identified by the rope forming figure-8-like loops, not circular loops (<a href="#fig-13">Figure 13</a>). If
+        identified by the rope forming figure-8-like loops, not circular loops (<a href="#fig-14">Figure 14</a>). If
         this is ensured, the rope does not need to be flaked, and it doesn't tangle, because every twist is undone when
         pulling the rope out of the coil.
       </p>
 
-      <figure class="photo" id="fig-13">
+      <figure class="photo" id="fig-14">
         <a href="images/coils-incorrect.jpg">
           <img src="images/preview/coils-incorrect.jpg" width="1000" height="500"
             alt="A blue climbing rope coiled into a neat oval of parallel circular loops on a wooden floor.">
@@ -2340,14 +2394,14 @@
             alt="The same blue rope coiled with its loops crossing over in a figure-eight pattern.">
         </a>
         <p class="subcap"><b>B.</b> Correctly coiled rope.</p>
-        <figcaption><b>Figure 13.</b> Rope coiled in two different ways. Do not try to "fix" the figure-eight pattern
+        <figcaption><b>Figure 14.</b> Rope coiled in two different ways. Do not try to "fix" the figure-eight pattern
           which naturally happens when coiling the rope (<b>B</b>). With it, rope can be pulled from the coil without
           twisting.
         </figcaption>
       </figure>
 
       <p>
-        If you try to make the coil circular, like a coiled garden hose (<a href="#fig-13">Figure 13, A</a>), you will
+        If you try to make the coil circular, like a coiled garden hose (<a href="#fig-14">Figure 14, A</a>), you will
         see that you need to twist the rope manually as you go. If you then don't undo those twists in the same way, the
         rope will get tangled as it is pulled out. This is sometimes a problem with brand new ropes, which may be
         packaged in this kind of circular coil.
@@ -2388,7 +2442,6 @@
       </p>
       <p>
         https://www.alpinesavvy.com/blog/anchor-induced-rope-twisting
-        
       </p>
       <p>
         https://www.ukclimbing.com/gear/climbing/ropes/qc_lab_twisty_ropes__-_the_how_why_and_risks-11897

@@ -285,6 +285,10 @@
       padding-left: 1.5em;
     }
 
+    main :is(ul, ol):not(.where) > li + li {
+      margin-top: 10px;
+    }
+
     .photo a:has(> img) {
       display: block;
     }
@@ -2033,7 +2037,7 @@
 
       <h2 id="applications"><span class="secnum">2</span> Applications</h2>
 
-      <p>For readers who skipped <a href="#theory">Section 1</a>, here is a summary of the main points, as they apply to
+      <p>Here is a summary of the main points from the <a href="#theory">Theory section</a>, as they apply to
         the practical applications below:</p>
 
       <ul>

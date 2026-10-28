@@ -18,4 +18,4 @@ Then open http://localhost:8000/. The page reloads automatically whenever a file
 
 ## Backup of the linked article
 
-`kinematics-of-rods/` holds an offline copy of [Kinematics of Rods](https://rotations.berkeley.edu/kinematics-of-rods/) (rotations.berkeley.edu), which `index.html` cites, saved on 2026-10-28 in case the original goes away. It includes the figures, the rendered equations and the page's styles. With `serve.py` running, open http://localhost:8000/kinematics-of-rods/kinematics-of-rods/.
+`kinematics-of-rods/` holds an offline copy of [Kinematics of Rods](https://rotations.berkeley.edu/kinematics-of-rods/) (rotations.berkeley.edu), which `index.html` cites, saved on 2026-10-28 in case the original goes away. It includes the figures, the rendered equations and the page's styles. It is published at https://potocpav.github.io/rope-twist/kinematics-of-rods/kinematics-of-rods/.

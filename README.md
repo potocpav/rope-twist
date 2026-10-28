@@ -1,23 +1,12 @@
 # How Climbing Ropes Twist
 
-Text and analysis by me, code by Claude.
-
 A blog post on why a climbing rope twists.
 
 **Read it:** https://potocpav.github.io/rope-twist/
 
+Text and analysis by me, code by Claude.
+
 Main page is `index.html` — plain static HTML, no build step.
-
-## TODO
-
-- [x] Write the article
-- [x] Add figures
-- [x] Review by AI
-  - [x] Large-scale structure
-  - [x] Language and formulation improvements
-- [x] Proof read
-- [ ] Review by friends
-- [ ] Publish
 
 ## Local preview
 

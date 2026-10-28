@@ -12,14 +12,16 @@
       if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
     } catch (e) { }
   </script>
-  <meta name="description" content="Why do climbing ropes twist and tangle? The physics of rope twist, and what it means for belaying, anchors and rope coiling.">
+  <meta name="description"
+    content="Why do climbing ropes twist and tangle? The physics of rope twist, and what it means for belaying, anchors and rope coiling.">
   <link rel="canonical" href="https://potocpav.github.io/rope-twist/">
   <link rel="icon" type="image/png" href="images/favicon.png">
   <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="Pavel Potoček's GitHub">
   <meta property="og:title" content="How Climbing Ropes Twist">
-  <meta property="og:description" content="Why do climbing ropes twist and tangle? The physics of rope twist, and what it means for belaying, anchors and rope coiling.">
+  <meta property="og:description"
+    content="Why do climbing ropes twist and tangle? The physics of rope twist, and what it means for belaying, anchors and rope coiling.">
   <meta property="og:url" content="https://potocpav.github.io/rope-twist/">
   <meta property="og:image" content="https://potocpav.github.io/rope-twist/images/social.jpg">
   <meta property="og:image:type" content="image/jpeg">
@@ -285,7 +287,7 @@
       padding-left: 1.5em;
     }
 
-    main :is(ul, ol):not(.where) > li + li {
+    main :is(ul, ol):not(.where)>li+li {
       margin-top: 10px;
     }
 
@@ -650,7 +652,8 @@
           <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0Zm0 3.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2ZM9 12H7V7h2v5Z" />
         </svg>
         <p>The theory behind rope twist is quite technical. Feel free to skip this section and jump straight
-          to the <a href="#applications">Applications</a> section below to learn how the rope twists in various real-world
+          to the <a href="#applications">Applications</a> section below to learn how the rope twists in various
+          real-world
           scenarios.</p>
       </aside>
 
@@ -1067,14 +1070,17 @@
           Rope radius is 5&nbsp;mm; the bar radius can be set from 0.5 to 2&nbsp;cm.</figcaption>
       </figure>
 
-      <p>As we will see later on, the applicability of this idealized result is somewhat limited. For low rope tensions and short helical paths, 
+      <p>As we will see later on, the applicability of this idealized result is somewhat limited. For low rope tensions
+        and short helical paths,
         the spin rate may be lower than predicted by this formula (see <a href="#rope-dynamics">Section 1.3</a>).
       </p>
 
       <h5 id="spin-direction">Spin direction</h5>
 
-      <p>The rope spins around its axis in the same direction it wraps around the bar. We can introduce a left/right-hand rule as a
-        mnemonic for the spin direction. If you grab the bar with your thumb pointing in the direction of rope travel, your fingers will curl in the direction of the rope's spin.
+      <p>The rope spins around its axis in the same direction it wraps around the bar. We can introduce a
+        left/right-hand rule as a
+        mnemonic for the spin direction. If you grab the bar with your thumb pointing in the direction of rope travel,
+        your fingers will curl in the direction of the rope's spin.
       </p>
 
       <p>If the left hand fits the rule, we will call the spin left-handed. If the right hand fits the rule, we will
@@ -1103,7 +1109,8 @@
         rate,
         because otherwise, torsion between the obstacles would accumulate without limit. The solution lies in the fact
         that torsion counteracts spin.
-        If the spin rates of two obstacles differ, torsion accumulates between them up to the level that makes their spin rates equal.
+        If the spin rates of two obstacles differ, torsion accumulates between them up to the level that makes their
+        spin rates equal.
       </p>
 
       <details class="derivation">
@@ -1253,9 +1260,11 @@
       <p>
         The idealized model above has one big limitation. It assumes that the rope never rotates relative to its bend
         (<a href="#eq-3">Equation (3)</a>), and everything that follows rests on this assumption.
-      </p><p>
+      </p>
+      <p>
         Resistance to bent rotation (<a href="#fig-6">Figure 6</a>) is caused by friction
-        inside the rope, which, like static friction, holds completely only up to a certain limit. If the torsion difference over
+        inside the rope, which, like static friction, holds completely only up to a certain limit. If the torsion
+        difference over
         a helix stays within that limit, the rope does not rotate relative to its bend at all, and the idealized model
         from <a href="#complex-configurations">Section 1.2</a> holds exactly. Only past the limit does the rope slip,
         and the idealized model is no longer valid.</p>
@@ -1279,7 +1288,7 @@
             <mi>β</mi>
             <mo>=</mo>
             <mn>0</mn>
-          </math>, which gives <a href="#eq-5">Equation (5)</a>. 
+          </math>, which gives <a href="#eq-5">Equation (5)</a>.
         </p>
         <p>Two torques act on the rope about its own axis. The
           first is the twisting
@@ -2007,9 +2016,9 @@
             against its bend and where it slips"></iframe>
         <figcaption><b>Figure 7.</b> Static and slip regimes on a bar square to the rope. The incoming rope has no
           torsion; the outgoing rope has the set twist. The rope holds against its bend (blue) until internal
-          friction can no longer keep the torsion from changing, and slips (red) over the rest of the wrap. If the bar
-          cannot hold the whole twist as torsion, the rope slips all around, and the rest of the twist comes out as
-          spin.</figcaption>
+          friction can no longer keep the torsion from changing, and slips (red) over the rest of the wrap. If the
+          rope slips over the whole wrap, some of the twist leaks to the other side and manifests as a spin.
+        </figcaption>
       </figure>
 
       <h3 id="rope-buckling"><span class="secnum">1.4</span> Rope buckling</h3>
@@ -2127,9 +2136,11 @@
       <h4 id="grigri"><span class="secnum">2.1.3</span> Grigri</h4>
       <p>
         A Grigri can twist a rope, because the rope runs over the lip at an angle, but the effect is typically limited,
-        and dependent on how the rope is handled. Normally, the brake side of the rope is held very loose with a Grigri, 
+        and dependent on how the rope is handled. Normally, the brake side of the rope is held very loose with a Grigri,
         so the rope can align itself over the lip to minimize the twist (<a href="#fig-10">Figure 10</a>).
-      </p><p>People used to belaying with tube-style devices may hold more tension on the brake side, which can interfere with the rope's self-alignment and cause some rope twist.
+      </p>
+      <p>People used to belaying with tube-style devices may hold more tension on the brake side, which can interfere
+        with the rope's self-alignment and cause some rope twist.
       </p>
       <figure class="photo" id="fig-10">
         <div class="photo-row">
@@ -2149,14 +2160,16 @@
           </div>
         </div>
         <figcaption><b>Figure 10.</b> A Grigri bends the rope twice. The bend over the lip can spontaneously move left
-          and right to compensate for the rope's twist in either direction. This limits how much overall twist is induced.</figcaption>
+          and right to compensate for the rope's twist in either direction. This limits how much overall twist is
+          induced.</figcaption>
       </figure>
 
       <h4 id="munter-hitch"><span class="secnum">2.1.4</span> Munter hitch</h4>
 
       <p>The Munter hitch is notorious for twisting the rope. From the theory, we know that
         the first bend in the direction of rope travel causes most of the twist.
-        Therefore, when belaying a lead climber, lowering or rappelling, everything depends on how the brake side of the rope is
+        Therefore, when belaying a lead climber, lowering or rappelling, everything depends on how the brake side of the
+        rope is
         handled.
         If the rope is held in a way that forms a pronounced helix, the rope will twist. Otherwise, it will
         not. <a href="#fig-11">Figure 11</a> shows the results of my experiments.
@@ -2236,7 +2249,8 @@
               over the top of the knot.">
         </a>
         <figcaption><b>Figure 12.</b> Rappelling with a Munter. The brake strands were passed above the head to increase
-          the braking factor and eliminate rope twist. The rope path is equivalent to that in <a href="#fig-11">Figure 11, D</a>.</figcaption>
+          the braking factor and eliminate rope twist. The rope path is equivalent to that in <a href="#fig-11">Figure
+            11, D</a>.</figcaption>
       </figure>
 
       <h3 id="lowering-through-anchors"><span class="secnum">2.2</span> Lowering through anchors</h3>
@@ -2250,10 +2264,12 @@
       <p>
         Experience shows that it's better to place the rings mirrored, rather than facing the same side
         (<a href="#fig-13">Figure 13, A</a>). But as we discussed in <a href="#complex-configurations">Section 1.2</a>,
-        neither of these configurations will completely eliminate rope twist. The two twists do not cancel each other out even if they are opposite; the first ring along the rope path will deposit its twist, and the
+        neither of these configurations will completely eliminate rope twist. The two twists do not cancel each other
+        out even if they are opposite; the first ring along the rope path will deposit its twist, and the
         second ring will have only a limited influence.
       </p>
-      <p>To fully eliminate rope twist, both rings should be free to move and align themselves (<a href="#fig-13">Figure 13, B
+      <p>To fully eliminate rope twist, both rings should be free to move and align themselves (<a href="#fig-13">Figure
+          13, B
           and C</a>), or be fixed perpendicular to the rope (<a href="#fig-13">Figure 13, D</a>).
       </p>
 
@@ -2289,17 +2305,21 @@
           </div>
         </div>
         <figcaption><b>Figure 13.</b> Anchor configurations. The first anchor (<b>A</b>) twists the rope, because the
-          quick links can't align themselves to be perpendicular to the rope. All other configurations (<b>B</b>, <b>C</b>, <b>D</b>) prevent rope
-          twist. <br><i>Images: <a href="https://www.alpinesavvy.com/blog/anchor-induced-rope-twisting">Alpine Savvy</a>,
+          quick links can't align themselves to be perpendicular to the rope. All other configurations (<b>B</b>,
+          <b>C</b>, <b>D</b>) prevent rope
+          twist. <br><i>Images: <a href="https://www.alpinesavvy.com/blog/anchor-induced-rope-twisting">Alpine
+              Savvy</a>,
             <a href="https://upskillclimbing.blogspot.com/2013/11/climbing-anchors-ideal-sport-route.html">Upskill
               Climbing</a></i>.
         </figcaption>
       </figure>
 
-      <p>Some online sources claim different twisting results from mine, including <a href="https://www.alpinesavvy.com/blog/anchor-induced-rope-twisting">Alpine Savvy</a> and
+      <p>Some online sources claim different twisting results from mine, including <a
+          href="https://www.alpinesavvy.com/blog/anchor-induced-rope-twisting">Alpine Savvy</a> and
         <a href="https://upskillclimbing.blogspot.com/2013/11/climbing-anchors-ideal-sport-route.html">Upskill
           Climbing</a>. My
-        claims come mainly from theory, and I haven't performed the necessary experiments to verify them. I welcome any corrections.
+        claims come mainly from theory, and I haven't performed the necessary experiments to verify them. I welcome any
+        corrections.
       </p>
 
       <h3 id="rope-coiling"><span class="secnum">2.3</span> Rope coiling</h3>
@@ -2328,7 +2348,8 @@
             alt="The same blue rope coiled with its loops crossing over in a figure-eight pattern.">
         </a>
         <p class="subcap"><b>B.</b> Correctly coiled rope.</p>
-        <figcaption><b>Figure 14.</b> Rope coiled in two different ways. Keep the figure-eight pattern that naturally forms when coiling the rope (<b>B</b>), and the rope will not twist.
+        <figcaption><b>Figure 14.</b> Rope coiled in two different ways. Keep the figure-eight pattern that naturally
+          forms when coiling the rope (<b>B</b>), and the rope will not twist.
         </figcaption>
       </figure>
 
@@ -2355,7 +2376,8 @@
         <li><b>Flake the rope</b>, watch how it twists (<i>i.e.</i>, watch its torsion), and manually undo it so that
           the sheath is straight again. This is the obvious option, and the one I used to untwist my ropes after all the
           experiments performed for this article. It works well.</li>
-        <li><b>Hang the rope freely</b>, whole or in segments. This should remove most torsion, because ropes naturally minimize
+        <li><b>Hang the rope freely</b>, whole or in segments. This should remove most torsion, because ropes naturally
+          minimize
           torsion. People report that this works, but you need to have a cliff.
         </li>
         <li><b>Run the rope through a tube-style device</b>, or a Grigri. Keep the brake side loose, so the rope can
@@ -2373,14 +2395,15 @@
         of inspiration from these, and they helped me develop my model. Go watch the video; it is a great illustration
         of rope twists in action. Edelrid correctly identifies the scenarios in which rope spins, and that the spin is
         the cause of rope twist. However, they make the mistake of assuming that the cause of the spin is asymmetric
-       friction acting on the rope.
+        friction acting on the rope.
       </p>
 
-      <p>Another mistake Edelrid makes is in the section on rope coiling. They discard circular coiling as a whole, 
+      <p>Another mistake Edelrid makes is in the section on rope coiling. They discard circular coiling as a whole,
         without considering the twist-free coiling method shown in <a href="#fig-14">Figure 14, B</a>.
       </p>
 
-      <p>I am also not persuaded by the article's claim that rope twist can become permanently embedded in the rope through the sheath rotating against the core. I think a more plausible explanation for permanently twisted ropes
+      <p>I am also not persuaded by the article's claim that rope twist can become permanently embedded in the rope
+        through the sheath rotating against the core. I think a more plausible explanation for permanently twisted ropes
         is that a permanent spiral flattening develops along the rope. But that is just my
         guess. I don't have enough experience to judge one way or another.
       </p>

@@ -8,6 +8,10 @@ Text and analysis by me, code by Claude.
 
 Main page is `index.html` — plain static HTML, no build step.
 
+## TODO
+
+- [ ] Describe the over-under coiling method ([reddit comment](https://www.reddit.com/r/ClimbingGear/comments/1xhm8ok/comment/19rs874c7y15x/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button))
+
 ## Local preview
 
 ```sh
